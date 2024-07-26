@@ -9,7 +9,7 @@ spec:
     server: https://kubernetes.default.svc
   source:
     repoURL: 'https://github.com/thatsimonsguy/homelab-k8s.git'
-    path: 'ingress-controller/nginx'
+    path: 'apps/ingress-controller/nginx'
     targetRevision: HEAD
   project: default
   syncPolicy:
