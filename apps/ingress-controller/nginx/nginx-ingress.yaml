@@ -13,9 +13,10 @@ spec:
       labels:
         app: nginx-ingress
     spec:
+      serviceAccountName: nginx-ingress-serviceaccount
       containers:
-        - name: nginx-ingress
-          image: quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.32.0
+        - name: nginx-ingress-controller
+          image: quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.26.1
           args:
             - /nginx-ingress-controller
             - --configmap=$(POD_NAMESPACE)/nginx-configuration
