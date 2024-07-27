@@ -3,9 +3,10 @@ kind: Service
 metadata:
   name: hello-world
 spec:
-  type: {{ .Values.service.type }}
+  type: NodePort
   ports:
-  - port: {{ .Values.service.port }}
+  - port: 80
     targetPort: 8080
+    nodePort: 30080
   selector:
     app: hello-world
