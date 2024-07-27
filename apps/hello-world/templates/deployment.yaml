@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hello-world
+  name: {{ .Values.image.appName }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: hello-world
+      app: {{ .Values.image.appName }}
   template:
     metadata:
       labels:
-        app: hello-world
+        app: {{ .Values.image.appName }}
     spec:
       containers:
-      - name: hello-world
+      - name: {{ .Values.image.appName }}
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         ports:
-        - containerPort: 8080
+        - containerPort: {{ .Values.image.containerPort }}

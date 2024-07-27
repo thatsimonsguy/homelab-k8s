@@ -1,15 +1,19 @@
 replicaCount: 1
 
 image:
+  appName: hello-world
   repository: gcr.io/google-samples/node-hello
   pullPolicy: IfNotPresent
   tag: "1.0"
+  containerPort: 8080
 
 service:
   type: ClusterIP
   port: 80
+  namespace: default
 
 ingress:
+  class: nginx
   enabled: true
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /

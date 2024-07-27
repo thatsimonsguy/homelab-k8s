@@ -2,11 +2,11 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: hello-world
+  name: {{ .Values.appName }}
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
-  ingressClassName: nginx
+  ingressClassName: {{ .Values.ingress.class }}
   rules:
   {{- range .Values.ingress.hosts }}
   - host: {{ .host | quote }}
@@ -17,9 +17,9 @@ spec:
         pathType: {{ .pathType }}
         backend:
           service:
-            name: hello-world
+            name: {{ .Values.appName }}
             port:
-              number: 80
+              number: {{ .Values.service.port }}
       {{- end }}
   {{- end }}
 {{- end }}
