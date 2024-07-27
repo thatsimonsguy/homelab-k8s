@@ -12,10 +12,27 @@ rules:
       - pods
       - secrets
       - services
+      - events
     verbs:
       - list
       - watch
       - get
+      - create
+  - apiGroups:
+      - discovery.k8s.io
+    resources:
+      - endpointslices
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - coordination.k8s.io
+    resources:
+      - leases
+    verbs:
+      - get
+      - list
+      - watch
   - apiGroups:
       - networking.k8s.io
     resources:
@@ -23,15 +40,15 @@ rules:
       - ingresses/status
       - ingressclasses
     verbs:
+      - get
       - list
       - watch
-      - get
   - apiGroups:
       - extensions
     resources:
       - ingresses
       - ingresses/status
     verbs:
+      - get
       - list
       - watch
-      - get
