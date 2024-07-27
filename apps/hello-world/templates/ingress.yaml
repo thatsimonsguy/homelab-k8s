@@ -17,9 +17,9 @@ spec:
         pathType: {{ .pathType }}
         backend:
           service:
-            name: hello-world
+            name: {{ $.Values.image.appName }}
             port:
-              number: {{ .Values.service.port }}
+              number: {{ $.Values.service.port }}
       {{- end }}
   {{- end }}
 {{- end }}
