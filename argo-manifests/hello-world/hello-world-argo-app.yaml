@@ -11,9 +11,9 @@ spec:
     repoURL: 'https://github.com/thatsimonsguy/homelab-k8s.git'
     path: 'apps/hello-world'
     targetRevision: HEAD
-    directory:
-      recurse: true
+    chart: hello-world
   project: default
+  sourceType: Helm
   syncPolicy:
     automated:
       prune: true
