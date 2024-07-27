@@ -3,10 +3,9 @@ kind: Service
 metadata:
   name: hello-world
 spec:
-  type: NodePort
+  type: ClusterIP
   ports:
   - port: 80
     targetPort: 8080
-    nodePort: 30080
   selector:
     app: hello-world

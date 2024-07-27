@@ -4,9 +4,7 @@ kind: Ingress
 metadata:
   name: hello-world
   annotations:
-    {{- range $key, $value := .Values.ingress.annotations }}
-      {{ $key }}: {{ $value | quote }}
-    {{- end }}
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
   {{- range .Values.ingress.hosts }}
