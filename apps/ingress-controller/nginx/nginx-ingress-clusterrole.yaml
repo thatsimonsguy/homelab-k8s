@@ -14,6 +14,7 @@ rules:
     verbs:
       - list
       - watch
+      - get
   - apiGroups:
       - ""
     resources:
@@ -27,6 +28,7 @@ rules:
     resources:
       - ingresses
       - ingresses/status
+      - ingressclasses
     verbs:
       - get
       - list
