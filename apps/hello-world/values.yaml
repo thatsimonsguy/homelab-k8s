@@ -1,8 +1,5 @@
 replicaCount: 1
 
-nameOverride: "hw"
-fullnameOverride: "helloworld"
-
 image:
   repository: gcr.io/google-samples/node-hello
   pullPolicy: IfNotPresent
