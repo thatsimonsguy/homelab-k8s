@@ -11,18 +11,11 @@ rules:
       - nodes
       - pods
       - secrets
-    verbs:
-      - list
-      - watch
-      - get
-  - apiGroups:
-      - ""
-    resources:
       - services
     verbs:
-      - get
       - list
       - watch
+      - get
   - apiGroups:
       - networking.k8s.io
     resources:
@@ -30,15 +23,15 @@ rules:
       - ingresses/status
       - ingressclasses
     verbs:
-      - get
       - list
       - watch
+      - get
   - apiGroups:
       - extensions
     resources:
       - ingresses
       - ingresses/status
     verbs:
-      - get
       - list
       - watch
+      - get
