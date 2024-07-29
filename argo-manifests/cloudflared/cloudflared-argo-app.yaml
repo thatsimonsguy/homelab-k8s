@@ -18,3 +18,6 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+  status:
+    sync:
+      status: Unknown
