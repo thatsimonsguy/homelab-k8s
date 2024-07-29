@@ -21,11 +21,19 @@ spec:
           - tunnel
           - --no-autoupdate
           - run
-          - --token
-          - $(TOKEN)
         env:
-        - name: TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: {{ .Values.secretName }}
-              key: token
+        - name: CFDPATH
+          value: /etc/cloudflared
+        - name: LOG_LEVEL
+          value: {{ .Values.logLevel }}
+        - name: LOG_FILE
+          value: {{ .Values.logFile }}
+        volumeMounts:
+        - name: cloudflared-pem
+          mountPath: /etc/cloudflared
+          subPath: cert.pem
+          readOnly: true
+      volumes:
+      - name: cloudflared-pem
+        secret:
+          secretName: {{ .Values.secretName }}
