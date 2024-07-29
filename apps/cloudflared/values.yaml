@@ -1,0 +1,16 @@
+replicaCount: 1
+
+image:
+  repository: cloudflare/cloudflared
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8080
+
+secretName: cloudflare-token
+
+logLevel: warn
+logFile: /var/log/cloudflared.log
+namespace: cloudflared

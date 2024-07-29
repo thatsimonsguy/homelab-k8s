@@ -1,0 +1,5 @@
+apiVersion: v2
+name: cloudflared-chart
+description: A Helm chart for deploying the cloudflared local tunnel agent
+version: 0.1.0
+appVersion: "latest"
