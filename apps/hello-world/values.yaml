@@ -8,9 +8,10 @@ image:
   containerPort: 80
 
 service:
-  type: ClusterIP
+  type: NodePort
   port: 80
   namespace: default
+  nodeport: 30001
 
 resources: {}
 nodeSelector: {}
