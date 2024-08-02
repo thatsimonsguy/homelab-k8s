@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "pihole.fullname" . }}
+  labels:
+    {{- include "pihole.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "pihole.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "pihole.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: pihole
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: dns-tcp
+              containerPort: 53
+              protocol: TCP
+            - name: dns-udp
+              containerPort: 53
+              protocol: UDP
+            - name: web
+              containerPort: 80
+              protocol: TCP
+          env:
+            - name: TZ
+              value: {{ .Values.timezone | quote }}
+            - name: WEBPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.sealedSecret.name }}
+                  key: {{ .Values.sealedSecret.key }}
+          volumeMounts:
+            - name: pihole-data
+              mountPath: {{ .Values.persistence.dataPath }}
+      volumes:
+        - name: pihole-data
+          persistentVolumeClaim:
+            claimName: {{ include "pihole.fullname" . }}

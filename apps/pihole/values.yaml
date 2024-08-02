@@ -1,0 +1,56 @@
+replicaCount: 1
+
+image:
+  repository: pihole/pihole
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: NodePort
+  ports:
+    - name: dns-tcp
+      port: 53
+      targetPort: 53
+      protocol: TCP
+      nodePort: 30053
+    - name: dns-udp
+      port: 53
+      targetPort: 53
+      protocol: UDP
+      nodePort: 30053
+    - name: web
+      port: 80
+      targetPort: 80
+      protocol: TCP
+      nodePort: 30080
+
+ingress:
+  enabled: false
+  annotations: {}
+  hosts:
+    - host: chart-example.local
+      paths: []
+  tls: []
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+persistence:
+  enabled: true
+  storageClass: ""
+  accessModes:
+    - ReadWriteOnce
+  size: 1Gi
+  dataPath: /data
+
+timezone: "America/Chicago"
+
+# Stub for Bitnami Sealed Secret
+sealedSecret:
+  name: pihole-webpassword
+  key: webpassword
