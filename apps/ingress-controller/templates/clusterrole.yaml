@@ -22,4 +22,16 @@ rules:
   - ingressrouteudps
   - traefikservices
   - tlsoptions
+  - serverstransports
+  - tlsstores
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["traefik.io"]
+  resources:
+  - middlewares
+  - ingressroutes
+  - ingressroutetcps
+  - ingressrouteudps
+  - traefikservices
+  - tlsoptions
+  - tlsstores
   verbs: ["get", "list", "watch"]
