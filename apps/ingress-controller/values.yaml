@@ -11,7 +11,7 @@ service:
 
 ingressRoute:
   enabled: true
-  host: example.com
+  host: matthewpsimons.com
   service:
-    name: your-service
+    name: hello-world
     port: 80

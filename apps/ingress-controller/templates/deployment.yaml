@@ -12,6 +12,7 @@ spec:
       labels:
         app: traefik
     spec:
+      serviceAccountName: traefik
       containers:
       - name: traefik
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
