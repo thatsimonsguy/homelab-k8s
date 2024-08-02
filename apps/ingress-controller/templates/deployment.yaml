@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "traefik-chart.fullname" . }}
+  name: traefik
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ include "traefik-chart.name" . }}
+      app: traefik
   template:
     metadata:
       labels:
-        app: {{ include "traefik-chart.name" . }}
+        app: traefik
     spec:
       containers:
       - name: traefik
