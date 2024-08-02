@@ -12,18 +12,6 @@ service:
   port: 80
   namespace: default
 
-ingress:
-  class: nginx
-  enabled: true
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-  hosts:
-    - host: matthewpsimons.com
-      paths:
-        - path: /
-          pathType: Prefix
-  tls: []
-
 resources: {}
 nodeSelector: {}
 tolerations: []

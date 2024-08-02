@@ -1,17 +1,20 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: nginx-ingress
+  name: traefik
   namespace: argocd
 spec:
   project: default
+
   source:
-    repoURL: 'https://github.com/thatsimonsguy/homelab-k8s'
+    repoURL: 'https://github.com/thatsimonsguy/homelab-k8s.git'
     targetRevision: main
-    path: apps/ingress-controller/nginx
+    path: 'apps/ingress-controller'
+
   destination:
     server: 'https://kubernetes.default.svc'
-    namespace: ingress-nginx
+    namespace: default
+
   syncPolicy:
     automated:
       prune: true

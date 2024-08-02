@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "traefik-chart.fullname" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "traefik-chart.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "traefik-chart.name" . }}
+    spec:
+      containers:
+      - name: traefik
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        ports:
+        - name: web
+          containerPort: 80
+        - name: admin
+          containerPort: 8080
+        args:
+        - "--entrypoints.web.address=:80"
+        - "--entrypoints.websecure.address=:443"
+        - "--providers.kubernetescrd"
+        - "--api.insecure=true"

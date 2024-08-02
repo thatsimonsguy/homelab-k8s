@@ -1,0 +1,17 @@
+replicaCount: 1
+
+image:
+  repository: traefik
+  tag: 2.11.6
+  pullPolicy: IfNotPresent
+
+service:
+  type: LoadBalancer
+  port: 80
+
+ingressRoute:
+  enabled: true
+  host: example.com
+  service:
+    name: your-service
+    port: 80
