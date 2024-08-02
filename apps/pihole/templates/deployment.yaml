@@ -4,6 +4,8 @@ metadata:
   name: {{ include "pihole.fullname" . }}
   labels:
     {{- include "pihole.labels" . | nindent 4 }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -31,11 +33,13 @@ spec:
           env:
             - name: TZ
               value: {{ .Values.timezone | quote }}
+            {{- if .Values.sealedSecret.enabled }}
             - name: WEBPASSWORD
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.sealedSecret.name }}
                   key: {{ .Values.sealedSecret.key }}
+            {{- end }}
           volumeMounts:
             - name: pihole-data
               mountPath: {{ .Values.persistence.dataPath }}
