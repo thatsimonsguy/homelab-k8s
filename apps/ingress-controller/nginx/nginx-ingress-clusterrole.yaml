@@ -18,6 +18,8 @@ rules:
       - watch
       - get
       - create
+      - update
+      - patch
   - apiGroups:
       - discovery.k8s.io
     resources:
@@ -46,6 +48,7 @@ rules:
       - get
       - list
       - watch
+      - update
   - apiGroups:
       - extensions
     resources:
@@ -55,3 +58,4 @@ rules:
       - get
       - list
       - watch
+      - update
