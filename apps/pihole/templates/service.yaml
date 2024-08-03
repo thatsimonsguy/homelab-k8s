@@ -4,17 +4,20 @@ metadata:
   name: {{ include "pihole.fullname" . }}
   labels:
     {{- include "pihole.labels" . | nindent 4 }}
-  annotations:
-    argocd.argoproj.io/sync-wave: "0"
 spec:
-  type: {{ .Values.service.type }}
+  type: ClusterIP
   ports:
-    {{- range .Values.service.ports }}
-    - name: {{ .name }}
-      port: {{ .port }}
-      targetPort: {{ .targetPort }}
-      protocol: {{ .protocol }}
-      nodePort: {{ .nodePort }}
-    {{- end }}
+    - name: dns-tcp
+      port: {{ .Values.service.ports.dnsTcp.port }}
+      targetPort: {{ .Values.service.ports.dnsTcp.targetPort }}
+      protocol: TCP
+    - name: dns-udp
+      port: {{ .Values.service.ports.dnsUdp.port }}
+      targetPort: {{ .Values.service.ports.dnsUdp.targetPort }}
+      protocol: UDP
+    - name: http
+      port: {{ .Values.service.ports.http.port }}
+      targetPort: {{ .Values.service.ports.http.targetPort }}
+      protocol: TCP
   selector:
     {{- include "pihole.selectorLabels" . | nindent 4 }}

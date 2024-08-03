@@ -6,23 +6,17 @@ image:
   pullPolicy: IfNotPresent
 
 service:
-  type: NodePort
+  type: ClusterIP
   ports:
-    - name: dns-tcp
+    dnsTcp:
       port: 53
       targetPort: 53
-      protocol: TCP
-      nodePort: 30153  # Example node port, adjust as needed
-    - name: dns-udp
+    dnsUdp:
       port: 53
       targetPort: 53
-      protocol: UDP
-      nodePort: 30153  # Example node port, adjust as needed
-    - name: web
+    http:
       port: 80
       targetPort: 80
-      protocol: TCP
-      nodePort: 30180  # Example node port, adjust as needed
 
 ingress:
   enabled: false
@@ -54,3 +48,6 @@ sealedSecret:
   enabled: true
   name: pihole-webpassword
   key: webpassword
+
+hostNetwork: true
+dnsPolicy: ClusterFirstWithHostNet
