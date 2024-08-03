@@ -50,7 +50,6 @@ persistence:
 
 timezone: "America/Chicago"
 
-# Stub for Bitnami Sealed Secret
 sealedSecret:
   enabled: true
   name: pihole-webpassword
