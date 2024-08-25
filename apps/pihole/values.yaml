@@ -10,15 +10,18 @@ service:
   externalTrafficPolicy: Cluster
   loadBalancerIP: 192.168.2.201
   ports:
-    dnsTcp:
+    - name: dns-tcp
       port: 53
       targetPort: 53
-    dnsUdp:
+      protocol: TCP
+    - name: dns-udp
       port: 53
       targetPort: 53
-    http:
-      port: 80
-      targetPort: 80
+      protocol: UDP
+    - name: dns-udp
+      port: 53
+      targetPort: 53
+      protocol: UDP
 
 ingress:
   enabled: false
