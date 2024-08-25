@@ -6,7 +6,9 @@ image:
   pullPolicy: IfNotPresent
 
 service:
-  type: ClusterIP
+  type: LoadBalancer
+  externalTrafficPolicy: Cluster
+  loadBalancerIP: 192.168.2.201
   ports:
     dnsTcp:
       port: 53
@@ -49,5 +51,6 @@ sealedSecret:
   name: pihole-webpassword
   key: webpassword
 
-hostNetwork: true
-dnsPolicy: ClusterFirstWithHostNet
+# Removed host networking
+hostNetwork: false
+dnsPolicy: ClusterFirst

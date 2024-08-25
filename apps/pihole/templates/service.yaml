@@ -5,19 +5,20 @@ metadata:
   labels:
     {{- include "pihole.labels" . | nindent 4 }}
 spec:
-  type: ClusterIP
+  type: LoadBalancer
+  loadBalancerIP: {{ .Values.service.loadBalancerIP }}
   ports:
-    - name: dns-tcp
-      port: {{ .Values.service.ports.dnsTcp.port }}
-      targetPort: {{ .Values.service.ports.dnsTcp.targetPort }}
+    - port: 80
+      targetPort: http
       protocol: TCP
-    - name: dns-udp
-      port: {{ .Values.service.ports.dnsUdp.port }}
-      targetPort: {{ .Values.service.ports.dnsUdp.targetPort }}
+      name: http
+    - port: 53
+      targetPort: dns
       protocol: UDP
-    - name: http
-      port: {{ .Values.service.ports.http.port }}
-      targetPort: {{ .Values.service.ports.http.targetPort }}
+      name: dns-udp
+    - port: 53
+      targetPort: dns
       protocol: TCP
+      name: dns-tcp
   selector:
-    {{- include "pihole.selectorLabels" . | nindent 4 }}
+    app: {{ include "pihole.name" . }}
