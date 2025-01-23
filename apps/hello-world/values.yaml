@@ -9,6 +9,7 @@ image:
 
 service:
   type: LoadBalancer
+  port: 80
 
 resources: {}
 nodeSelector: {}
