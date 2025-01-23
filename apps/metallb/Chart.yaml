@@ -1,0 +1,10 @@
+apiVersion: v2
+name: metallb-wrapper
+description: A Helm chart for warpping metallb and defining local resources
+type: application
+version: 0.1.0
+
+dependencies:
+  - name: metallb
+    version: "latest"
+    repository: "https://metallb.github.io/metallb"

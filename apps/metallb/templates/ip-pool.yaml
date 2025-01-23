@@ -1,0 +1,23 @@
+{{- range .Values.ipPools }}
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: {{ .name }}
+  namespace: metallb-system
+spec:
+  addresses:
+{{ toYaml .addresses | indent 4 }}
+---
+{{- end }}
+
+{{- range .Values.l2Advs }}
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: {{ .name }}
+  namespace: metallb-system
+spec:
+  ipAddressPools:
+{{ toYaml .ipAddressPools | indent 4 }}
+---
+{{- end }}
