@@ -15,9 +15,9 @@ speaker:
     repository: ghcr.io/metallb/speaker
     tag: v0.14.9
 
-  controller:
-    frr:
-      enabled: false
-    image:
-      repository: ghcr.io/metallb/controller
-      tag: v0.14.9
+controller:
+  frr:
+    enabled: false
+  image:
+    repository: ghcr.io/metallb/controller
+    tag: v0.14.9
