@@ -11,3 +11,13 @@ l2Advs:
 speaker:
   frr:
     enabled: false
+  image:
+    repository: ghcr.io/metallb/speaker
+    tag: v0.14.8
+
+  controller:
+    frr:
+      enabled: false
+    image:
+      repository: ghcr.io/metallb/controller
+      tag: v0.14.8
