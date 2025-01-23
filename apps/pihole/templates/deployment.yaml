@@ -21,12 +21,6 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            - name: dns-tcp
-              containerPort: 53
-              protocol: TCP
-            - name: dns-udp
-              containerPort: 53
-              protocol: UDP
             - name: http
               containerPort: 80
               protocol: TCP
