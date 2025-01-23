@@ -17,7 +17,7 @@ service:
       port: 53
       targetPort: 53
       protocol: UDP
-    - name: pihole-http
+    - name: http
       port: 80
       targetPort: 80
       protocol: TCP
