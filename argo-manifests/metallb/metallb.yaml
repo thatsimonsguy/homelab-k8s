@@ -12,16 +12,8 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: metallb-system
+    createNamespace: true
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
-  hooks:
-  - name: create-namespace
-    manifest: |
-      apiVersion: v1
-      kind: Namespace
-      metadata:
-        name: metallb-system
-    syncPolicy:
-      hook: PreSync
