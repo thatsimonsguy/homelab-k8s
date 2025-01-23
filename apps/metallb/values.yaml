@@ -6,4 +6,4 @@ ipPools:
 l2Advs:
   - name: lan-adv
     ipAddressPools:
-      - home-lan-pool
+      - lan-pool
