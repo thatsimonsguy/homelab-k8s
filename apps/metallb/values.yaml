@@ -7,3 +7,7 @@ l2Advs:
   - name: lan-adv
     ipAddressPools:
       - lan-pool
+
+speaker:
+  frr:
+    enabled: false
