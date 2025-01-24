@@ -1,6 +1,0 @@
-apiVersion: v2
-name: transmission-openvpn
-description: A Helm chart for transmission-openvpn
-type: application
-version: 0.1.0
-appVersion: "latest"

@@ -20,7 +20,7 @@ spec:
             - NET_ADMIN
       privileged: true
       containers:
-        - name: transmission-openvpn
+        - name: transmission
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
