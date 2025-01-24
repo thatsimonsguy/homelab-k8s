@@ -1,0 +1,11 @@
+server:
+  serviceType: LoadBalancer
+  externalIP: true
+
+adminPasswordSecretName: argocd-admin-secret
+
+applicationSetController:
+  allowPrivilegeEscalation: true
+
+sealedSecret:
+  adminPassword: "adminPassword"

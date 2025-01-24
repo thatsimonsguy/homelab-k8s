@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: argocd-applicationset-controller
+  namespace: argocd
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: argocd-applicationset-controller
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: argocd-applicationset-controller
+    spec:
+      containers:
+        - name: argocd-applicationset-controller
+          image: argoproj/argocd-applicationset-controller:latest
+          securityContext:
+            allowPrivilegeEscalation: {{ .Values.applicationSetController.allowPrivilegeEscalation }}
+            capabilities:
+              add:
+                - NET_ADMIN
