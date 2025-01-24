@@ -5,6 +5,7 @@ metadata:
   namespace: argocd
 spec:
   type: {{ .Values.server.serviceType }}
+  loadBalancerIP: {{ .Values.server.loadBalancerIP }}
   ports:
     - name: http
       port: 80
