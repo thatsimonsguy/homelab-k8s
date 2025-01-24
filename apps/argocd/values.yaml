@@ -8,4 +8,4 @@ applicationSetController:
   allowPrivilegeEscalation: true
 
 sealedSecret:
-  adminPassword: "adminPassword"
+  adminPassword: "admin-password"
