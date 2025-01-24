@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    app: {{ .Chart.Name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
+    spec:
+      securityContext:
+        capabilities:
+          add:
+            - NET_ADMIN
+      containers:
+        - name: transmission-openvpn
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: OPENVPN_PROVIDER
+              value: "{{ .Values.openvpn.provider }}"
+            - name: OPENVPN_CONFIG
+              value: "{{ .Values.openvpn.config }}"
+            - name: OPENVPN_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.sealedSecret.usernameSecretName }}
+                  key: username
+            - name: OPENVPN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.sealedSecret.passwordSecretName }}
+                  key: password
+            - name: LOCAL_NETWORK
+              value: "{{ .Values.openvpn.localNetwork }}"
+            - name: PUID
+              value: "{{ .Values.openvpn.puid }}"
+            - name: PGID
+              value: "{{ .Values.openvpn.pgid }}"
+          ports:
+            - containerPort: 9091
+          volumeMounts:
+            - mountPath: "{{ .Values.persistence.mountPath }}"
+              name: data
+          logging:
+            driver: json-file
+            options:
+              max-size: "10m"
+      volumes:
+        - name: data
+          hostPath:
+            path: "{{ .Values.persistence.path }}"
