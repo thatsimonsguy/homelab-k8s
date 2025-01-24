@@ -15,9 +15,18 @@ spec:
     spec:
       containers:
         - name: argocd-applicationset-controller
-          image:  quay.io/argoproj/argocd:v2.13.2
+          image: quay.io/argoproj/argocd-applicationset-controller:v2.13.2
           securityContext:
-            allowPrivilegeEscalation: {{ .Values.applicationSetController.allowPrivilegeEscalation }}
+            allowPrivilegeEscalation: true
             capabilities:
               add:
                 - NET_ADMIN
+          env:
+            - name: ARGOCD_REPO_SERVER
+              value: argocd-repo-server:8081
+            - name: ARGOCD_API_SERVER
+              value: argocd-server:443
+            - name: ARGOCD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
