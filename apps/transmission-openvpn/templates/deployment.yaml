@@ -18,6 +18,7 @@ spec:
         capabilities:
           add:
             - NET_ADMIN
+      privileged: true
       containers:
         - name: transmission-openvpn
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
