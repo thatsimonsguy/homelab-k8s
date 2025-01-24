@@ -1,18 +1,18 @@
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: transmission-openvpn
-  namespace: argocd
-spec:
-  destination:
-    namespace: default
-    server: https://kubernetes.default.svc
-  source:
-    repoURL: 'https://github.com/thatsimonsguy/homelab-k8s.git'
-    path: 'apps/transmission-openvpn'
-    targetRevision: main
-  project: default
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
+#apiVersion: argoproj.io/v1alpha1
+#kind: Application
+#metadata:
+#  name: transmission-openvpn
+#  namespace: argocd
+#spec:
+#  destination:
+#    namespace: default
+#    server: https://kubernetes.default.svc
+#  source:
+#    repoURL: 'https://github.com/thatsimonsguy/homelab-k8s.git'
+#    path: 'apps/transmission-openvpn'
+#    targetRevision: main
+#  project: default
+#  syncPolicy:
+#    automated:
+#      prune: true
+#      selfHeal: true
