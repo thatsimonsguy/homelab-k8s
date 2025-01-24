@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: argocd-applicationset-controller
-          image:  argoproj/argocd-applicationset-controller:stable
+          image:  argoproj/argocd-applicationset-controller:v2.8.3
           securityContext:
             allowPrivilegeEscalation: {{ .Values.applicationSetController.allowPrivilegeEscalation }}
             capabilities:
