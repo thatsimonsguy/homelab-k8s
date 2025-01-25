@@ -27,12 +27,12 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.sealedSecret.usernameSecretName }}
-                  key: username
+                  key: openvpn-username
             - name: OPENVPN_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.sealedSecret.passwordSecretName }}
-                  key: password
+                  key: openvpn-password
             - name: LOCAL_NETWORK
               value: "{{ .Values.openvpn.localNetwork }}"
             - name: PUID
