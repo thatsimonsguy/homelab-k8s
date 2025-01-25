@@ -54,6 +54,7 @@ spec:
               add:
                 - NET_ADMIN
                 - SYS_ADMIN
+                - SYS_MODULE
       volumes:
         - name: data
           hostPath:
