@@ -49,10 +49,11 @@ spec:
             options:
               max-size: "10m"
           securityContext:
-            privileged: true
+            allowPrivilegeEscalation: true
             capabilities:
               add:
                 - NET_ADMIN
+                - SYS_ADMIN
       volumes:
         - name: data
           hostPath:
