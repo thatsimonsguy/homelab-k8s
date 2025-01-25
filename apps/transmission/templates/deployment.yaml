@@ -44,10 +44,6 @@ spec:
           volumeMounts:
             - mountPath: "{{ .Values.persistence.mountPath }}"
               name: data
-          logging:
-            driver: json-file
-            options:
-              max-size: "10m"
           securityContext:
             privileged: true
             capabilities:
