@@ -14,11 +14,6 @@ spec:
       labels:
         app: {{ .Chart.Name }}
     spec:
-      securityContext:
-        capabilities:
-          add:
-            - NET_ADMIN
-      privileged: true
       containers:
         - name: transmission
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -53,6 +48,11 @@ spec:
             driver: json-file
             options:
               max-size: "10m"
+          securityContext:
+            allowPrivilegeEscalation: true
+            capabilities:
+              add:
+                - NET_ADMIN
       volumes:
         - name: data
           hostPath:
