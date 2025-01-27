@@ -9,4 +9,4 @@ spec:
     requests:
       storage: 11Ti
   volumeName: plex-pv
-  storageClassName: nas
+  storageClassName: "nas"

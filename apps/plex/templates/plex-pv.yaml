@@ -9,4 +9,4 @@ spec:
     - ReadWriteMany
   hostPath:
     path: /mnt/nas
-  storageClassName: nas
+  storageClassName: "nas"
