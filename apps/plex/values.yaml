@@ -60,7 +60,7 @@ pms:
   #   memory: 128Mi
 
   # -- Add kubernetes liveness probe to pms container.
-  livenessProbe: {
+  livenessProbe:
     httpGet:
       path: /identity
       port: 32400
@@ -68,10 +68,9 @@ pms:
       periodSeconds: 60
       timeoutSeconds: 1
       failureThreshold: 3
-  }
 
   # -- Add kubernetes readiness probe to pms container.
-  readinessProbe: {
+  readinessProbe:
     httpGet:
       path: /identity
       port: 32400
@@ -79,7 +78,6 @@ pms:
       periodSeconds: 60
       timeoutSeconds: 1
       failureThreshold: 3
-  }
 
 # -- A basic image that will convert the configmap to a file in the rclone config volume
 # this is ignored if rclone is not enabled
