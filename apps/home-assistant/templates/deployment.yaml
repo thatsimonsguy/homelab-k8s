@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: home-assistant
+  namespace: home-assistant
   labels:
     app: home-assistant
 spec:
@@ -27,6 +28,6 @@ spec:
         - name: home-assistant-config
           mountPath: /config
       volumes:
-      - name: config
+      - name: home-assistant-config
         persistentVolumeClaim:
           claimName: home-assistant-config
