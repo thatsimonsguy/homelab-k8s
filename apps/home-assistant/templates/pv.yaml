@@ -8,6 +8,6 @@ spec:
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
-  storageClassName: retain-default-storageclass
+  storageClassName: "{{ .Values.persistence.storageClass }}"
   hostPath:
-    path: /var/lib/rancher/k3s/storage/home-assistant
+    path: " {{ .Values.persistence.hostPath }}"

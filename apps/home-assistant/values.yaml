@@ -12,6 +12,7 @@ persistence:
   enabled: true
   storageClass: ""
   size: 5Gi
+  hostPath: /var/lib/rancher/k3s/storage/home-assistant
 
 env:
   TZ: "America/Chicago"
