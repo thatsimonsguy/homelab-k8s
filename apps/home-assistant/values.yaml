@@ -10,7 +10,7 @@ service:
 
 persistence:
   enabled: true
-  storageClass: ""
+  storageClass: retain-default-storage
   size: 5Gi
   hostPath: /var/lib/rancher/k3s/storage
 

@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: home-assistant-config
+  name: home-assistant-pv
 spec:
   capacity:
     storage: 5Gi
