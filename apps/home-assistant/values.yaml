@@ -1,0 +1,17 @@
+image:
+  repository: ghcr.io/home-assistant/home-assistant
+  tag: stable
+  pullPolicy: IfNotPresent
+
+service:
+  type: LoadBalancer
+  loadBalancerIP: 192.168.2.15
+  port: 8123
+
+persistence:
+  enabled: true
+  storageClass: ""
+  size: 5Gi
+
+env:
+  TZ: "America/Chicago"
