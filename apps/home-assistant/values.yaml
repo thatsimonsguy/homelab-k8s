@@ -13,6 +13,7 @@ persistence:
   storageClass: retain-default-storage
   size: 5Gi
   hostPath: /var/lib/rancher/k3s/storage
+  existingClaim: home-assistant-config
 
 env:
   TZ: "America/Chicago"
