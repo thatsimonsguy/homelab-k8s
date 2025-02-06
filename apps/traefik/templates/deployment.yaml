@@ -14,6 +14,10 @@ spec:
         app: traefik
     spec:
       serviceAccountName: traefik
+      volumes:
+        - name: acme-storage
+          persistentVolumeClaim:
+            claimName: traefik-acme-pvc
       containers:
         - name: traefik
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"

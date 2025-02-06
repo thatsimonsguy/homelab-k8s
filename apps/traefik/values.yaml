@@ -26,6 +26,14 @@ certificatesResolvers:
       storage: /data/acme.json
       httpChallenge:
         entryPoint: web
+      tlsChallenge: {}
+
+persistence:
+  enabled: true
+  accessMode: ReadWriteOnce
+  size: 1Gi
+  storageClass: "default"
+  path: "/data"
 
 ports:
   web:
