@@ -37,7 +37,13 @@ spec:
           volumeMounts:
             - name: pihole-data
               mountPath: {{ .Values.persistence.dataPath }}
+            - name: dnsmasq-config
+              mountPath: /etc/dnsmasq.d/02-custom.conf
+              subPath: 02-custom.conf
       volumes:
         - name: pihole-data
           persistentVolumeClaim:
             claimName: {{ include "pihole.fullname" . }}
+        - name: dnsmasq-config
+          configMap:
+            name: {{ include "pihole.fullname" . }}-dnsmasq
