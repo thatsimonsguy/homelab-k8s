@@ -12,4 +12,4 @@ spec:
       protocol: TCP
       name: http
   selector:
-    { { - include "pihole.selectorLabels" . | nindent 4 } }
+    {{ - include "pihole.selectorLabels" . | nindent 4 }}
