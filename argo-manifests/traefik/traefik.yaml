@@ -11,7 +11,7 @@ spec:
     chart: traefik
     helm:
       valueFiles:
-        - ../../apps/traefik/values.yaml
+        - values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: traefik
