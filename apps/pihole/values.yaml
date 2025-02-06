@@ -7,11 +7,19 @@ image:
 
 service:
   type: LoadBalancer
-  externalTrafficPolicy: Local
+  externalTrafficPolicy: Cluster
   ports:
     - name: http
       port: 80
       targetPort: 80
+      protocol: TCP
+    - name: dns
+      port: 53
+      targetPort: 53
+      protocol: UDP
+    - name: dns-tcp
+      port: 53
+      targetPort: 53
       protocol: TCP
 
 ingress:

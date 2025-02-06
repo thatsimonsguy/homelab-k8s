@@ -5,11 +5,14 @@ metadata:
   labels:
     {{- include "pihole.labels" . | nindent 4 }}
 spec:
-  type: LoadBalancer
+  type: {{ .Values.service.type }}
+  externalTrafficPolicy: {{ .Values.service.externalTrafficPolicy }}
   ports:
-    - port: 80
-      targetPort: http
-      protocol: TCP
-      name: http
+    {{- range .Values.service.ports }}
+    - name: {{ .name }}
+      port: {{ .port }}
+      targetPort: {{ .targetPort }}
+      protocol: {{ .protocol }}
+    {{- end }}
   selector:
     {{- include "pihole.selectorLabels" . | nindent 4 }}
