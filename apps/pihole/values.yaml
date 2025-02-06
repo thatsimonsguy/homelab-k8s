@@ -58,9 +58,7 @@ dnsPolicy: ClusterFirst
 
 dnsmasq:
   customConfig: |
-    interface=eth0
     listen-address=0.0.0.0
     bind-interfaces
     server=8.8.8.8
     server=1.1.1.1
-    local-service
