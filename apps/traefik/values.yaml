@@ -1,14 +1,17 @@
+image:
+  repository: traefik
+  tag: latest
+  pullPolicy: IfNotPresent
 
-deployment:
-  enabled: true
-
-ingressRoute:
-  dashboard:
-    enabled: true
+replicaCount: 1
 
 service:
   type: LoadBalancer
   loadBalancerIP: 192.168.2.15
+
+ingressRoute:
+  dashboard:
+    enabled: true
 
 providers:
   kubernetesIngress:
@@ -19,7 +22,7 @@ providers:
 certificatesResolvers:
   letsencrypt:
     acme:
-      email: "dontspammebro@notreal.com"
+      email: "placeholder@placeholder.com"
       storage: /data/acme.json
       httpChallenge:
         entryPoint: web
@@ -31,3 +34,9 @@ ports:
   websecure:
     tls:
       enabled: true
+
+rbac:
+  enabled: true
+
+deployment:
+  enabled: true

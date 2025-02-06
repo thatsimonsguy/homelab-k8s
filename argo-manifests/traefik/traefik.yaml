@@ -4,24 +4,15 @@ metadata:
   name: traefik
   namespace: argocd
 spec:
-  project: default
-  source:
-    repoURL: https://helm.traefik.io/traefik
-    targetRevision: "34.2.0"
-    chart: traefik
-    helm:
-      valueFiles:
-        - values.yaml
   destination:
+    namespace: default
     server: https://kubernetes.default.svc
-    namespace: traefik
+  source:
+    repoURL: 'https://github.com/thatsimonsguy/homelab-k8s.git'
+    path: 'apps/traefik'
+    targetRevision: main
+  project: default
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
-  ignoreDifferences:
-    - group: ""
-      kind: Namespace
-      name: traefik
-      jsonPointers:
-        - /metadata
