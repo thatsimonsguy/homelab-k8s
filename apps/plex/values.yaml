@@ -219,6 +219,7 @@ commonLabels: {}
 
 extraEnv:
   PLEX_PREFERENCE_CUSTOM_CONNECTIONS: "http://192.168.2.14:32400"
+  PLEX_ADVERTISE_IP: "http://192.168.2.14:32400"
 
 # -- Optionally specify additional volume mounts for the PMS and init containers.
 extraVolumeMounts:
