@@ -27,6 +27,7 @@ spec:
             - "--api.dashboard=true"
             - "--entrypoints.web.address=:80"
             - "--entrypoints.websecure.address=:443"
+            - "--entrypoints.traefik.address=:8080"
             - "--providers.kubernetescrd"
             - "--providers.kubernetesingress"
             - "--certificatesresolvers.letsencrypt.acme.email={{ .Values.certificatesResolvers.letsencrypt.acme.email }}"
