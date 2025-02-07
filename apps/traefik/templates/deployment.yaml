@@ -23,6 +23,7 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
+            - "--accesslog=true"
             - "--api.insecure=true"
             - "--api.dashboard=true"
             - "--entrypoints.web.address=:80"
