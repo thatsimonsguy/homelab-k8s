@@ -5,6 +5,8 @@ metadata:
 rules:
 - apiGroups:
   - ""
+  - extensions
+  - networking.k8s.io
   resources:
   - services
   - endpoints
