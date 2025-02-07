@@ -2,7 +2,7 @@ apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware
 metadata:
   name: plex-headers
-  namespace: plex
+  namespace: default
 spec:
   headers:
     customRequestHeaders:
@@ -13,7 +13,7 @@ apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
   name: plex-route
-  namespace: plex
+  namespace: default
 spec:
   entryPoints:
     - websecure
