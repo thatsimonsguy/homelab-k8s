@@ -18,12 +18,13 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`plex.local`)
+    - match: Host(`plex.local`) && PathPrefix(`/`)
       kind: Rule
       middlewares:
         - name: plex-headers
       services:
         - name: plex-plex-media-server
           port: 32400
+          passHostHeader: true
   tls:
     certResolver: letsencrypt
