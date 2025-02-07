@@ -29,10 +29,13 @@ spec:
             - "--providers.kubernetescrd"
             - "--providers.kubernetesingress"
             - "--certificatesresolvers.letsencrypt.acme.email={{ .Values.certificatesResolvers.letsencrypt.acme.email }}"
-            - "--certificatesresolvers.letsencrypt.acme.storage={{ .Values.certificatesResolvers.letsencrypt.acme.storage }}"
+            - "--certificatesresolvers.letsencrypt.acme.storage=/data/acme.json"
             - "--certificatesresolvers.letsencrypt.acme.httpChallenge.entryPoint=web"
           ports:
             - name: web
               containerPort: 80
             - name: websecure
               containerPort: 443
+          volumeMounts:
+            - name: acme-storage
+              mountPath: /data
