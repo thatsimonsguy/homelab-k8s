@@ -13,7 +13,7 @@ global:
   imageRegistry: ""
 
 ingress:
-  enabled: true
+  enabled: false
   ingressClassName: "traefik"
   url: "plex.local"
 
@@ -214,8 +214,8 @@ priorityClassName: ""
 commonLabels: {}
 
 extraEnv:
-  PLEX_PREFERENCE_CUSTOM_CONNECTIONS: "http://192.168.2.14:32400"
-  PLEX_ADVERTISE_IP: "http://192.168.2.14:32400"
+  PLEX_PREFERENCE_CUSTOM_CONNECTIONS: "https://plex.local"
+  PLEX_ADVERTISE_IP: "https://plex.local"
 
 # -- Optionally specify additional volume mounts for the PMS and init containers.
 extraVolumeMounts:
