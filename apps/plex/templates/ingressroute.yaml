@@ -1,15 +1,4 @@
 apiVersion: traefik.containo.us/v1alpha1
-kind: Middleware
-metadata:
-  name: plex-headers
-  namespace: default
-spec:
-  headers:
-    customRequestHeaders:
-      X-Forwarded-Proto: "https"
-
----
-apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
   name: plex-route
@@ -22,8 +11,9 @@ spec:
       kind: Rule
       middlewares:
         - name: plex-headers
+        - namespace: default
       services:
-        - name: pms-plex-media-server
+        - name: plex-plex-media-server
           port: 32400
   tls:
     certResolver: letsencrypt
