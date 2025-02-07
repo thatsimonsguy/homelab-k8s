@@ -5,14 +5,13 @@ metadata:
 rules:
 - apiGroups:
   - ""
-  - extensions
-  - networking.k8s.io
   resources:
   - services
   - endpoints
   - secrets
   - ingressclasses
   - ingresses
+  - nodes
   verbs:
   - get
   - list
