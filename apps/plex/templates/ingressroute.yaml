@@ -22,7 +22,6 @@ spec:
       kind: Rule
       middlewares:
         - name: plex-headers
-        - namespace: default
       services:
         - name: plex-plex-media-server
           port: 32400
