@@ -3,14 +3,16 @@ kind: IngressRoute
 metadata:
   name: traefik-dashboard
   namespace: traefik
+  labels:
+    app.kubernetes.io/instance: traefik
 spec:
   entryPoints:
     - websecure
   routes:
-    - match: "Host(`traefik.local`)"
-      kind: Rule
+    - kind: Rule
+      match: Host(`traefik.local`)
       services:
-        - name: traefik
-          port: 8080
+        - name: api@internal
+          kind: TraefikService
   tls:
     certResolver: letsencrypt
