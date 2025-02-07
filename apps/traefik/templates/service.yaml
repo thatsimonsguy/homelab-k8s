@@ -15,3 +15,6 @@ spec:
     - name: websecure
       port: 443
       targetPort: websecure
+    - name: traefik
+      port: 8080
+      targetPort: 8080
