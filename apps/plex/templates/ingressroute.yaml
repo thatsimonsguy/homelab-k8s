@@ -18,7 +18,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`plex.local`) || Host('plex.direct')
+    - match: Host(`plex.local`)
       kind: Rule
       middlewares:
         - name: plex-headers
