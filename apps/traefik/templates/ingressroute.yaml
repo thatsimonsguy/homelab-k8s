@@ -11,3 +11,4 @@ spec:
       kind: Rule
       services:
         - name: api@internal
+          kind: TraefikService
