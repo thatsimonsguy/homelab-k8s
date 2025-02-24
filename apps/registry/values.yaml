@@ -12,4 +12,4 @@ service:
 persistence:
   enabled: true
   size: 5Gi
-  storageClass: "retain-default-storage"
+  storageClass: "retain-default-storageclass"
