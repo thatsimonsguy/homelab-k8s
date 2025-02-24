@@ -1,7 +1,7 @@
 image:
-  repository: staycation
-  tag: "latest"
-  pullPolicy: Never
+  repository: traefik
+  tag: latest
+  pullPolicy: IfNotPresent
 
 replicaCount: 1
 
