@@ -16,7 +16,7 @@ spec:
             pathType: {{ .pathType }}
             backend:
               service:
-                name: {{ include "staycation.fullname" $. }}
+                name: {{ include "staycation.fullname" $ }}
                 port:
                   number: {{ $.Values.service.port }}
         {{- end }}
