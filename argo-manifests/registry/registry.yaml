@@ -10,7 +10,7 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    repoURL: https://github.com/your-github/homelab-k8s.git
+    repoURL: https://github.com/thatsimonsguy/homelab-k8s.git
     path: apps/registry
     targetRevision: main
   syncPolicy:
