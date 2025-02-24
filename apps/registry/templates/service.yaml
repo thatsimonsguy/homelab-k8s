@@ -7,6 +7,5 @@ spec:
   ports:
     - port: {{ .Values.service.port }}
       targetPort: {{ .Values.service.port }}
-      clusterIP: 10.43.99.254
   selector:
     app: registry
