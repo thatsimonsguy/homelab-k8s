@@ -1,24 +1,18 @@
-{{- if .Values.ingress.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "staycation.fullname" . }}
+  name: staycation
   annotations:
-    {{- toYaml .Values.ingress.annotations | nindent 4 }}
+    kubernetes.io/ingress.class: traefik
 spec:
   rules:
-  {{- range .Values.ingress.hosts }}
-    - host: {{ .host }}
+    - host: matthewpsimons.com
       http:
         paths:
-        {{- range .paths }}
-          - path: {{ .path }}
-            pathType: {{ .pathType }}
+          - path: "/staycation"
+            pathType: Prefix
             backend:
               service:
-                name: {{ include "staycation.fullname" $ }}
+                name: staycation
                 port:
-                  number: {{ $.Values.service.port }}
-        {{- end }}
-  {{- end }}
-{{- end }}
+                  number: 80
