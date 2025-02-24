@@ -4,8 +4,7 @@ image:
   tag: "latest"
   pullPolicy: Never
 service:
-  type: LoadBalancer
-  loadBalancerIP: 192.168.2.17
+  type: ClusterIP
   port: 80
 ingress:
   enabled: true
