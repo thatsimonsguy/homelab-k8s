@@ -1,0 +1,6 @@
+apiVersion: v2
+name: registry
+description: A private Docker registry for local K3s image hosting
+type: application
+version: 1.0.0
+appVersion: "2.8.1"
