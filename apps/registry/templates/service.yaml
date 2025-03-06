@@ -4,8 +4,8 @@ metadata:
   name: registry
   namespace: kube-system
 spec:
-  type: { { .Values.service.type } }
-  loadBalancerIP: { { .Values.service.loadBalancerIP } }
+  type: {{ .Values.service.type }}
+  loadBalancerIP: {{ .Values.service.loadBalancerIP }}
   ports:
     - port: {{ .Values.service.port }}
       targetPort: {{ .Values.service.port }}
