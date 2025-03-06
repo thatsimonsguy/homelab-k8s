@@ -1,6 +1,6 @@
 replicaCount: 1
 image:
-  repository: staycation
+  repository: 192.168.2.17:5000/staycation
   tag: "latest"
   pullPolicy: Always
 service:
