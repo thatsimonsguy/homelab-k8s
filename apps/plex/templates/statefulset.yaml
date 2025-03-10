@@ -140,15 +140,6 @@ spec:
               value: compute,video,utility
             {{- end }}
 
-          {{- with .Values.pms.livenessProbe }}
-          livenessProbe:
-{{ toYaml . | indent 12 }}
-          {{- end }}
-          {{- with .Values.pms.readinessProbe }}
-          readinessProbe:
-{{ toYaml . | indent 12 }}
-          {{- end }}
-
           {{- with .Values.pms.resources }}
           resources:
             limits:
