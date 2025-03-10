@@ -21,6 +21,10 @@ spec:
       annotations:
         {{- toYaml .Values.statefulSet.podAnnotations | nindent 8 }}
     spec:
+      { { - if .Values.hostNetwork } }
+      hostNetwork: true
+      dnsPolicy: { { .Values.dnsPolicy | default "ClusterFirstWithHostNet" } }
+      { { - end } }
       {{- if .Values.runtimeClassName }}
       runtimeClassName: {{ .Values.runtimeClassName | quote }}
       {{- end }}

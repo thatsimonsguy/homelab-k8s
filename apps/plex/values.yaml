@@ -182,7 +182,7 @@ statefulSet:
   podAnnotations: {}
 
 service:
-  type: HostNetwork
+  type: NodePort
   port: 32400
 
   # Port to use when type of service is "NodePort" (32400 by default)
@@ -243,3 +243,6 @@ extraContainers: []
 #        memory: 128Mi
 #    volumeMounts:
 #      - ...
+
+hostNetwork: true
+dnsPolicy: ClusterFirstWithHostNet
