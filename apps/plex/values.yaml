@@ -13,7 +13,7 @@ global:
   imageRegistry: ""
 
 ingress:
-  enabled: true
+  enabled: false
   ingressClassName: "traefik"
   url: "plex.local"
 
@@ -182,7 +182,7 @@ statefulSet:
   podAnnotations: {}
 
 service:
-  type: ClusterIP
+  type: HostNetwork
   port: 32400
 
   # Port to use when type of service is "NodePort" (32400 by default)
