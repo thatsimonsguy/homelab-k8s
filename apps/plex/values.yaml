@@ -65,7 +65,6 @@ pms:
       timeoutSeconds: 3
       failureThreshold: 3
       scheme: HTTP
-      host: 127.0.0.1
 
   # -- Add kubernetes readiness probe to pms container.
   readinessProbe:
@@ -77,7 +76,6 @@ pms:
       timeoutSeconds: 3
       failureThreshold: 3
       scheme: HTTP
-      host: 127.0.0.1
 
 # -- A basic image that will convert the configmap to a file in the rclone config volume
 # this is ignored if rclone is not enabled
