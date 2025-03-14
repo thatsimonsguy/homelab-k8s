@@ -1,0 +1,9 @@
+apiVersion: v2
+name: jackett
+version: 0.1.0
+description: A Helm chart for deploying Jackett
+type: application
+appVersion: "latest"
+sources:
+  - https://github.com/Jackett/Jackett
+  - https://hub.docker.com/r/linuxserver/jackett/

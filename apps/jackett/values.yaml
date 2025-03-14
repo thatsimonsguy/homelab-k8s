@@ -1,0 +1,27 @@
+replicaCount: 1
+
+image:
+  repository: linuxserver/jackett
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: LoadBalancer
+  port: 9117
+  loadBalancerIP: 192.168.2.14
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+persistence:
+  config:
+    enabled: true
+    accessMode: ReadWriteOnce
+    size: 1Gi
+    storageClass: ""
+    dataPath: /config
