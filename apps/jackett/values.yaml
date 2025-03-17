@@ -25,3 +25,8 @@ persistence:
     size: 1Gi
     storageClass: "nas-config-storage"
     dataPath: /config
+
+securityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
