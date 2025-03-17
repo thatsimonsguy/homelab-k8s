@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "sonarr.fullname" . }}
+  namespace: sonarr
+  labels:
+    {{- include "sonarr.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "sonarr.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "sonarr.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: sonarr
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8989
+              protocol: TCP
+          env:
+            - name: PUID
+              value: "{{ .Values.env.PUID }}"
+            - name: PGID
+              value: "{{ .Values.env.PGID }}"
+            - name: TZ
+              value: "{{ .Values.env.TZ }}"
+          volumeMounts:
+            - name: config
+              mountPath: {{ .Values.persistence.config.dataPath }}
+            - name: tv
+              mountPath: {{ .Values.volumes.tv.mountPath }}
+            - name: downloads
+              mountPath: {{ .Values.volumes.downloads.mountPath }}
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: {{ include "sonarr.fullname" . }}-config
+        - name: tv
+          hostPath:
+            path: {{ .Values.volumes.tv.hostPath }}
+        - name: downloads
+          hostPath:
+            path: {{ .Values.volumes.downloads.hostPath }}

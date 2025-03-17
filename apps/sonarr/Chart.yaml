@@ -1,0 +1,9 @@
+apiVersion: v2
+name: sonarr
+version: 0.1.0
+description: A Helm chart for deploying Sonarr
+type: application
+appVersion: "latest"
+sources:
+  - https://github.com/Sonarr/Sonarr
+  - https://hub.docker.com/r/linuxserver/sonarr/
