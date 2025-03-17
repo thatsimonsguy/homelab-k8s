@@ -24,7 +24,7 @@ volumes:
     mountPath: /tv
   downloads:
     hostPath: /mnt/nas/data/completed
-    mountPath: /downloads
+    mountPath: /data/completed
 
 env:
   PUID: "1000"
