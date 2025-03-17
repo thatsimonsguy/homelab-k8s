@@ -15,22 +15,6 @@ spec:
       labels:
         {{- include "sonarr.selectorLabels" . | nindent 8 }}
     spec:
-      initContainers: # set sqlite to DELETE mode to work around WAL issues over CIFS
-        - name: configure-sqlite
-          image: alpine:latest
-          command: [ "/bin/sh", "-c" ]
-          args:
-            - |
-              apk add --no-cache sqlite;
-              if [ -f /config/sonarr.db ]; then
-                echo "Setting SQLite journal mode to DELETE";
-                sqlite3 /config/sonarr.db "PRAGMA journal_mode=DELETE;";
-              else
-                echo "No database found, skipping...";
-              fi
-          volumeMounts:
-            - name: config
-              mountPath: /config
       containers:
         - name: sonarr
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"

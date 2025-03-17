@@ -15,7 +15,7 @@ persistence:
     enabled: true
     accessMode: ReadWriteOnce
     size: 1Gi
-    storageClass: "nas-config-storage"
+    storageClass: ""
     dataPath: /config
 
 volumes:
