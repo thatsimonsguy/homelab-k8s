@@ -22,7 +22,6 @@ spec:
           securityContext:
             runAsUser: {{ .Values.securityContext.runAsUser }}
             runAsGroup: {{ .Values.securityContext.runAsGroup }}
-            fsGroup: {{ .Values.securityContext.fsGroup }}
           ports:
             - name: http
               containerPort: 9117
