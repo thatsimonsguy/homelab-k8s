@@ -15,7 +15,7 @@ persistence:
     enabled: true
     accessMode: ReadWriteOnce
     size: 1Gi
-    storageClass: ""
+    storageClass: "retain-default-storageclass"
     dataPath: /config
 
 volumes:
