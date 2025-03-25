@@ -1,0 +1,32 @@
+replicaCount: 1
+
+image:
+  repository: linuxserver/radarr
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: LoadBalancer
+  port: 8989
+  loadBalancerIP: 192.168.2.19
+
+persistence:
+  config:
+    enabled: true
+    accessMode: ReadWriteOnce
+    size: 1Gi
+    storageClass: "retain-default-storageclass"
+    dataPath: /config
+
+volumes:
+  movies:
+    hostPath: /mnt/nas/movies
+    mountPath: /movies
+  downloads:
+    hostPath: /mnt/nas/data/completed
+    mountPath: /data/completed
+
+env:
+  PUID: "1000"
+  PGID: "1000"
+  TZ: "Etc/UTC"

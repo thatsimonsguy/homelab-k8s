@@ -1,0 +1,9 @@
+apiVersion: v2
+name: radarr
+version: 0.1.0
+description: A Helm chart for deploying Radarr
+type: application
+appVersion: "latest"
+sources:
+  - https://github.com/Radarr/Radarr
+  - https://hub.docker.com/r/linuxserver/radarr/

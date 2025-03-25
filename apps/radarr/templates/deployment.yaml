@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "radarr.fullname" . }}
+  namespace: radarr
+  labels:
+    {{- include "radarr.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "radarr.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "radarr.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: radarr
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8989
+              protocol: TCP
+          env:
+            - name: PUID
+              value: "{{ .Values.env.PUID }}"
+            - name: PGID
+              value: "{{ .Values.env.PGID }}"
+            - name: TZ
+              value: "{{ .Values.env.TZ }}"
+          volumeMounts:
+            - name: config
+              mountPath: {{ .Values.persistence.config.dataPath }}
+            - name: movies
+              mountPath: {{ .Values.volumes.movies.mountPath }}
+            - name: downloads
+              mountPath: {{ .Values.volumes.downloads.mountPath }}
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: {{ include "radarr.fullname" . }}-config
+        - name: movies
+          hostPath:
+            path: {{ .Values.volumes.movies.hostPath }}
+        - name: downloads
+          hostPath:
+            path: {{ .Values.volumes.downloads.hostPath }}
+            mountPath: {{ .Values.volumes.downloads.mountPath }}
