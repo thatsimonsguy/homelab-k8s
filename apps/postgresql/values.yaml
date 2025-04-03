@@ -11,9 +11,8 @@ auth:
 #  storageClass: "nas-config-storage"
 #  size: 8Gi
 
-primary:
-  service:
-    type: LoadBalancer
-    loadBalancerIP: 192.168.2.20
-    ports:
-      postgresql: 5432
+postgresql:
+  primary:
+    service:
+      type: LoadBalancer
+      loadBalancerIP: 192.168.2.20
