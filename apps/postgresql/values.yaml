@@ -1,0 +1,17 @@
+image:
+  tag: "16.2.0-debian-11-r0"  # Latest as of now from Bitnami
+
+auth:
+  existingSecret: postgresql-secret
+  database: "mydatabase"
+  username: "myuser"
+
+primary:
+  persistence:
+    enabled: true
+    storageClass: "nas-config-storage"
+    size: 8Gi
+
+service:
+  type: LoadBalancer
+  loadBalancerIP: 192.168.2.20

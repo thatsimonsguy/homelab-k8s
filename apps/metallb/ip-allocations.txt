@@ -7,4 +7,5 @@
 192.168.2.17  cluster-internal container registry
 192.168.2.18  sonarr
 192.168.2.19  radarr
+192.168.2.20  postgresql
 192.168.2.25  argocd web ui
