@@ -11,7 +11,3 @@ postgresql:
     service:
       type: LoadBalancer
       loadBalancerIP: 192.168.2.20
-    persistence:
-      enabled: true
-      storageClass: "retain-default-storageclass"
-      size: 8Gi
