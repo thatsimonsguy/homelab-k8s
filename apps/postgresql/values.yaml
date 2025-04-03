@@ -1,12 +1,11 @@
 image:
   tag: "16.2.0-debian-11-r0"  # Latest as of now from Bitnami
 
-auth:
-  existingSecret: postgresql-secret
-  database: "mydatabase"
-  username: "myuser"
-
 postgresql:
+  auth:
+    existingSecret: postgresql-secret
+    database: "mydatabase"
+    username: "myuser"
   primary:
     service:
       type: LoadBalancer
