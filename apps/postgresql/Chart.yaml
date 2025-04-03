@@ -1,9 +1,10 @@
 apiVersion: v2
 name: postgresql
-description: PostgreSQL database chart for homelab
+description: PostgreSQL wrapper chart for homelab
 type: application
 version: 0.1.0
 appVersion: "16"
+
 dependencies:
   - name: postgresql
     version: 15.5.2
