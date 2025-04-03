@@ -6,6 +6,7 @@ postgresql:
     existingSecret: postgresql-secret
     database: "mydatabase"
     username: "myuser"
+    forcePassword: true
   primary:
     service:
       type: LoadBalancer
