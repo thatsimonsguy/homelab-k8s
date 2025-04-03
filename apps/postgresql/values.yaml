@@ -6,11 +6,12 @@ auth:
   database: "mydatabase"
   username: "myuser"
 
-primary.persistence:
-  enabled: true
-  storageClass: "nas-config-storage"
-  size: 8Gi
+#persistence:
+#  enabled: true
+#  storageClass: "nas-config-storage"
+#  size: 8Gi
 
-primary.service:
-  type: LoadBalancer
-  loadBalancerIP: 192.168.2.20
+primary:
+  service:
+    type: LoadBalancer
+    loadBalancerIP: 192.168.2.20
