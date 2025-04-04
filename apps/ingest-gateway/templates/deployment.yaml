@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "ingestion-gateway.fullname" . }}
+  name: {{ include "ingest-gateway.fullname" . }}
   labels:
-    {{- include "ingestion-gateway.labels" . | nindent 4 }}
+    {{- include "ingest-gateway.labels" . | nindent 4 }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "ingestion-gateway.name" . }}
+      app.kubernetes.io/name: {{ include "ingest-gateway.name" . }}
       app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: {{ include "ingestion-gateway.name" . }}
+        app.kubernetes.io/name: {{ include "ingest-gateway.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       containers:
-        - name: ingestion-gateway
+        - name: ingest-gateway
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
