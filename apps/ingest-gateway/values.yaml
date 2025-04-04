@@ -10,7 +10,8 @@ service:
 
 ingress:
   enabled: true
-  annotations: {}
+  annotations:
+    traefik.ingress.kubernetes.io/router.middlewares: strip-ingest-prefix@kubernetescrd
   host: matthewpsimons.com
   path: /ingest
   pathType: Prefix
