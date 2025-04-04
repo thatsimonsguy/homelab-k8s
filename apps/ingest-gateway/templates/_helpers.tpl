@@ -3,7 +3,7 @@
 {{- end }}
 
 {{- define "ingest-gateway.fullname" -}}
-{{ .Release.Name }}-{{ .Chart.Name }}
+{{ .Release.Name }}
 {{- end }}
 
 {{- define "ingest-gateway.labels" -}}
