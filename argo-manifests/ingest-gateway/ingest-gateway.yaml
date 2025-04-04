@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ingest-gateway
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/thatsimonsguy/homelab-k8s'
+    targetRevision: main
+    path: apps/ingest-gateway
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: default
+  revisionHistoryLimit: 3
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

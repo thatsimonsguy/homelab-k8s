@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "ingestion-gateway.fullname" . }}
+  labels:
+    {{- include "ingestion-gateway.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "ingestion-gateway.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "ingestion-gateway.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: ingestion-gateway
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.port }}
+          env:
+            - name: PORT
+              value: "{{ .Values.service.targetPort }}"
+            - name: DB_USER
+              value: {{ .Values.postgres.user }}
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgres.passwordSecretName }}
+                  key: {{ .Values.postgres.passwordSecretKey }}
+            - name: DB_HOST
+              value: {{ .Values.postgres.host | default "localhost" }}
+            - name: DB_PORT
+              value: "{{ .Values.postgres.port | default "5432" }}"
+            - name: DB_NAME
+              value: {{ .Values.postgres.db }}
+            - name: QUERY_TIMEOUT_SEC
+              value: "{{ .Values.queryTimeoutSec | default "5" }}"
