@@ -6,7 +6,6 @@ metadata:
   annotations:
     {{- toYaml .Values.ingress.annotations | nindent 4 }}
 spec:
-  ingressClassName: traefik
   rules:
     - host: {{ .Values.ingress.host }}
       http:
