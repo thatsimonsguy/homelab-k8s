@@ -16,8 +16,14 @@ ingressRoute:
 providers:
   kubernetesIngress:
     enabled: true
+    namespaces: []
   kubernetesCRD:
     enabled: true
+    namespaces: []
+
+ingressClass:
+  enabled: true
+  isDefaultClass: true
 
 certificatesResolvers:
   letsencrypt:
