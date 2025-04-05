@@ -8,6 +8,5 @@ spec:
     - port: {{ .Values.service.port }}
       targetPort: 80
   selector:
-    app.kubernetes.io/name: staycation
-    app.kubernetes.io/instance: staycation
-
+    app.kubernetes.io/name: {{ include "staycation.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
