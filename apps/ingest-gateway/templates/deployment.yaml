@@ -13,6 +13,7 @@ spec:
   template:
     metadata:
       labels:
+        app: ingest-gateway
         app.kubernetes.io/name: {{ include "ingest-gateway.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
