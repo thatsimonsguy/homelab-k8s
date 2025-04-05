@@ -12,7 +12,6 @@ ingress:
   enabled: true
   annotations:
     traefik.ingress.kubernetes.io/router.middlewares: strip-ingest-prefix@kubernetescrd
-    kubernetes.io/ingress.class: traefik
   host: matthewpsimons.com
   path: /ingest
   pathType: Prefix
