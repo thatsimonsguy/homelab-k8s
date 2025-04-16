@@ -15,23 +15,19 @@ spec:
       {{- if .Values.gpu.enabled }}
       runtimeClassName: {{ .Values.gpu.runtimeClassName }}
       {{- end }}
-      initContainers:
-        - name: pull-embedding-model
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          command: ["ollama", "pull", "nomic-embed-text"]
-          volumeMounts:
-            - name: model-cache
-              mountPath: {{ .Values.persistence.mountPath }}
       containers:
-        - name: ollama
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          ports:
-            - containerPort: 11434
-          volumeMounts:
-            - name: model-cache
-              mountPath: {{ .Values.persistence.mountPath }}
+      - name: ollama
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        command: ["/bin/sh", "-c"]
+        args:
+          - |
+            ollama pull nomic-embed-text && ollama serve
+        ports:
+          - containerPort: 11434
+        volumeMounts:
+          - name: model-cache
+            mountPath: {{ .Values.persistence.mountPath }}
       volumes:
         - name: model-cache
           persistentVolumeClaim:
