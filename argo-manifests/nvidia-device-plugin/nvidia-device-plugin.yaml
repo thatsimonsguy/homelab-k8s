@@ -11,11 +11,10 @@ spec:
     chart: nvidia-device-plugin
     targetRevision: 0.17.1
     helm:
-      parameters:
-        - name: nodeSelector."kubernetes\\.io/hostname"
-          value: burdturglar
-        - name: tolerations
-          value: "[]"
+      values: |
+        nodeSelector:
+          kubernetes.io/hostname: burdturglar
+        tolerations: []
 
   destination:
     server: https://kubernetes.default.svc
