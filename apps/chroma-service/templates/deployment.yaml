@@ -25,4 +25,4 @@ spec:
             - containerPort: {{ .Values.service.port }}
           env:
             - name: CHROMA_DB_IMPL_THREADS
-              value: {{ .Values.chroma.threads }}
+              value: "1"
