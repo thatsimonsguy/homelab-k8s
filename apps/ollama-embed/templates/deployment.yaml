@@ -16,24 +16,15 @@ spec:
       runtimeClassName: {{ .Values.gpu.runtimeClassName }}
       {{- end }}
       containers:
-      - name: ollama
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
-        command: ["/bin/sh", "-c"]
-        args:
-          - |
-            echo "➡️ Starting embed pod..." && \
-            which ollama && \
-            ollama pull nomic-embed-text && \
-            echo "✅ Model pulled" && \
-            sleep 2 && \
-            ollama serve
-        ports:
-          - containerPort: 11434
-        volumeMounts:
-          - name: model-cache
-            mountPath: {{ .Values.persistence.mountPath }}
+        - name: ollama-embed
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 11434
+          volumeMounts:
+            - name: model-cache
+              mountPath: {{ .Values.persistence.mountPath }}
       volumes:
         - name: model-cache
           persistentVolumeClaim:
-            claimName: ollama-embed-model-cache
+            claimName: ollama-model-cache
