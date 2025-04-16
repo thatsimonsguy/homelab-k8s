@@ -1,6 +1,0 @@
-apiVersion: v2
-name: chroma-service
-description: A Helm chart for the chroma-service that returns chunks for Matt's llm chat bot
-type: application
-version: 0.1.0
-appVersion: "0.1.0"
