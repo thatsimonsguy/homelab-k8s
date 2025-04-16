@@ -10,6 +10,12 @@ spec:
     repoURL: https://nvidia.github.io/k8s-device-plugin
     chart: nvidia-device-plugin
     targetRevision: 0.17.1
+    helm:
+      parameters:
+        - name: nodeSelector."kubernetes\\.io/hostname"
+          value: burdturglar
+        - name: tolerations
+          value: "[]"
 
   destination:
     server: https://kubernetes.default.svc
