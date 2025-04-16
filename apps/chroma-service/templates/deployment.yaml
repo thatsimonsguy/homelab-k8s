@@ -26,3 +26,8 @@ spec:
           env:
             - name: CHROMA_DB_IMPL_THREADS
               value: "1"
+          resources:
+            requests:
+              cpu: "1"
+            limits:
+              cpu: "2"
