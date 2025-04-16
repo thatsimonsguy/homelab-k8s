@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ollama-embed
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    app: ollama-embed
+  ports:
+    - protocol: TCP
+      port: {{ .Values.service.port }}
+      targetPort: 11434
