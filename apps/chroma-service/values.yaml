@@ -9,4 +9,4 @@ service:
   targetPort: 8080
 
 chroma:
-  threads: 1
+  threads: "1"
