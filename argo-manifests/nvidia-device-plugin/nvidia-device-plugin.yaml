@@ -9,17 +9,6 @@ spec:
     repoURL: https://nvidia.github.io/k8s-device-plugin
     chart: nvidia-device-plugin
     targetRevision: 0.17.1
-    helm:
-      values: |
-        nodeSelector:
-          kubernetes.io/hostname: burdturglar
-        tolerations:
-          - key: "nvidia.com/gpu"
-            operator: "Exists"
-            effect: "NoSchedule"
-        affinity: {}
-        mps:
-          enabled: false
   destination:
     server: https://kubernetes.default.svc
     namespace: kube-system
