@@ -30,4 +30,4 @@ spec:
             requests:
               cpu: "1"
             limits:
-              cpu: "2"
+              cpu: "4"
