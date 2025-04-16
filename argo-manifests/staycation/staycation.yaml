@@ -1,21 +1,21 @@
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: staycation
-  namespace: argocd
-spec:
-  project: default
-  source:
-    repoURL: 'https://github.com/thatsimonsguy/homelab-k8s'
-    targetRevision: main
-    path: apps/staycation
-  destination:
-    server: 'https://kubernetes.default.svc'
-    namespace: default
-  ignoreDifferences:
-    - group: networking.k8s.io
-      kind: Ingress
-      jsonPointers:
-        - /status/loadBalancer
-  syncPolicy:
-    automated: {}
+#apiVersion: argoproj.io/v1alpha1
+#kind: Application
+#metadata:
+#  name: staycation
+#  namespace: argocd
+#spec:
+#  project: default
+#  source:
+#    repoURL: 'https://github.com/thatsimonsguy/homelab-k8s'
+#    targetRevision: main
+#    path: apps/staycation
+#  destination:
+#    server: 'https://kubernetes.default.svc'
+#    namespace: default
+#  ignoreDifferences:
+#    - group: networking.k8s.io
+#      kind: Ingress
+#      jsonPointers:
+#        - /status/loadBalancer
+#  syncPolicy:
+#    automated: {}
