@@ -1,0 +1,17 @@
+replicaCount: 1
+
+image:
+  repository: qdrant/qdrant
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 6333
+
+persistence:
+  enabled: true
+  storagePath: ./qdrant-storage  # Path relative to the Helm chart
+  mountPath: /qdrant/storage
+  accessMode: ReadWriteOnce
+  size: 1Gi
