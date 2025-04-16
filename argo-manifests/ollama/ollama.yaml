@@ -9,7 +9,7 @@ spec:
   source:
     repoURL: 'https://github.com/thatsimonsguy/homelab-k8s'
     targetRevision: main
-    path: charts/ollama
+    path: apps/ollama
     helm:
       valueFiles:
         - values.yaml
