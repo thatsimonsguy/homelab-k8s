@@ -22,7 +22,12 @@ spec:
         command: ["/bin/sh", "-c"]
         args:
           - |
-            ollama pull nomic-embed-text && ollama serve
+            echo "➡️ Starting embed pod..." && \
+            which ollama && \
+            ollama pull nomic-embed-text && \
+            echo "✅ Model pulled" && \
+            sleep 2 && \
+            ollama serve
         ports:
           - containerPort: 11434
         volumeMounts:
