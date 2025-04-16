@@ -9,4 +9,4 @@ spec:
     requests:
       storage: {{ .Values.persistence.size }}
   volumeMode: Filesystem
-  storageClassName: ""
+  storageClassName: local-path
