@@ -1,0 +1,12 @@
+apiVersion: v2
+name: text-embed
+version: 0.1.0
+description: A Helm chart for deploying Nomic's text-embed service
+
+maintainers:
+  - name: Matt Simons
+    email: thatsimonsguy@gmail.com
+sources:
+  - https://github.com/nomic-ai/nomic/tree/main/crates/text-embed
+
+dependencies: []

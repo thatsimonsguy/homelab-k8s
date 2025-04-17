@@ -1,0 +1,18 @@
+deprecated: false
+
+image:
+  repository: ghcr.io/nomic-ai/text-embed
+  tag: latest
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+
+model:
+  id: nomic-embed-text-v1.5
+
+service:
+  type: LoadBalancer
+  port: 8080
+  LoadBalancerIP: 192.168.2.22
+
+resources: {}
