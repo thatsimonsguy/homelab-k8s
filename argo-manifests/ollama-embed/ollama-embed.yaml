@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
 
- source:
+  source:
     repoURL: 'https://github.com/thatsimonsguy/homelab-k8s'
     targetRevision: main
     path: apps/ollama-embed
@@ -22,5 +22,5 @@ spec:
     automated:
       prune: true
       selfHeal: true
-   syncOptions:
+    syncOptions:
       - CreateNamespace=true
