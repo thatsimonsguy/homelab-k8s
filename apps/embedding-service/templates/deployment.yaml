@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "embedding-service.fullname" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "embedding-service.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "embedding-service.name" . }}
+    spec:
+      containers:
+        - name: embedding-service
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: MODEL_PATH
+              value: /models/nomic-embed-text-v1.5.Q4_K_M.gguf
+            - name: EMBEDDING_BINARY
+              value: /app/llama-embedding
+            - name: BATCH_SIZE
+              value: "4096"
+          ports:
+            - containerPort: 8080
+          resources: {{- toYaml .Values.resources | nindent 12 }}
