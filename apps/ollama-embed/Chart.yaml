@@ -1,6 +1,0 @@
-apiVersion: v2
-name: ollama-embed
-description: Local LLM backend powered by Ollama for embedding vectors
-type: application
-version: 0.1.0
-appVersion: "latest"
