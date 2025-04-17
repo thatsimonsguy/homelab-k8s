@@ -27,4 +27,4 @@ spec:
       volumes:
         - name: model-cache
           persistentVolumeClaim:
-            claimName: ollama-model-cache
+            claimName: ollama-embed-model-cache
