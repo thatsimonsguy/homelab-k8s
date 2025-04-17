@@ -6,8 +6,9 @@ image:
   pullPolicy: IfNotPresent
 
 service:
-  type: ClusterIP
+  type: LoadBalancer
   port: 6333
+  loadBalancerIP: 192.168.2.23
 
 persistence:
   enabled: true

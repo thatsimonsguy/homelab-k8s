@@ -8,4 +8,5 @@ spec:
     - port: {{ .Values.service.port }}
       targetPort: 6333
   selector:
-    app: {{ include "qdrant.name" . }}
+    app: {{ include "qdrant.name" . }}.
+  loadBalancerIP: {{ .Values.service.loadBalancerIP }}

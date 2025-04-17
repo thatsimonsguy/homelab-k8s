@@ -6,8 +6,9 @@ image:
 replicaCount: 1
 
 service:
-  type: ClusterIP
+  type: LoadBalancer
   port: 11434
+  loadBalancerIP: 192.168.2.22
 
 persistence:
   enabled: true
