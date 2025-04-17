@@ -1,6 +1,0 @@
-apiVersion: v2
-name: rag-service
-description: A Helm chart for the RAG-service that orchestrates LLM chat flows on Matt's resume site.
-type: application
-version: 0.1.0
-appVersion: "0.1.0"
