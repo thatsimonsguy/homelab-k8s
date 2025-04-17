@@ -1,26 +1,26 @@
-#apiVersion: argoproj.io/v1alpha1
-#kind: Application
-#metadata:
-#  name: ollama-embed
-#  namespace: argocd
-#spec:
-#  project: default
-#
-# source:
-#    repoURL: 'https://github.com/thatsimonsguy/homelab-k8s'
-#    targetRevision: main
-#    path: apps/ollama-embed
-#    helm:
-#      valueFiles:
-#        - values.yaml
-#
-#  destination:
-#    server: https://kubernetes.default.svc
-#    namespace: llm
-#
-#  syncPolicy:
-#    automated:
-#      prune: true
-#      selfHeal: true
-#   syncOptions:
-#      - CreateNamespace=true
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ollama-embed
+  namespace: argocd
+spec:
+  project: default
+
+ source:
+    repoURL: 'https://github.com/thatsimonsguy/homelab-k8s'
+    targetRevision: main
+    path: apps/ollama-embed
+    helm:
+      valueFiles:
+        - values.yaml
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: llm
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+   syncOptions:
+      - CreateNamespace=true
