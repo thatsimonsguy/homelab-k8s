@@ -9,4 +9,4 @@ spec:
   ports:
     - port: {{ .Values.service.port }}
       targetPort: {{ .Values.service.targetPort }}
-  LoadBalancerIP: {{ .Values.service.LoadBalancerIP }}
+  loadBalancerIP: {{ .Values.service.loadBalancerIP }}
