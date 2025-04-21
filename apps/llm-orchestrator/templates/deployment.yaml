@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "llm-orchestrator.fullname" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "llm-orchestrator.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "llm-orchestrator.name" . }}
+    spec:
+      containers:
+        - name: llm-orchestrator
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: PORT
+              value: "8080"
+            - name: EMBED_SERVICE_URL
+              value: http://embedding-service.llm.svc.cluster.local
+            - name: QDRANT_URL
+              value: http://qdrant.llm.svc.cluster.local:6333
+            - name: MISTRAL_SERVICE_URL
+              value: http://ollama.llm.svc.cluster.local:11434
+            - name: MISTRAL_MODEL
+              value: mistral
+            - name: MISTRAL_STREAM
+              value: "true"
+            - name: QDRANT_COLLECTION
+              value: matt-chunks
+
+          ports:
+            - containerPort: 8080
+          resources: {{- toYaml .Values.resources | nindent 12 }}
