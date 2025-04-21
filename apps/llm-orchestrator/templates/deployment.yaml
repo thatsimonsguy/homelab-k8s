@@ -30,11 +30,11 @@ spec:
             - name: MISTRAL_MODEL
               value: {{ .Values.env.mistralModel }}
             - name: MISTRAL_STREAM
-              value: {{ .Values.env.mistralStream }}
+              value: "{{ .Values.env.mistralStream }}"
             - name: USE_OPENAI
-              value: {{ .Values.env.useOpenAI }}
+              value: "{{ .Values.env.useOpenAI }}"
             - name : OPENAI_MODEL
-              value: {{ .Values.env.openAIModel }}
+              value: "{{ .Values.env.openAIModel }}"
             - name: OPENAI_API_KEY
               valueFrom:
                 secretKeyRef:

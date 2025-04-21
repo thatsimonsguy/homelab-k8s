@@ -27,7 +27,7 @@ env:
   mistralModel: mistral
   mistralStream: "true"
   useOpenAI: "true"
-  openAIModel: gtp-4o
+  openAIModel: gpt-4o
 
 sealedSecret:
   name: openai-secret
