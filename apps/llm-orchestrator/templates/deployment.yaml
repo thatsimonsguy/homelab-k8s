@@ -22,7 +22,7 @@ spec:
             - name: EMBED_SERVICE_URL
               value: "{{ .Values.env.embeddingURL }}"
             - name: QDRANT_URL
-              value: "{{ .Values.env.qdrantURL }}""
+              value: "{{ .Values.env.qdrantURL }}"
             - name: QDRANT_COLLECTION
               value: "{{ .Values.env.qdrantCollection }}"
             - name: MISTRAL_SERVICE_URL
