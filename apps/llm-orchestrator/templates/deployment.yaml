@@ -18,17 +18,17 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             - name: PORT
-              value: {{ .Values.env.port }}
+              value: "{{ .Values.env.port }}"
             - name: EMBED_SERVICE_URL
-              value: {{ .Values.env.embeddingURL }}
+              value: "{{ .Values.env.embeddingURL }}"
             - name: QDRANT_URL
-              value: {{ .Values.env.qdrantURL }}
+              value: "{{ .Values.env.qdrantURL }}""
             - name: QDRANT_COLLECTION
-              value: {{ .Values.env.qdrantCollection }}
+              value: "{{ .Values.env.qdrantCollection }}"
             - name: MISTRAL_SERVICE_URL
-              value: {{ .Values.env.mistralURL }}
+              value: "{{ .Values.env.mistralURL }}"
             - name: MISTRAL_MODEL
-              value: {{ .Values.env.mistralModel }}
+              value: "{{ .Values.env.mistralModel }}"
             - name: MISTRAL_STREAM
               value: "{{ .Values.env.mistralStream }}"
             - name: USE_OPENAI
@@ -39,7 +39,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.sealedSecret.name }}
-                  key: {{ .Values.sealedSecret.key }}
+                  key: "{{ .Values.sealedSecret.key }}"
 
           ports:
             - containerPort: 8080
