@@ -19,7 +19,7 @@ ingress:
   pathType: Prefix
 
 env:
-  port: 8080
+  port: "8080"
   embeddingURL: http://embedding-service.llm.svc.cluster.local
   qdrantURL: http://qdrant.llm.svc.cluster.local:6333
   qdrantCollection: matt-chunks
