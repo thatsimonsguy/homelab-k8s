@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: 192.168.2.17:5000/llm-orchestrator
-  tag: v0.1.3
+  tag: v0.1.4
   pullPolicy: Always
 
 service:
@@ -17,3 +17,18 @@ ingress:
   host: matthewpsimons.com
   path: /api/v1/chat
   pathType: Prefix
+
+env:
+  port: 8080
+  embeddingURL: http://embedding-service.llm.svc.cluster.local
+  qdrantURL: http://qdrant.llm.svc.cluster.local:6333
+  qdrantCollection: matt-chunks
+  mistralURL: http://ollama.llm.svc.cluster.local:11434
+  mistralModel: mistral
+  mistralStream: "true"
+  useOpenAI: "true"
+  openAIModel: gtp-4o
+
+sealedSecret:
+  name: openai-secret
+  key: api_key

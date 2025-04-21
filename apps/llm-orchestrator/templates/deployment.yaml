@@ -18,19 +18,28 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             - name: PORT
-              value: "8080"
+              value: {{ .Values.env.port }}
             - name: EMBED_SERVICE_URL
-              value: http://embedding-service.llm.svc.cluster.local
+              value: {{ .Values.env.embeddingURL }}
             - name: QDRANT_URL
-              value: http://qdrant.llm.svc.cluster.local:6333
-            - name: MISTRAL_SERVICE_URL
-              value: http://ollama.llm.svc.cluster.local:11434
-            - name: MISTRAL_MODEL
-              value: mistral
-            - name: MISTRAL_STREAM
-              value: "true"
+              value: {{ .Values.env.qdrantURL }}
             - name: QDRANT_COLLECTION
-              value: matt-chunks
+              value: {{ .Values.env.qdrantCollection }}
+            - name: MISTRAL_SERVICE_URL
+              value: {{ .Values.env.mistralURL }}
+            - name: MISTRAL_MODEL
+              value: {{ .Values.env.mistralModel }}
+            - name: MISTRAL_STREAM
+              value: {{ .Values.env.mistralStream }}
+            - name: USE_OPENAI
+              value: {{ .Values.env.useOpenAI }}
+            - name : OPENAI_MODEL
+              value: {{ .Values.env.openAIModel }}
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.sealedSecret.name }}
+                  key: {{ .Values.sealedSecret.key }}
 
           ports:
             - containerPort: 8080
