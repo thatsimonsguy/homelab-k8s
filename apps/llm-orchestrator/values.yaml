@@ -29,6 +29,10 @@ env:
   useOpenAI: "true"
   openAIModel: gpt-4o
 
-sealedSecret:
-  name: openai-secret
-  key: api_key
+sealedSecrets:
+  openai:
+    name: openai-secret
+    key: api_key
+  cors:
+    name: cors-secret
+    key: cors-secret

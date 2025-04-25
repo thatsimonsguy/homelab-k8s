@@ -38,8 +38,13 @@ spec:
             - name: OPENAI_API_KEY
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.sealedSecret.name }}
-                  key: "{{ .Values.sealedSecret.key }}"
+                  name: {{ .Values.sealedSecrets.openai.name }}
+                  key: "{{ .Values.sealedSecrets.openai.key }}"
+            - name: DEV_CORS_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.sealedSecrets.cors.name }}
+                  key: "{{ .Values.sealedSecrets.cors.key }}"
 
           ports:
             - containerPort: 8080
