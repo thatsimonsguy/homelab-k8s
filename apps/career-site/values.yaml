@@ -1,6 +1,6 @@
 image:
   repository: 192.168.2.17:5000/career-site
-  tag: v0.1.5
+  tag: v0.1.6
   pullPolicy: Always
 
 service:
