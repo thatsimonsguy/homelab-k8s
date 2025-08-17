@@ -1,0 +1,6 @@
+apiVersion: v2
+name: mailform
+description: Contact-form HTTP → AWS SES (via SMTP) using MailForm
+version: 0.2.0
+appVersion: "latest"
+type: application

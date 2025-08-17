@@ -1,0 +1,36 @@
+image:
+  repository: ghcr.io/edazdarevic/mailform  # TODO: replace if different per docs
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+
+service:
+  type: ClusterIP
+  port: 3000
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations: {}
+  hosts:
+    - host: matthewpsimons.com
+      paths:
+        - path: /contact
+          pathType: Prefix
+  tls: []
+
+resources: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+# Name of the Kubernetes Secret that holds the MailForm target file(s).
+# In git, this will be a **SealedSecret** which creates this Secret at deploy time.
+existingTargetsSecret: mailform-targets
+
+# File name (without extension) for the endpoint — hitting /contact will use contact.json
+primaryTargetName: contact
+
+# Namespace to deploy into
+namespace: mailform

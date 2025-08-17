@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mailform
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/thatsimonsguy/homelab-k8s.git
+    targetRevision: main
+    path: apps/mailform
+    helm:
+      releaseName: mailform
+      valuesObject:
+        namespace: mailform
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: mailform
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
