@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: 192.168.2.17:5000/llm-orchestrator
-  tag: v0.1.7
+  tag: v0.1.8
   pullPolicy: Always
 
 service:
