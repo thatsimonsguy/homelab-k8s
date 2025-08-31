@@ -1,0 +1,35 @@
+rabbitmq:
+  auth:
+    username: admin
+    existingPasswordSecret: rabbitmq-secret
+    secretPasswordKey: rabbitmq-password
+    existingErlangSecret: rabbitmq-secret
+    secretErlangKey: rabbitmq-erlang-cookie
+  
+  service:
+    type: LoadBalancer
+    loadBalancerIP: 192.168.2.21
+  
+  persistence:
+    enabled: true
+    size: 8Gi
+  
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+  
+  plugins: "rabbitmq_management rabbitmq_prometheus"
+  
+  memoryHighWatermark:
+    enabled: true
+    type: relative
+    value: 0.6
+  
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: false
