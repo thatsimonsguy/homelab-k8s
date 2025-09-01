@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webhook-router
+  namespace: webhook-router
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webhook-router
+  template:
+    metadata:
+      labels:
+        app: webhook-router
+    spec:
+      containers:
+      - name: webhook-router
+        image: 192.168.2.17:5000/webhook-router:0.1.0
+        ports:
+        - containerPort: 8080
+        envFrom:
+        - configMapRef:
+            name: webhook-router-config
+        env:
+        - name: RABBITMQ_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: rabbitmq-credentials
+              key: username
+        - name: RABBITMQ_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: rabbitmq-credentials
+              key: password
+        - name: WEBHOOK_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: github-webhook-secret
+              key: secret

@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: webhook-router
+  namespace: webhook-router
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: matthewpsimons.com
+      http:
+        paths:
+          - path: "/botbot/webhooks"
+            pathType: Prefix
+            backend:
+              service:
+                name: webhook-router
+                port:
+                  number: 80
