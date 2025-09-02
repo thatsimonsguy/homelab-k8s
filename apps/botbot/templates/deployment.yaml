@@ -21,6 +21,8 @@ spec:
         - configMapRef:
             name: botbot-config
         env:
+        - name: PATH
+          value: "/usr/local/bin:/home/botbot/go/bin:/usr/local/go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
         - name: GITHUB_TOKEN
           valueFrom:
             secretKeyRef:
