@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: botbot
+  namespace: default
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: botbot
+  template:
+    metadata:
+      labels:
+        app: botbot
+    spec:
+      containers:
+      - name: botbot
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        envFrom:
+        - configMapRef:
+            name: botbot-config
+        env:
+        - name: GITHUB_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: botbot-secrets
+              key: GITHUB_TOKEN
+        - name: RABBITMQ_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: botbot-secrets
+              key: RABBITMQ_USERNAME
+        - name: RABBITMQ_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: botbot-secrets
+              key: RABBITMQ_PASSWORD
+        volumeMounts:
+        - name: workspace
+          mountPath: /home/botbot/workspace
+        - name: templates
+          mountPath: /home/botbot/workspace/templates
+          readOnly: true
+        - name: claude-config
+          mountPath: /home/botbot/.claude
+        command: ["bash", "-c"]
+        args:
+        - |
+          sudo mkdir -p /home/botbot/workspace/repos && 
+          sudo chown botbot:botbot /home/botbot/workspace/repos && 
+          exec botbot coder-daemon
+      volumes:
+      - name: workspace
+        emptyDir: {}
+      - name: templates
+        configMap:
+          name: botbot-templates
+      - name: claude-config
+        emptyDir: {}

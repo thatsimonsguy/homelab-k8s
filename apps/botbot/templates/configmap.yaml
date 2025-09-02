@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: botbot-config
+  namespace: default
+data:
+  RABBITMQ_ADDRESS: "192.168.2.16"
+  RABBITMQ_PORT: "5672"
+  RABBITMQ_EXCHANGE: "botbot"
+  GITHUB_OWNER: "thatsimonsguy"
+  GITHUB_REPO: "botbot"
+  GITHUB_AUTH_TYPE: "token"
+  CLAUDECODE: "1"
+  CLAUDE_CODE_ENTRYPOINT: "cli"
+  PARENT_DIR: "/home/botbot/workspace/repos"
+  DEFAULT_BASE: "main"
+  STRATEGY_ORDER: "linear"
+  CODE_TEMPLATE_FILE: "templates/code_template.md"
+  LOG_LEVEL: "info"
