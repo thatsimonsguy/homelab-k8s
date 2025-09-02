@@ -39,9 +39,6 @@ spec:
         volumeMounts:
         - name: workspace
           mountPath: /home/botbot/workspace
-        - name: templates
-          mountPath: /home/botbot/workspace/templates
-          readOnly: true
         - name: claude-config
           mountPath: /home/botbot/.claude
         command: ["bash", "-c"]
@@ -53,8 +50,5 @@ spec:
       volumes:
       - name: workspace
         emptyDir: {}
-      - name: templates
-        configMap:
-          name: botbot-templates
       - name: claude-config
         emptyDir: {}
