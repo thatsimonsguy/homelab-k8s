@@ -36,19 +36,9 @@ spec:
             secretKeyRef:
               name: botbot-secrets
               key: RABBITMQ_PASSWORD
-        volumeMounts:
-        - name: workspace
-          mountPath: /home/botbot/workspace
-        - name: claude-config
-          mountPath: /home/botbot/.claude
         command: ["bash", "-c"]
         args:
         - |
           sudo mkdir -p /home/botbot/workspace/repos && 
           sudo chown botbot:botbot /home/botbot/workspace/repos && 
           exec botbot coder-daemon
-      volumes:
-      - name: workspace
-        emptyDir: {}
-      - name: claude-config
-        emptyDir: {}
