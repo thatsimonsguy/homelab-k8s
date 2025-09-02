@@ -38,9 +38,18 @@ spec:
             secretKeyRef:
               name: botbot-secrets
               key: RABBITMQ_PASSWORD
+        volumeMounts:
+        - name: claude-credentials
+          mountPath: /home/botbot/.claude/.credentials.json
+          subPath: .credentials.json
+          readOnly: true
         command: ["bash", "-c"]
         args:
         - |
           sudo mkdir -p /home/botbot/workspace/repos && 
           sudo chown botbot:botbot /home/botbot/workspace/repos && 
           exec botbot coder-daemon
+      volumes:
+      - name: claude-credentials
+        secret:
+          secretName: claude-credentials
