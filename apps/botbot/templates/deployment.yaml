@@ -42,7 +42,7 @@ spec:
         - name: claude-credentials
           mountPath: /home/botbot/.claude/.credentials.json
           subPath: .credentials.json
-          readOnly: true
+          readOnly: false
         command: ["bash", "-c"]
         args:
         - |
