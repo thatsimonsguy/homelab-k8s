@@ -49,4 +49,6 @@ securityContext:
     add:
       - NET_ADMIN
       - MKNOD
-  privileged: false
+      - NET_RAW
+      - SYS_MODULE
+  privileged: true  # Required for iptables management
