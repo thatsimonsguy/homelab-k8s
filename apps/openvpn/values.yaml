@@ -19,40 +19,22 @@ persistence:
   size: 100Mi
   accessMode: ReadWriteOnce
 
-# VPN Service (LoadBalancer for direct MetalLB access)
+# VPN Service (LoadBalancer for MetalLB access)
 service:
   vpn:
     type: LoadBalancer
-    loadBalancerIP: "192.168.2.26"  # Next available MetalLB IP
+    loadBalancerIP: "192.168.2.26"
     ports:
       tcp: 443
       udp: 1194
 
-# Network configuration
-network:
-  # Use host networking for direct local access to admin UI
-  hostNetwork: true
-  # Admin UI will be accessible at host IP:943 (192.168.1.35:943)
-
-# Admin UI Service (disabled when using host networking)
-serviceAdmin:
-  enabled: false
-  type: ClusterIP
-  port: 943
-
-# Ingress configuration
-ingress:
-  # Admin UI ingress (disabled - using host network instead)
-  admin:
-    enabled: false
-    host: matthewpsimons.com
-    path: /vpn
-    pathType: Prefix
-    className: traefik
+# Admin UI Configuration
+admin:
+  enabled: true
+  hostNetwork: true  # Direct access via 192.168.1.35:943
 
 # OpenVPN Configuration
 config:
-  # VPN client network pool (5 addresses)
   vpnNetwork: "192.168.1.250"
   vpnNetmask: "255.255.255.248"  # /29 network for 5 usable IPs
   hostname: "vpn.matthewpsimons.com"
@@ -68,8 +50,3 @@ securityContext:
       - NET_ADMIN
       - MKNOD
   privileged: false
-
-# Device access for /dev/net/tun
-hostDevices:
-  - name: tun
-    path: /dev/net/tun

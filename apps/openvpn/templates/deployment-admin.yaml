@@ -1,21 +1,29 @@
+{{- if .Values.admin.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "openvpn.fullname" . }}
+  name: {{ include "openvpn.fullname" . }}-admin
   labels:
     {{- include "openvpn.labels" . | nindent 4 }}
+    app.kubernetes.io/component: admin
 spec:
   replicas: 1
   selector:
     matchLabels:
       {{- include "openvpn.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: admin
   template:
     metadata:
       labels:
         {{- include "openvpn.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: admin
     spec:
+      hostNetwork: {{ .Values.admin.hostNetwork }}
+      {{- if .Values.admin.hostNetwork }}
+      dnsPolicy: ClusterFirstWithHostNet
+      {{- end }}
       containers:
-        - name: openvpn
+        - name: openvpn-admin
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           securityContext:
@@ -24,12 +32,12 @@ spec:
                 {{- toYaml .Values.securityContext.capabilities.add | nindent 16 }}
             privileged: {{ .Values.securityContext.privileged }}
           ports:
-            - name: vpn-tcp
-              containerPort: 443
+            - name: admin-ui
+              containerPort: 943
               protocol: TCP
-            - name: vpn-udp
-              containerPort: 1194
-              protocol: UDP
+              {{- if .Values.admin.hostNetwork }}
+              hostPort: 943
+              {{- end }}
           env:
             - name: TZ
               value: {{ .Values.env.TZ }}
@@ -41,15 +49,19 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           livenessProbe:
-            tcpSocket:
-              port: 443
+            httpGet:
+              path: /
+              port: 943
+              scheme: HTTPS
             initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 3
           readinessProbe:
-            tcpSocket:
-              port: 443
+            httpGet:
+              path: /
+              port: 943
+              scheme: HTTPS
             initialDelaySeconds: 10
             periodSeconds: 5
             timeoutSeconds: 3
@@ -63,3 +75,4 @@ spec:
             path: /dev/net/tun
             type: CharDevice
       restartPolicy: Always
+{{- end }}
