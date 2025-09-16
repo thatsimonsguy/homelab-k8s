@@ -1,0 +1,55 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "openvpn.fullname" . }}-init-pki
+  labels:
+    {{- include "openvpn.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: openvpn-init-pki
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          command: ['sh', '-c']
+          args:
+            - |
+              set -e
+              echo "Checking if PKI is already initialized..."
+              if [ ! -f /etc/openvpn/pki/ca.crt ]; then
+                echo "Initializing PKI..."
+                expect -c "
+                  spawn ovpn_initpki
+                  expect \"Enter New CA Key Passphrase:\"
+                  send \"\r\"
+                  expect \"Re-Enter New CA Key Passphrase:\"
+                  send \"\r\"
+                  expect \"Common Name*\"
+                  send \"\r\"
+                  expect eof
+                " || {
+                  echo "Interactive PKI init failed, trying non-interactive..."
+                  ovpn_initpki nopass
+                }
+                echo "PKI initialized successfully"
+              else
+                echo "PKI already exists, skipping initialization"
+              fi
+              echo "Listing PKI files:"
+              ls -la /etc/openvpn/pki/
+          volumeMounts:
+            - name: openvpn-data
+              mountPath: /etc/openvpn
+          securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
+            privileged: true
+      volumes:
+        - name: openvpn-data
+          persistentVolumeClaim:
+            claimName: {{ include "openvpn.fullname" . }}-data
