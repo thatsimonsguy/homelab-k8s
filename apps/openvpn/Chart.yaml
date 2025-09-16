@@ -1,6 +1,0 @@
-apiVersion: v2
-name: openvpn
-description: A Helm chart for deploying OpenVPN Access Server
-type: application
-version: 1.0.0
-appVersion: "2.13.1"
