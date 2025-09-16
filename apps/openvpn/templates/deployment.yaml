@@ -14,25 +14,35 @@ spec:
       labels:
         {{- include "openvpn.selectorLabels" . | nindent 8 }}
     spec:
-      securityContext:
-        sysctls:
-          - name: net.ipv6.conf.default.forwarding
-            value: "1"
-          - name: net.ipv6.conf.all.forwarding
-            value: "1"
       initContainers:
         - name: openvpn-init
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           command: ['sh', '-c']
           args:
             - |
+              set -e
+              echo "=== OpenVPN Initialization ==="
+              
+              # Step 1: Generate configuration if needed
               if [ ! -f /etc/openvpn/ovpn_env.sh ]; then
-                echo "Initializing OpenVPN configuration..."
+                echo "Generating OpenVPN configuration..."
                 ovpn_genconfig -u {{ .Values.config.protocol }}://{{ .Values.config.hostname }}:{{ .Values.config.port }} -s {{ .Values.config.vpnSubnet }}/24
-                echo "Configuration initialized"
+                echo "Configuration generated"
               else
-                echo "Configuration already exists, skipping initialization"
+                echo "Configuration already exists"
               fi
+              
+              # Step 2: Initialize PKI if needed
+              if [ ! -f /etc/openvpn/pki/ca.crt ]; then
+                echo "Initializing PKI (no password)..."
+                ovpn_initpki nopass
+                echo "PKI initialized"
+              else
+                echo "PKI already exists"
+              fi
+              
+              echo "=== Initialization Complete ==="
+              ls -la /etc/openvpn/pki/ || echo "PKI directory not found"
           volumeMounts:
             - name: openvpn-data
               mountPath: /etc/openvpn
