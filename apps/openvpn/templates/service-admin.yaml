@@ -1,3 +1,4 @@
+{{- if .Values.serviceAdmin.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -13,3 +14,4 @@ spec:
       protocol: TCP
   selector:
     {{- include "openvpn.selectorLabels" . | nindent 4 }}
+{{- end }}

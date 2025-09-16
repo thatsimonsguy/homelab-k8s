@@ -14,6 +14,10 @@ spec:
       labels:
         {{- include "openvpn.selectorLabels" . | nindent 8 }}
     spec:
+      {{- if .Values.network.hostNetwork }}
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      {{- end }}
       containers:
         - name: openvpn
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"

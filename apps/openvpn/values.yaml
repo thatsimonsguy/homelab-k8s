@@ -28,21 +28,27 @@ service:
       tcp: 443
       udp: 1194
 
-# Admin UI Service (ClusterIP for Traefik ingress)
+# Network configuration
+network:
+  # Use host networking for direct local access to admin UI
+  hostNetwork: true
+  # Admin UI will be accessible at host IP:943 (192.168.1.35:943)
+
+# Admin UI Service (disabled when using host networking)
 serviceAdmin:
+  enabled: false
   type: ClusterIP
   port: 943
 
 # Ingress configuration
 ingress:
-  # Admin UI ingress (local network only via Traefik)
+  # Admin UI ingress (disabled - using host network instead)
   admin:
-    enabled: true
+    enabled: false
     host: matthewpsimons.com
     path: /vpn
     pathType: Prefix
     className: traefik
-    # IP whitelist will be applied via middleware
 
 # OpenVPN Configuration
 config:

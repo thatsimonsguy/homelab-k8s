@@ -6,7 +6,6 @@ metadata:
   labels:
     {{- include "openvpn.labels" . | nindent 4 }}
   annotations:
-    traefik.ingress.kubernetes.io/router.middlewares: default-{{ include "openvpn.fullname" . }}-ip-whitelist@kubernetescrd
     traefik.ingress.kubernetes.io/router.tls: "true"
 spec:
   ingressClassName: {{ .Values.ingress.admin.className }}
