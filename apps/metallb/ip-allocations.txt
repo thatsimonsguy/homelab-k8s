@@ -13,3 +13,4 @@
 192.168.2.23  qdrant (dev endpoint)
 192.168.2.24  llm-orchestrator (dev endpoint)
 192.168.2.25  argocd web ui
+192.168.2.26  openvpn

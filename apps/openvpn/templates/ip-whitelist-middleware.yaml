@@ -1,0 +1,12 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ include "openvpn.fullname" . }}-ip-whitelist
+  labels:
+    {{- include "openvpn.labels" . | nindent 4 }}
+spec:
+  ipWhiteList:
+    sourceRange:
+      - "192.168.1.0/24"   # Local network access only
+      - "10.0.0.0/8"       # Private network ranges
+      - "172.16.0.0/12"    # Private network ranges

@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: openvpn
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/thatsimonsguy/homelab-k8s.git'
+    path: 'apps/openvpn'
+    targetRevision: main
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

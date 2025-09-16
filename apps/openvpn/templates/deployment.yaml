@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "openvpn.fullname" . }}
+  labels:
+    {{- include "openvpn.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "openvpn.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "openvpn.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: openvpn
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            capabilities:
+              add:
+                {{- toYaml .Values.securityContext.capabilities.add | nindent 16 }}
+            privileged: {{ .Values.securityContext.privileged }}
+          ports:
+            - name: admin-ui
+              containerPort: 943
+              protocol: TCP
+            - name: vpn-tcp
+              containerPort: 443
+              protocol: TCP
+            - name: vpn-udp
+              containerPort: 1194
+              protocol: UDP
+          env:
+            - name: TZ
+              value: {{ .Values.env.TZ }}
+          volumeMounts:
+            - name: openvpn-data
+              mountPath: /openvpn
+            - name: tun-device
+              mountPath: /dev/net/tun
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 943
+              scheme: HTTPS
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 943
+              scheme: HTTPS
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+      volumes:
+        - name: openvpn-data
+          persistentVolumeClaim:
+            claimName: {{ include "openvpn.fullname" . }}-data
+        - name: tun-device
+          hostPath:
+            path: /dev/net/tun
+            type: CharDevice
+      restartPolicy: Always

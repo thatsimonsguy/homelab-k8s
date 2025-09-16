@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "openvpn.fullname" . }}-vpn
+  labels:
+    {{- include "openvpn.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.vpn.type }}
+  loadBalancerIP: {{ .Values.service.vpn.loadBalancerIP }}
+  ports:
+    - name: vpn-tcp
+      port: {{ .Values.service.vpn.ports.tcp }}
+      targetPort: 443
+      protocol: TCP
+    - name: vpn-udp
+      port: {{ .Values.service.vpn.ports.udp }}
+      targetPort: 1194
+      protocol: UDP
+  selector:
+    {{- include "openvpn.selectorLabels" . | nindent 4 }}

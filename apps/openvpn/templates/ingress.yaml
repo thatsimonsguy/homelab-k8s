@@ -1,0 +1,27 @@
+{{- if .Values.ingress.admin.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "openvpn.fullname" . }}-admin
+  labels:
+    {{- include "openvpn.labels" . | nindent 4 }}
+  annotations:
+    traefik.ingress.kubernetes.io/router.middlewares: default-{{ include "openvpn.fullname" . }}-ip-whitelist@kubernetescrd
+    traefik.ingress.kubernetes.io/router.tls: "true"
+spec:
+  ingressClassName: {{ .Values.ingress.admin.className }}
+  rules:
+    - host: {{ .Values.ingress.admin.host }}
+      http:
+        paths:
+          - path: {{ .Values.ingress.admin.path }}
+            pathType: {{ .Values.ingress.admin.pathType }}
+            backend:
+              service:
+                name: {{ include "openvpn.fullname" . }}-admin
+                port:
+                  number: 943
+  tls:
+    - hosts:
+        - {{ .Values.ingress.admin.host }}
+{{- end }}

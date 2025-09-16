@@ -1,0 +1,69 @@
+image:
+  repository: openvpn/openvpn-as
+  tag: "2.13.1-d8cdeb9c-Ubuntu22"
+  pullPolicy: IfNotPresent
+
+# Resource limits
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 256Mi
+
+# Persistent storage for configuration
+persistence:
+  enabled: true
+  storageClass: "retain-default-storage"
+  size: 100Mi
+  accessMode: ReadWriteOnce
+
+# VPN Service (LoadBalancer for direct MetalLB access)
+service:
+  vpn:
+    type: LoadBalancer
+    loadBalancerIP: "192.168.2.26"  # Next available MetalLB IP
+    ports:
+      tcp: 443
+      udp: 1194
+
+# Admin UI Service (ClusterIP for Traefik ingress)
+serviceAdmin:
+  type: ClusterIP
+  port: 943
+
+# Ingress configuration
+ingress:
+  # Admin UI ingress (local network only via Traefik)
+  admin:
+    enabled: true
+    host: matthewpsimons.com
+    path: /vpn
+    pathType: Prefix
+    className: traefik
+    # IP whitelist will be applied via middleware
+
+# OpenVPN Configuration
+config:
+  # VPN client network pool (5 addresses)
+  vpnNetwork: "192.168.1.250"
+  vpnNetmask: "255.255.255.248"  # /29 network for 5 usable IPs
+  hostname: "vpn.matthewpsimons.com"
+
+# Environment variables
+env:
+  TZ: "America/Chicago"
+
+# Security context for OpenVPN requirements
+securityContext:
+  capabilities:
+    add:
+      - NET_ADMIN
+      - MKNOD
+  privileged: false
+
+# Device access for /dev/net/tun
+hostDevices:
+  - name: tun
+    path: /dev/net/tun
