@@ -15,7 +15,7 @@ resources:
 # Persistent storage for configuration
 persistence:
   enabled: true
-  storageClass: "retain-default-storage"
+  storageClass: "retain-default-storageclass"
   size: 100Mi
   accessMode: ReadWriteOnce
 
