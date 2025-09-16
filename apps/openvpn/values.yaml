@@ -1,6 +1,6 @@
 image:
-  repository: openvpn/openvpn-as
-  tag: "2.13.1-d8cdeb9c-Ubuntu22"
+  repository: kylemanna/openvpn
+  tag: "latest"
   pullPolicy: IfNotPresent
 
 # Resource limits
@@ -21,24 +21,22 @@ persistence:
 
 # VPN Service (LoadBalancer for MetalLB access)
 service:
-  vpn:
-    enabled: true
-    type: LoadBalancer
-    loadBalancerIP: "192.168.2.26"
-    ports:
-      tcp: 443
-      udp: 1194
-
-# Admin UI Configuration (separate deployment with host networking)
-admin:
-  enabled: true
-  hostNetwork: true  # Direct access via 192.168.1.35:943
+  type: LoadBalancer
+  loadBalancerIP: "192.168.2.26"
+  port: 443
+  protocol: TCP
 
 # OpenVPN Configuration
 config:
-  vpnNetwork: "192.168.1.250"
-  vpnNetmask: "255.255.255.248"  # /29 network for 5 usable IPs
+  # External hostname for VPN server
   hostname: "vpn.matthewpsimons.com"
+  # VPN subnet (internal network for VPN clients)
+  vpnSubnet: "192.168.255.0"
+  vpnNetmask: "255.255.255.0"
+  # Protocol (udp or tcp)
+  protocol: "tcp"
+  # Port for VPN traffic
+  port: 443
 
 # Environment variables
 env:

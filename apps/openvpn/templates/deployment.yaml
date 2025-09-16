@@ -15,51 +15,64 @@ spec:
         {{- include "openvpn.selectorLabels" . | nindent 8 }}
     spec:
       initContainers:
-        - name: enable-ip-forward
-          image: busybox:1.36
-          command: ['sh', '-c', 'sysctl -w net.ipv4.ip_forward=1']
+        - name: openvpn-init
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          command: ['sh', '-c']
+          args:
+            - |
+              if [ ! -f /etc/openvpn/ovpn_env.sh ]; then
+                echo "Initializing OpenVPN configuration..."
+                ovpn_genconfig -u {{ .Values.config.protocol }}://{{ .Values.config.hostname }}:{{ .Values.config.port }} -s {{ .Values.config.vpnSubnet }}/24
+                echo "Configuration initialized"
+              else
+                echo "Configuration already exists, skipping initialization"
+              fi
+          volumeMounts:
+            - name: openvpn-data
+              mountPath: /etc/openvpn
           securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
             privileged: true
       containers:
         - name: openvpn
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          securityContext:
-            capabilities:
-              add:
-                {{- toYaml .Values.securityContext.capabilities.add | nindent 16 }}
-            privileged: {{ .Values.securityContext.privileged }}
+          command: ['ovpn_run']
           ports:
-            - name: vpn-tcp
-              containerPort: 443
-              protocol: TCP
-            - name: vpn-udp
-              containerPort: 1194
-              protocol: UDP
+            - name: openvpn
+              containerPort: {{ .Values.config.port }}
+              protocol: {{ .Values.service.protocol }}
           env:
             - name: TZ
               value: {{ .Values.env.TZ }}
           volumeMounts:
             - name: openvpn-data
-              mountPath: /openvpn
+              mountPath: /etc/openvpn
             - name: tun-device
               mountPath: /dev/net/tun
+          securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
+                - MKNOD
+            privileged: true
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           livenessProbe:
-            tcpSocket:
-              port: 443
+            exec:
+              command:
+                - sh
+                - -c
+                - "ps aux | grep '[o]vpn' || exit 1"
             initialDelaySeconds: 30
-            periodSeconds: 10
-            timeoutSeconds: 5
-            failureThreshold: 3
+            periodSeconds: 30
           readinessProbe:
             tcpSocket:
-              port: 443
-            initialDelaySeconds: 10
-            periodSeconds: 5
-            timeoutSeconds: 3
-            failureThreshold: 3
+              port: {{ .Values.config.port }}
+            initialDelaySeconds: 15
+            periodSeconds: 10
       volumes:
         - name: openvpn-data
           persistentVolumeClaim:
