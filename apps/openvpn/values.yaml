@@ -22,13 +22,14 @@ persistence:
 # VPN Service (LoadBalancer for MetalLB access)
 service:
   vpn:
+    enabled: true
     type: LoadBalancer
     loadBalancerIP: "192.168.2.26"
     ports:
       tcp: 443
       udp: 1194
 
-# Admin UI Configuration
+# Admin UI Configuration (separate deployment with host networking)
 admin:
   enabled: true
   hostNetwork: true  # Direct access via 192.168.1.35:943
@@ -51,4 +52,6 @@ securityContext:
       - MKNOD
       - NET_RAW
       - SYS_MODULE
-  privileged: true  # Required for iptables management
+      - SYS_NICE
+  privileged: true
+  runAsUser: 0  # Run as root for iptables access
