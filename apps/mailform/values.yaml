@@ -18,6 +18,10 @@ ingress:
       paths:
         - path: /contact
           pathType: Prefix
+    - host: api.rollwithmatt.com
+      paths:
+        - path: /contact
+          pathType: Prefix
   tls: []
 
 resources: {}
