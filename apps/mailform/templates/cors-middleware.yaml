@@ -10,6 +10,7 @@ spec:
       - https://www.rollwithmatt.com
       - https://matthewpsimons.com
       - https://www.matthewpsimons.com
+      - https://api.rollwithmatt.com
     accessControlAllowMethods:
       - GET
       - POST
