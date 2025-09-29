@@ -7,7 +7,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/oebus/homelab-k8s.git
-    targetRevision: HEAD
+    targetRevision: main
     path: apps/mailform-rollwithmatt
   destination:
     server: https://kubernetes.default.svc
