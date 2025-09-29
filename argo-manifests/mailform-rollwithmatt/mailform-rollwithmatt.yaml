@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mailform-rollwithmatt
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/oebus/homelab-k8s.git
+    targetRevision: HEAD
+    path: apps/mailform-rollwithmatt
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: mailform-rollwithmatt
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
