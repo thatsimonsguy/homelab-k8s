@@ -13,7 +13,7 @@ ingress:
   enabled: true
   className: traefik
   annotations:
-    traefik.ingress.kubernetes.io/router.middlewares: mailform-mailform-cors@kubernetescrd
+    traefik.ingress.kubernetes.io/router.middlewares: mailform-cors@kubernetescrd
   hosts:
     - host: matthewpsimons.com
       paths:
