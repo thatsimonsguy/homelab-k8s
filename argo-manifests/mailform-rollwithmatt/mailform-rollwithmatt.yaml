@@ -6,9 +6,13 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/oebus/homelab-k8s.git
+    repoURL: https://github.com/thatsimonsguy/homelab-k8s.git
     targetRevision: main
     path: apps/mailform-rollwithmatt
+    helm:
+      releaseName: mailform-rollwithmatt
+      valuesObject:
+        namespace: mailform-rollwithmatt
   destination:
     server: https://kubernetes.default.svc
     namespace: mailform-rollwithmatt
