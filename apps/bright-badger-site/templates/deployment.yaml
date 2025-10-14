@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "bright-badger-site.fullname" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "bright-badger-site.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "bright-badger-site.name" . }}
+    spec:
+      containers:
+        - name: bright-badger-site
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 80

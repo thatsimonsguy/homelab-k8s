@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "bright-badger-site.fullname" . }}
+spec:
+  selector:
+    app: {{ include "bright-badger-site.name" . }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: 80
