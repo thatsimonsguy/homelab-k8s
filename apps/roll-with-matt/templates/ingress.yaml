@@ -23,3 +23,10 @@ spec:
                 name: {{ include "roll-with-matt.fullname" . }}
                 port:
                   number: {{ .Values.service.port }}
+          - path: /inspiration_art
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "roll-with-matt.fullname" . }}
+                port:
+                  number: {{ .Values.service.port }}
