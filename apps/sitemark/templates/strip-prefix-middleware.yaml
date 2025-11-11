@@ -1,9 +1,0 @@
-apiVersion: traefik.io/v1alpha1
-kind: Middleware
-metadata:
-  name: {{ include "sitemark.fullname" . }}-strip-prefix
-  namespace: sitemark
-spec:
-  stripPrefix:
-    prefixes:
-      - /sitemark
