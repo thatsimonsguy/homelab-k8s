@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: 192.168.2.17:5000/sitemark-frontend
-  tag: 0.1.2
+  tag: 0.1.3
   pullPolicy: Always
 
 service:
