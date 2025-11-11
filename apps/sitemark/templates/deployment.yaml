@@ -19,6 +19,12 @@ spec:
         - name: sitemark
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: VITE_MAPBOX_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.sealedSecrets.mapbox.name }}
+                  key: {{ .Values.sealedSecrets.mapbox.key }}
           envFrom:
             - configMapRef:
                 name: {{ include "sitemark.fullname" . }}-config
