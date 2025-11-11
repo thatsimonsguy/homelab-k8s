@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "sitemark.fullname" . }}
+  namespace: sitemark
+  labels:
+    {{- include "sitemark.labels" . | nindent 4 }}
+  annotations:
+    kubernetes.io/ingress.class: {{ .Values.ingress.class }}
+    traefik.ingress.kubernetes.io/router.middlewares: sitemark-strip-prefix@kubernetescrd
+spec:
+  rules:
+    - host: {{ .Values.ingress.host }}
+      http:
+        paths:
+          - path: {{ .Values.ingress.path }}
+            pathType: {{ .Values.ingress.pathType }}
+            backend:
+              service:
+                name: {{ include "sitemark.fullname" . }}
+                port:
+                  number: {{ .Values.service.port }}

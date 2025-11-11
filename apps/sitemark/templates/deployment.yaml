@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "sitemark.fullname" . }}
+  namespace: sitemark
+  labels:
+    {{- include "sitemark.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "sitemark.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "sitemark.name" . }}
+    spec:
+      containers:
+        - name: sitemark
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: VITE_MAPBOX_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.sealedSecrets.mapbox.name }}
+                  key: {{ .Values.sealedSecrets.mapbox.key }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "sitemark.fullname" . }}-config
+          ports:
+            - containerPort: 80
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources: {{- toYaml .Values.resources | nindent 12 }}

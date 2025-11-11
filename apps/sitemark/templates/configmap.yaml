@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "sitemark.fullname" . }}-config
+  namespace: sitemark
+data:
+  VITE_SHARE_API_BASE_URL: "{{ .Values.env.shareApiUrl }}"

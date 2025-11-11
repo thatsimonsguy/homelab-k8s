@@ -1,0 +1,32 @@
+replicaCount: 1
+
+image:
+  repository: 192.168.2.17:5000/sitemark-frontend
+  tag: v0.1.0
+  pullPolicy: Always
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  class: traefik
+  host: brightbadgertech.com
+  path: /sitemark
+  pathType: Prefix
+
+env:
+  shareApiUrl: https://brightbadgertech.com/sitemark/api
+
+sealedSecrets:
+  mapbox:
+    name: sitemark-mapbox-secret
+    key: token
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

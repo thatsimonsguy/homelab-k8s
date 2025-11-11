@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "sitemark.fullname" . }}
+  namespace: sitemark
+  labels:
+    {{- include "sitemark.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    app: {{ include "sitemark.name" . }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: 80
