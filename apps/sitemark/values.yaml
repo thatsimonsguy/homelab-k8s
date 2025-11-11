@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: 192.168.2.17:5000/sitemark-frontend
-  tag: 0.1.5
+  tag: 0.1.6
   pullPolicy: Always
 
 service:
@@ -16,7 +16,7 @@ ingress:
   pathType: Prefix
 
 env:
-  shareApiUrl: https://brightbadgertech.com/sitemark/api
+  shareApiUrl: https://brightbadgertech.com/sitemark
 
 sealedSecrets:
   mapbox:
