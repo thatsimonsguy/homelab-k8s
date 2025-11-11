@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: 192.168.2.17:5000/sitemark-frontend
-  tag: 0.1.12
+  tag: 0.1.13
   pullPolicy: Always
 
 service:
@@ -15,13 +15,7 @@ ingress:
   path: /sitemark
   pathType: Prefix
 
-env:
-  shareApiUrl: https://brightbadgertech.com/sitemark
-
-sealedSecrets:
-  mapbox:
-    name: sitemark-mapbox-secret
-    key: token
+# No environment configuration needed - values are baked into build
 
 resources: {}
 
