@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "sitemark-api.fullname" . }}
+  namespace: sitemark-api
+  labels:
+    {{- include "sitemark-api.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "sitemark-api.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "sitemark-api.name" . }}
+        app.kubernetes.io/name: {{ include "sitemark-api.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: sitemark-api
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.targetPort }}
+          env:
+            - name: PORT
+              value: "{{ .Values.app.port }}"
+            - name: LOG_LEVEL
+              value: {{ .Values.app.logLevel }}
+            - name: DATABASE_URL
+              value: "postgresql://{{ .Values.postgres.user }}:$(DB_PASSWORD)@{{ .Values.postgres.host }}:{{ .Values.postgres.port }}/{{ .Values.postgres.database }}?sslmode=disable"
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgres.passwordSecretName }}
+                  key: {{ .Values.postgres.passwordSecretKey }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.service.targetPort }}
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.service.targetPort }}
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources: {{- toYaml .Values.resources | nindent 12 }}

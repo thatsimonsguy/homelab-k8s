@@ -1,0 +1,40 @@
+replicaCount: 1
+
+image:
+  repository: 192.168.2.17:5000/sitemark-backend
+  tag: 0.1.2
+  pullPolicy: Always
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+ingress:
+  enabled: true
+  class: traefik
+  host: brightbadgertech.com
+  path: /sitemark-api
+  pathType: Prefix
+
+# Database configuration
+postgres:
+  host: 192.168.2.20
+  port: 5432
+  database: sitemarkdb
+  user: sitemark_service
+  passwordSecretName: sitemark-db-secret
+  passwordSecretKey: password
+
+# Application configuration
+app:
+  port: 8080
+  logLevel: info
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
