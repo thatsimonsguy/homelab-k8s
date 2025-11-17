@@ -47,7 +47,96 @@ kubectl logs -f deployment/<app-name> -n <namespace>
 
 **Storage**: Applications requiring persistence use PVCs, some with explicit PVs for local storage
 
-## Development Workflow
+## Cluster Operations
+
+### Connecting to the K3s Host
+```bash
+ssh k3s  # Connects to the single-node k3s cluster host
+```
+
+### Cluster Information
+- **Platform**: K3s (lightweight Kubernetes distribution)
+- **Node**: Single-node cluster running on Ubuntu 24.04 LTS
+- **Runtime**: Containerd (not Docker)
+- **Management**: ArgoCD with automated sync and self-healing enabled
+
+### Important ArgoCD Considerations
+- **Automated Sync**: ArgoCD automatically corrects any manual changes to deployments
+- **Self-Healing**: Manual scaling/modifications will be reverted to Git state
+- **Sync Policy**: Most applications have `automated: {selfHeal: true}` enabled
+- **Always check ArgoCD status** after manual operations to avoid conflicts
+
+### Common Operational Tasks
+
+#### Registry Maintenance (Image Cleanup)
+```bash
+# Scale down registry (ArgoCD will self-heal this back)
+kubectl -n kube-system scale deploy/registry --replicas=0
+kubectl -n kube-system rollout status deploy/registry
+
+# Run garbage collection
+kubectl -n kube-system apply -f - <<'EOF'
+apiVersion: v1
+kind: Pod
+metadata:
+  name: registry-gc
+spec:
+  restartPolicy: Never
+  containers:
+    - name: reg
+      image: registry:2
+      command: ["sh","-lc"]
+      args:
+        - |
+          set -e
+          echo "Before GC:" && du -sh /var/lib/registry/docker/registry/v2/blobs
+          registry garbage-collect /etc/docker/registry/config.yml
+          echo "After GC:" && du -sh /var/lib/registry/docker/registry/v2/blobs
+      volumeMounts:
+        - name: data
+          mountPath: /var/lib/registry
+  volumes:
+    - name: data
+      persistentVolumeClaim:
+        claimName: registry-pvc
+EOF
+
+# Monitor and cleanup
+kubectl -n kube-system logs -f pod/registry-gc
+kubectl -n kube-system delete pod/registry-gc
+# Registry will self-heal back to replicas=1 via ArgoCD
+```
+
+#### Container Image Management
+- **Runtime**: Use `crictl` commands (not `docker`)
+- **Images**: Managed through private registry at `192.168.2.17:5000`
+- **Cleanup**: Use registry garbage collection (see above)
+
+#### Troubleshooting Failed Pods
+```bash
+# Check pod status across all namespaces
+kubectl get pods -A | grep -E "(Error|ImagePullBackOff|CrashLoopBackOff)"
+
+# Force delete stuck pods (ArgoCD will recreate)
+kubectl delete pod <pod-name> -n <namespace> --force --grace-period=0
+
+# Check ArgoCD application health
+kubectl -n argocd get applications
+```
+
+#### Monitoring ArgoCD
+```bash
+# Check application sync status
+kubectl -n argocd get applications
+
+# View specific application details
+kubectl -n argocd get application <app-name> -o yaml
+
+# Check for sync conflicts after manual changes
+kubectl -n argocd describe application <app-name>
+```
+
+### Development Workflow
 
 1. Modify Helm charts in `apps/<app-name>/`
 2. Test locally with `helm template`
