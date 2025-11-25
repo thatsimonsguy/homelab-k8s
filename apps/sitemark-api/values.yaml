@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: 192.168.2.17:5000/sitemark-backend
-  tag: 0.1.7
+  tag: 0.1.8
   pullPolicy: Always
 
 service:
@@ -13,8 +13,8 @@ service:
 ingress:
   enabled: true
   class: traefik
-  host: brightbadgertech.com
-  path: /sitemark-api
+  host: api.sitemark.app
+  path: /
   pathType: Prefix
 
 # Database configuration

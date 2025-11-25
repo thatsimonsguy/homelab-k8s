@@ -24,6 +24,8 @@ spec:
           ports:
             - containerPort: {{ .Values.service.targetPort }}
           env:
+            - name: ENV
+              value: production
             - name: PORT
               value: "{{ .Values.app.port }}"
             - name: LOG_LEVEL
