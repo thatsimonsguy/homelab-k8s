@@ -11,3 +11,7 @@ postgresql:
     service:
       type: LoadBalancer
       loadBalancerIP: 192.168.2.20
+    extendedConfiguration: |
+      shared_preload_libraries = 'pg_stat_statements'
+      pg_stat_statements.max = 10000
+      pg_stat_statements.track = all
