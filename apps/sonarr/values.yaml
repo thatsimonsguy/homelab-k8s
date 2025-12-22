@@ -6,9 +6,8 @@ image:
   pullPolicy: IfNotPresent
 
 service:
-  type: LoadBalancer
+  type: ClusterIP
   port: 8989
-  loadBalancerIP: 192.168.2.18
 
 persistence:
   config:
