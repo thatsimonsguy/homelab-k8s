@@ -7,7 +7,7 @@ spec:
   entryPoints:
     - web
   routes:
-    - match: Host(`radarr.lan`)
+    - match: Host(`radarr.int.matthewpsimons.com`)
       kind: Rule
       services:
         - name: radarr
