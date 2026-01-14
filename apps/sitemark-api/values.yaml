@@ -32,6 +32,22 @@ app:
   port: 8080
   logLevel: info
 
+# Authentication configuration
+auth:
+  frontendUrl: https://sitemark.app
+  jwtAccessTokenExpiry: 1h
+  jwtRefreshTokenExpiry: 720h
+  oauth:
+    google:
+      redirectUrl: https://api.sitemark.app/auth/callback/google
+    microsoft:
+      redirectUrl: https://api.sitemark.app/auth/callback/microsoft
+    okta:
+      redirectUrl: https://api.sitemark.app/auth/callback/okta
+      domain: yourorg.okta.com
+  # Secrets stored in sealed secret
+  secretsSecretName: sitemark-auth-secret
+
 resources: {}
 
 nodeSelector: {}
