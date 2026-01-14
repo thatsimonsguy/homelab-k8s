@@ -30,7 +30,7 @@ postgres:
 # Application configuration
 app:
   port: 8080
-  logLevel: info
+  logLevel: debug
 
 # Authentication configuration
 auth:
