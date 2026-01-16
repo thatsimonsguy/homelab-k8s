@@ -70,22 +70,19 @@ spec:
                   key: google-client-secret
             - name: OAUTH_GOOGLE_REDIRECT_URL
               value: {{ .Values.auth.oauth.google.redirectUrl }}
-            # OAuth Microsoft configuration (placeholders)
+            # OAuth Microsoft configuration
             - name: OAUTH_MICROSOFT_CLIENT_ID
-              value: "your_microsoft_client_id"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.auth.secretsSecretName }}
+                  key: microsoft-client-id
             - name: OAUTH_MICROSOFT_CLIENT_SECRET
-              value: "your_microsoft_client_secret"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.auth.secretsSecretName }}
+                  key: microsoft-client-secret
             - name: OAUTH_MICROSOFT_REDIRECT_URL
               value: {{ .Values.auth.oauth.microsoft.redirectUrl }}
-            # OAuth Okta configuration (placeholders)
-            - name: OAUTH_OKTA_CLIENT_ID
-              value: "your_okta_client_id"
-            - name: OAUTH_OKTA_CLIENT_SECRET
-              value: "your_okta_client_secret"
-            - name: OAUTH_OKTA_DOMAIN
-              value: {{ .Values.auth.oauth.okta.domain }}
-            - name: OAUTH_OKTA_REDIRECT_URL
-              value: {{ .Values.auth.oauth.okta.redirectUrl }}
           livenessProbe:
             httpGet:
               path: /health

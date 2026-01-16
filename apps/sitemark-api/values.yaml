@@ -42,9 +42,6 @@ auth:
       redirectUrl: https://api.sitemark.app/auth/callback/google
     microsoft:
       redirectUrl: https://api.sitemark.app/auth/callback/microsoft
-    okta:
-      redirectUrl: https://api.sitemark.app/auth/callback/okta
-      domain: yourorg.okta.com
   # Secrets stored in sealed secret
   secretsSecretName: sitemark-auth-secret
 
