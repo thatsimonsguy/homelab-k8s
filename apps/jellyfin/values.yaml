@@ -1,0 +1,34 @@
+replicaCount: 1
+
+image:
+  repository: linuxserver/jellyfin
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: LoadBalancer
+  port: 8096
+  loadBalancerIP: 192.168.2.27
+
+persistence:
+  config:
+    accessMode: ReadWriteOnce
+    size: 5Gi
+    storageClass: "nas-config-storage"
+    mountPath: /config
+
+volumes:
+  tv:
+    hostPath: /mnt/nas/tv
+    mountPath: /data/tv
+  movies:
+    hostPath: /mnt/nas/movies
+    mountPath: /data/movies
+
+env:
+  PUID: "1000"
+  PGID: "1000"
+  TZ: "America/Chicago"
+
+gpu:
+  enabled: true
