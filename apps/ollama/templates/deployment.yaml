@@ -12,9 +12,6 @@ spec:
       labels:
         app: ollama
     spec:
-      {{- if .Values.gpu.enabled }}
-      runtimeClassName: {{ .Values.gpu.runtimeClassName }}
-      {{- end }}
       containers:
         - name: ollama
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -24,6 +21,11 @@ spec:
           volumeMounts:
             - name: model-cache
               mountPath: {{ .Values.persistence.mountPath }}
+          {{- if .Values.gpu.enabled }}
+          resources:
+            limits:
+              nvidia.com/gpu: 1
+          {{- end }}
       volumes:
         - name: model-cache
           persistentVolumeClaim:
