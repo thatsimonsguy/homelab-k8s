@@ -12,12 +12,18 @@ spec:
       labels:
         app: ollama
     spec:
+      {{- if .Values.gpu.enabled }}
+      runtimeClassName: nvidia
+      {{- end }}
       containers:
         - name: ollama
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: 11434
+          env:
+            - name: NVIDIA_VISIBLE_DEVICES
+              value: "{{ .Values.env.NVIDIA_VISIBLE_DEVICES }}"
           volumeMounts:
             - name: model-cache
               mountPath: {{ .Values.persistence.mountPath }}
@@ -26,6 +32,15 @@ spec:
             limits:
               nvidia.com/gpu: 1
           {{- end }}
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - /bin/sh
+                  - -c
+                  - |
+                    until ollama list >/dev/null 2>&1; do sleep 2; done
+                    ollama pull {{ .Values.model.pull }}
       volumes:
         - name: model-cache
           persistentVolumeClaim:

@@ -12,9 +12,16 @@ service:
 
 persistence:
   enabled: true
-  size: 10Gi
+  size: 20Gi
   storageClass: local-path
   mountPath: /root/.ollama
 
 gpu:
   enabled: true
+
+env:
+  # Pin to GTX 1080 Ti (GPU 0), reserving GTX 960 (GPU 1) for Jellyfin
+  NVIDIA_VISIBLE_DEVICES: "GPU-a0588968-f48e-059d-e0d7-9be4dfe1bbee"
+
+model:
+  pull: qwen2.5:14b
