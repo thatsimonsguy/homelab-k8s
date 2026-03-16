@@ -20,10 +20,10 @@ persistence:
 volumes:
   tv:
     hostPath: /mnt/nas/tv
-    mountPath: /data/tv
+    mountPath: /mnt/nas/tv
   movies:
     hostPath: /mnt/nas/movies
-    mountPath: /data/movies
+    mountPath: /mnt/nas/movies
 
 env:
   PUID: "1000"
