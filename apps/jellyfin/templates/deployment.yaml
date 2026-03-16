@@ -15,6 +15,9 @@ spec:
       labels:
         {{- include "jellyfin.selectorLabels" . | nindent 8 }}
     spec:
+      {{- if .Values.gpu.enabled }}
+      runtimeClassName: nvidia
+      {{- end }}
       containers:
         - name: jellyfin
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
