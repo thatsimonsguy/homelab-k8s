@@ -29,6 +29,8 @@ env:
   PUID: "1000"
   PGID: "1000"
   TZ: "America/Chicago"
+  # Pin to GTX 960 (GPU 1), reserving GTX 1080 Ti (GPU 0) for LLM workloads
+  NVIDIA_VISIBLE_DEVICES: "GPU-f8384aa9-fe44-7c37-aa19-9b18a97cd313"
 
 gpu:
   enabled: true

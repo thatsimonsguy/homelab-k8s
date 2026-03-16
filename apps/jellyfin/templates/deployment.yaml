@@ -33,6 +33,8 @@ spec:
               value: "{{ .Values.env.PGID }}"
             - name: TZ
               value: "{{ .Values.env.TZ }}"
+            - name: NVIDIA_VISIBLE_DEVICES
+              value: "{{ .Values.env.NVIDIA_VISIBLE_DEVICES }}"
           volumeMounts:
             - name: config
               mountPath: {{ .Values.persistence.config.mountPath }}
