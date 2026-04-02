@@ -18,6 +18,14 @@ spec:
       {{- if .Values.gpu.enabled }}
       runtimeClassName: nvidia
       {{- end }}
+      initContainers:
+        - name: wait-for-nas
+          image: busybox
+          command: ['sh', '-c', 'echo "Checking NAS mount..."; until mountpoint -q /host-mnt-nas; do echo "NAS not mounted, waiting..."; sleep 5; done; echo "NAS is mounted."']
+          volumeMounts:
+            - name: nas-check
+              mountPath: /host-mnt-nas
+              mountPropagation: HostToContainer
       containers:
         - name: jellyfin
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -57,3 +65,6 @@ spec:
         - name: movies
           hostPath:
             path: {{ .Values.volumes.movies.hostPath }}
+        - name: nas-check
+          hostPath:
+            path: /mnt/nas

@@ -14,6 +14,14 @@ spec:
       labels:
         app: {{ .Chart.Name }}
     spec:
+      initContainers:
+        - name: wait-for-nas
+          image: busybox
+          command: ['sh', '-c', 'echo "Checking NAS mount..."; until mountpoint -q /host-mnt-nas; do echo "NAS not mounted, waiting..."; sleep 5; done; echo "NAS is mounted."']
+          volumeMounts:
+            - name: nas-check
+              mountPath: /host-mnt-nas
+              mountPropagation: HostToContainer
       containers:
         - name: transmission
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -53,3 +61,6 @@ spec:
         - name: data
           hostPath:
             path: "{{ .Values.persistence.path }}"
+        - name: nas-check
+          hostPath:
+            path: /mnt/nas

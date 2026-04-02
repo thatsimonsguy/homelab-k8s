@@ -15,6 +15,14 @@ spec:
       labels:
         {{- include "radarr.selectorLabels" . | nindent 8 }}
     spec:
+      initContainers:
+        - name: wait-for-nas
+          image: busybox
+          command: ['sh', '-c', 'echo "Checking NAS mount..."; until mountpoint -q /host-mnt-nas; do echo "NAS not mounted, waiting..."; sleep 5; done; echo "NAS is mounted."']
+          volumeMounts:
+            - name: nas-check
+              mountPath: /host-mnt-nas
+              mountPropagation: HostToContainer
       containers:
         - name: radarr
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -48,3 +56,6 @@ spec:
           hostPath:
             path: {{ .Values.volumes.downloads.hostPath }}
             mountPath: {{ .Values.volumes.downloads.mountPath }}
+        - name: nas-check
+          hostPath:
+            path: /mnt/nas
