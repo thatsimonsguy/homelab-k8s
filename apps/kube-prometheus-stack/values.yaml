@@ -1,0 +1,38 @@
+kube-prometheus-stack:
+  grafana:
+    enabled: true
+    admin:
+      existingSecret: grafana-admin-secret
+      userKey: admin-user
+      passwordKey: admin-password
+    resources:
+      requests:
+        memory: 128Mi
+      limits:
+        memory: 512Mi
+
+  prometheus:
+    prometheusSpec:
+      retention: 15d
+      resources:
+        requests:
+          memory: 512Mi
+        limits:
+          memory: 2Gi
+      # Disable Thanos sidecar - not needed for homelab
+      thanos: {}
+
+  alertmanager:
+    enabled: true
+    alertmanagerSpec:
+      resources:
+        requests:
+          memory: 64Mi
+        limits:
+          memory: 128Mi
+
+  nodeExporter:
+    enabled: true
+
+  kubeStateMetrics:
+    enabled: true
