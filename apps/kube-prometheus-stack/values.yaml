@@ -10,12 +10,6 @@ kube-prometheus-stack:
         memory: 128Mi
       limits:
         memory: 512Mi
-    persistence:
-      enabled: true
-      size: 2Gi
-      accessModes:
-        - ReadWriteOnce
-
   prometheus:
     prometheusSpec:
       retention: 15d
