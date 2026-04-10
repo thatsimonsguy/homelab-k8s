@@ -10,10 +10,17 @@ kube-prometheus-stack:
         memory: 128Mi
       limits:
         memory: 512Mi
+    persistence:
+      enabled: true
+      size: 2Gi
+      accessModes:
+        - ReadWriteOnce
 
   prometheus:
     prometheusSpec:
       retention: 15d
+      # Hard size cap: stops ingesting at 8GB, well before the 10Gi PVC limit
+      retentionSize: 8GB
       resources:
         requests:
           memory: 512Mi
@@ -21,6 +28,14 @@ kube-prometheus-stack:
           memory: 2Gi
       # Disable Thanos sidecar - not needed for homelab
       thanos: {}
+      storageSpec:
+        volumeClaimTemplate:
+          spec:
+            accessModes:
+              - ReadWriteOnce
+            resources:
+              requests:
+                storage: 10Gi
 
   alertmanager:
     enabled: true
@@ -30,6 +45,14 @@ kube-prometheus-stack:
           memory: 64Mi
         limits:
           memory: 128Mi
+      storage:
+        volumeClaimTemplate:
+          spec:
+            accessModes:
+              - ReadWriteOnce
+            resources:
+              requests:
+                storage: 1Gi
 
   nodeExporter:
     enabled: true
