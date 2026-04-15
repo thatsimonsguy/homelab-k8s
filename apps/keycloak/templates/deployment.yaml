@@ -48,20 +48,22 @@ spec:
               value: xforwarded
             - name: KC_HTTP_ENABLED
               value: "true"
+            - name: KC_HEALTH_ENABLED
+              value: "true"
           ports:
             - name: http
               containerPort: 8080
           readinessProbe:
             httpGet:
               path: /health/ready
-              port: 9000
+              port: 8080
             initialDelaySeconds: 30
             periodSeconds: 10
             failureThreshold: 6
           livenessProbe:
             httpGet:
               path: /health/live
-              port: 9000
+              port: 8080
             initialDelaySeconds: 60
             periodSeconds: 15
             failureThreshold: 3
