@@ -1,24 +1,26 @@
-keycloak:
-  auth:
-    adminUser: admin
-    existingSecret: keycloak-secret
-    passwordSecretKey: admin-password
+image:
+  repository: quay.io/keycloak/keycloak
+  tag: "26.3.3"
+  pullPolicy: IfNotPresent
 
-  production: false
-  proxy: edge
+replicaCount: 1
 
-  postgresql:
-    enabled: false
+service:
+  type: ClusterIP
+  port: 8080
 
-  externalDatabase:
-    host: "192.168.2.20"
-    port: 5432
-    database: keycloak
-    existingSecret: keycloak-secret
-    existingSecretUserKey: db-user
-    existingSecretPasswordKey: db-password
+db:
+  host: "192.168.2.20"
+  port: "5432"
+  name: keycloak
+  existingSecret: keycloak-secret
+  userKey: db-user
+  passwordKey: db-password
 
-  service:
-    type: ClusterIP
-    ports:
-      http: 80
+admin:
+  existingSecret: keycloak-secret
+  userLiteral: admin
+  passwordKey: admin-password
+
+hostname:
+  url: "http://keycloak.int.matthewpsimons.com"
