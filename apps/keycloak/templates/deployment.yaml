@@ -42,10 +42,8 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.admin.existingSecret }}
                   key: {{ .Values.admin.passwordKey }}
-            - name: KC_HOSTNAME_URL
-              value: {{ .Values.hostname.url }}
-            - name: KC_HOSTNAME_ADMIN_URL
-              value: {{ .Values.hostname.url }}
+            - name: KC_HOSTNAME
+              value: {{ .Values.hostname.host }}
             - name: KC_PROXY_HEADERS
               value: xforwarded
             - name: KC_HTTP_ENABLED

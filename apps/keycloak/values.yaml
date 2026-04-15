@@ -23,4 +23,4 @@ admin:
   passwordKey: admin-password
 
 hostname:
-  url: "http://keycloak.int.matthewpsimons.com"
+  host: "keycloak.int.matthewpsimons.com"
