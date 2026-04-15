@@ -56,14 +56,14 @@ spec:
           readinessProbe:
             httpGet:
               path: /health/ready
-              port: 8080
+              port: 9000
             initialDelaySeconds: 30
             periodSeconds: 10
             failureThreshold: 6
           livenessProbe:
             httpGet:
               path: /health/live
-              port: 8080
-            initialDelaySeconds: 60
+              port: 9000
+            initialDelaySeconds: 90
             periodSeconds: 15
             failureThreshold: 3
