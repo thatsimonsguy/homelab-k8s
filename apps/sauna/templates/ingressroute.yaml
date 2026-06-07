@@ -1,0 +1,17 @@
+# Plain-HTTP route. TLS + mTLS (client-cert auth) are handled at Cloudflare's
+# edge (the Cloudflare Tunnel terminates TLS, then forwards HTTP to Traefik), so
+# Traefik just host-routes to the tablet. Matches the other tunnel-backed apps.
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: sauna
+  namespace: {{ .Values.namespace }}
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`{{ .Values.host }}`)
+      kind: Rule
+      services:
+        - name: sauna-tablet
+          port: {{ .Values.tablet.port }}

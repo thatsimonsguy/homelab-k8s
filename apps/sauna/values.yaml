@@ -1,0 +1,14 @@
+# Public route for the sauna controller, fronted by the Cloudflare Tunnel.
+#
+# Path: phone --HTTPS + client cert--> Cloudflare edge (terminates TLS, enforces
+# mTLS via a WAF rule) --tunnel--> Traefik (web) --> saunad on the tablet.
+# Traefik only host-routes; all TLS/auth happens at Cloudflare.
+
+host: sauna.matthewpsimons.com
+
+# saunad on the tablet (external LAN device — not a pod)
+tablet:
+  ip: 192.168.1.208
+  port: 8080
+
+namespace: sauna

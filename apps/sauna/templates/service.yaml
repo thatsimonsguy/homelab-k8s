@@ -1,0 +1,12 @@
+# Selector-less Service + matching Endpoints below = a stable in-cluster name
+# that points at the tablet's saunad on the LAN.
+apiVersion: v1
+kind: Service
+metadata:
+  name: sauna-tablet
+  namespace: {{ .Values.namespace }}
+spec:
+  ports:
+    - name: http
+      port: {{ .Values.tablet.port }}
+      targetPort: {{ .Values.tablet.port }}
