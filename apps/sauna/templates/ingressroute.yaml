@@ -1,0 +1,24 @@
+# Public HTTPS route for the sauna, gated by the mTLS TLSOption.
+# Server cert is issued by the Traefik letsencrypt resolver (needs the host to
+# be publicly resolvable + 443/80 reachable for the ACME challenge).
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: sauna
+  namespace: {{ .Values.namespace }}
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`{{ .Values.host }}`)
+      kind: Rule
+      services:
+        - name: sauna-tablet
+          port: {{ .Values.tablet.port }}
+  tls:
+    certResolver: {{ .Values.certResolver }}
+    domains:
+      - main: {{ .Values.host }}
+    options:
+      name: sauna-mtls
+      namespace: {{ .Values.namespace }}

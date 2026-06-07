@@ -1,0 +1,13 @@
+# Require a valid client certificate (signed by our CA) for any TLS connection
+# that uses this option. Fail-closed: no/invalid cert => handshake rejected.
+apiVersion: traefik.io/v1alpha1
+kind: TLSOption
+metadata:
+  name: sauna-mtls
+  namespace: {{ .Values.namespace }}
+spec:
+  minVersion: VersionTLS12
+  clientAuth:
+    secretNames:
+      - sauna-client-ca
+    clientAuthType: RequireAndVerifyClientCert

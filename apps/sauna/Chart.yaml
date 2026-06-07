@@ -1,0 +1,6 @@
+apiVersion: v2
+name: sauna
+description: mTLS-gated public ingress for the sauna controller (saunad on the tablet)
+type: application
+version: 0.1.0
+appVersion: "1.0"

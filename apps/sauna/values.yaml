@@ -1,0 +1,17 @@
+# Public, mTLS-protected ingress for the sauna controller.
+#
+# Traffic: phone --HTTPS+client cert--> Traefik (websecure) --reverse proxy-->
+# saunad on the tablet (a LAN device, reached via a manual Endpoints object).
+# Only clients presenting a cert signed by files/ca.crt are allowed in.
+
+host: sauna.matthewpsimons.com
+
+# saunad on the tablet (external LAN device — not a pod)
+tablet:
+  ip: 192.168.1.208
+  port: 8080
+
+# Traefik ACME resolver (matches apps/traefik certificatesResolvers.letsencrypt)
+certResolver: letsencrypt
+
+namespace: sauna

@@ -1,0 +1,13 @@
+# Manual backend for the selector-less Service: the tablet's saunad on the LAN.
+# (The cluster must be able to route to this IP:port.)
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: sauna-tablet
+  namespace: {{ .Values.namespace }}
+subsets:
+  - addresses:
+      - ip: {{ .Values.tablet.ip }}
+    ports:
+      - name: http
+        port: {{ .Values.tablet.port }}
