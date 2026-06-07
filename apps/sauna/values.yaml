@@ -1,8 +1,8 @@
-# Public, mTLS-protected ingress for the sauna controller.
+# Public route for the sauna controller, fronted by the Cloudflare Tunnel.
 #
-# Traffic: phone --HTTPS+client cert--> Traefik (websecure) --reverse proxy-->
-# saunad on the tablet (a LAN device, reached via a manual Endpoints object).
-# Only clients presenting a cert signed by files/ca.crt are allowed in.
+# Path: phone --HTTPS + client cert--> Cloudflare edge (terminates TLS, enforces
+# mTLS via a WAF rule) --tunnel--> Traefik (web) --> saunad on the tablet.
+# Traefik only host-routes; all TLS/auth happens at Cloudflare.
 
 host: sauna.matthewpsimons.com
 
@@ -10,8 +10,5 @@ host: sauna.matthewpsimons.com
 tablet:
   ip: 192.168.1.208
   port: 8080
-
-# Traefik ACME resolver (matches apps/traefik certificatesResolvers.letsencrypt)
-certResolver: letsencrypt
 
 namespace: sauna
