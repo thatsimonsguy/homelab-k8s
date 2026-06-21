@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: linuxserver/radarr
-  tag: latest
+  tag: 6.2.1.10461-ls306
   pullPolicy: IfNotPresent
 
 service:
