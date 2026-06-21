@@ -55,7 +55,6 @@ spec:
         - name: downloads
           hostPath:
             path: {{ .Values.volumes.downloads.hostPath }}
-            mountPath: {{ .Values.volumes.downloads.mountPath }}
         - name: nas-check
           hostPath:
             path: /mnt/nas
