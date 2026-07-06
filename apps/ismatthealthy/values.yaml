@@ -34,15 +34,14 @@ ingress:
   # LAN-only surface: ingest + healthz. NEVER routed to the tunnel.
   lanHost: ingest.ismatthealthy.int.matthewpsimons.com
 
-# Litestream -> Cloudflare R2 (decision D8). Disabled until the R2 bucket +
-# sealed credentials exist; flipping enabled=true adds the sidecar.
+# Litestream -> Cloudflare R2 (decision D8). Credentials: templates/
+# r2-sealed-secret.yaml (sealed 2026-07-06).
 litestream:
-  enabled: false
+  enabled: true
   image: litestream/litestream:0.3
   bucket: ismatthealthy
   path: db
-  # endpoint like https://<account-id>.r2.cloudflarestorage.com
-  endpoint: ""
+  endpoint: https://ff050bce9049f75029763393cb37f65e.r2.cloudflarestorage.com
   secretName: ismatthealthy-r2 # sealed secret: access-key-id / secret-access-key
 
 resources: {}
