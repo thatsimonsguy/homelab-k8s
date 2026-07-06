@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ismatthealthy-hub
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: ismatthealthy-hub
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  strategy:
+    type: Recreate # single SQLite writer — never two hubs on one db
+  selector:
+    matchLabels:
+      app: ismatthealthy-hub
+  template:
+    metadata:
+      labels:
+        app: ismatthealthy-hub
+    spec:
+      containers:
+        - name: hub
+          image: "{{ .Values.hub.image.repository }}:{{ .Values.hub.image.tag }}"
+          imagePullPolicy: {{ .Values.hub.image.pullPolicy }}
+          args:
+            - "-db"
+            - {{ .Values.hub.dbPath }}
+            - "-public-addr"
+            - "0.0.0.0:{{ .Values.hub.publicPort }}"
+            - "-lan-addr"
+            - "0.0.0.0:{{ .Values.hub.lanPort }}"
+          ports:
+            - name: public
+              containerPort: {{ .Values.hub.publicPort }}
+            - name: lan
+              containerPort: {{ .Values.hub.lanPort }}
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: lan
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: lan
+            initialDelaySeconds: 2
+            periodSeconds: 5
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          resources: {{- toYaml .Values.resources | nindent 12 }}
+        {{- if .Values.litestream.enabled }}
+        - name: litestream
+          image: {{ .Values.litestream.image }}
+          args: ["replicate"]
+          env:
+            - name: LITESTREAM_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.litestream.secretName }}
+                  key: access-key-id
+            - name: LITESTREAM_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.litestream.secretName }}
+                  key: secret-access-key
+          volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: litestream-config
+              mountPath: /etc/litestream.yml
+              subPath: litestream.yml
+        {{- end }}
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: ismatthealthy-data
+        {{- if .Values.litestream.enabled }}
+        - name: litestream-config
+          configMap:
+            name: ismatthealthy-litestream
+        {{- end }}

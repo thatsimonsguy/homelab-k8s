@@ -1,0 +1,48 @@
+# ismatthealthy — hub (Go + embedded SQLite on a PVC) and web (static SPA).
+#
+# Exposure model (repo ADR-0003): the hub has TWO listeners. Only the public
+# read surface (8080) and the SPA are ever routed toward the internet; the
+# LAN listener (8081: ingest + ops) stays on a .int host. When the Cloudflare
+# Tunnel is added at launch, it points at the PUBLIC host only.
+
+namespace: ismatthealthy
+
+hub:
+  image:
+    repository: 192.168.2.17:5000/ismatthealthy-hub
+    tag: 0.1.0
+    pullPolicy: Always
+  publicPort: 8080
+  lanPort: 8081
+  dbPath: /data/ismatthealthy.db
+
+web:
+  image:
+    repository: 192.168.2.17:5000/ismatthealthy-web
+    tag: 0.1.0
+    pullPolicy: Always
+  port: 80
+
+persistence:
+  size: 1Gi
+  storageClass: local-path # single-node k3s; SQLite + network locks don't mix
+
+ingress:
+  class: traefik
+  # public surface: SPA + /api (read-only). The tunnel will target this host.
+  publicHost: ismatthealthy.int.matthewpsimons.com
+  # LAN-only surface: ingest + healthz. NEVER routed to the tunnel.
+  lanHost: ingest.ismatthealthy.int.matthewpsimons.com
+
+# Litestream -> Cloudflare R2 (decision D8). Disabled until the R2 bucket +
+# sealed credentials exist; flipping enabled=true adds the sidecar.
+litestream:
+  enabled: false
+  image: litestream/litestream:0.3
+  bucket: ismatthealthy
+  path: db
+  # endpoint like https://<account-id>.r2.cloudflarestorage.com
+  endpoint: ""
+  secretName: ismatthealthy-r2 # sealed secret: access-key-id / secret-access-key
+
+resources: {}

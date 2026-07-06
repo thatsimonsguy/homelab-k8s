@@ -1,0 +1,17 @@
+{{- if .Values.litestream.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ismatthealthy-litestream
+  namespace: {{ .Values.namespace }}
+data:
+  litestream.yml: |
+    dbs:
+      - path: {{ .Values.hub.dbPath }}
+        replicas:
+          - type: s3
+            bucket: {{ .Values.litestream.bucket }}
+            path: {{ .Values.litestream.path }}
+            endpoint: {{ .Values.litestream.endpoint }}
+            force-path-style: true
+{{- end }}

@@ -1,0 +1,51 @@
+# Two ingresses, two audiences (repo ADR-0003) — the boundary is which HOST
+# gets routed to the tunnel at launch, and the LAN surface is a different
+# host entirely.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ismatthealthy-public
+  namespace: {{ .Values.namespace }}
+  annotations:
+    kubernetes.io/ingress.class: {{ .Values.ingress.class }}
+spec:
+  rules:
+    - host: {{ .Values.ingress.publicHost }}
+      http:
+        paths:
+          # read-only API — the hub's public listener only
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: ismatthealthy-hub-public
+                port:
+                  number: 80
+          # everything else is the SPA
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: ismatthealthy-web
+                port:
+                  number: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ismatthealthy-lan
+  namespace: {{ .Values.namespace }}
+  annotations:
+    kubernetes.io/ingress.class: {{ .Values.ingress.class }}
+spec:
+  rules:
+    - host: {{ .Values.ingress.lanHost }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: ismatthealthy-hub-lan
+                port:
+                  number: 80

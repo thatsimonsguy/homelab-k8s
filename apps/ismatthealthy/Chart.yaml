@@ -1,0 +1,5 @@
+apiVersion: v2
+name: ismatthealthy
+description: Public health-data portal — Go hub (embedded SQLite) + React SPA
+version: 0.1.0
+appVersion: "0.1.0"

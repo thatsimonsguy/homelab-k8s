@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ismatthealthy-hub-public
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    app: ismatthealthy-hub
+  ports:
+    - name: http
+      port: 80
+      targetPort: public
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ismatthealthy-hub-lan
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    app: ismatthealthy-hub
+  ports:
+    - name: http
+      port: 80
+      targetPort: lan
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ismatthealthy-web
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    app: ismatthealthy-web
+  ports:
+    - name: http
+      port: 80
+      targetPort: {{ .Values.web.port }}
