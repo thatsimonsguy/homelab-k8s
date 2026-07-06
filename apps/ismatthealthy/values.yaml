@@ -29,8 +29,11 @@ persistence:
 
 ingress:
   class: traefik
-  # public surface: SPA + /api (read-only). The tunnel will target this host.
-  publicHost: ismatthealthy.int.matthewpsimons.com
+  # public surface: SPA + /api (read-only). ismatthealthy.com arrives through
+  # the Cloudflare Tunnel; the .int host is the LAN view of the same surface.
+  publicHosts:
+    - ismatthealthy.com
+    - ismatthealthy.int.matthewpsimons.com
   # LAN-only surface: ingest + healthz. NEVER routed to the tunnel.
   lanHost: ingest.ismatthealthy.int.matthewpsimons.com
 
