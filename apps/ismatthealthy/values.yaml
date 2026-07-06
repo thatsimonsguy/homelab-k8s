@@ -29,13 +29,16 @@ persistence:
 
 ingress:
   class: traefik
-  # public surface: SPA + /api (read-only). ismatthealthy.com arrives through
-  # the Cloudflare Tunnel; the .int host is the LAN view of the same surface.
+  # public surface: SPA + /api (read-only), via the Cloudflare Tunnel.
+  # Deliberately NO *.matthewpsimons.com hosts anywhere in this app — the
+  # site's anonymity depends on zero DNS association with that domain
+  # (2026-07-06 privacy audit). LAN viewing uses the public site.
   publicHosts:
     - ismatthealthy.com
-    - ismatthealthy.int.matthewpsimons.com
-  # LAN-only surface: ingest + healthz. NEVER routed to the tunnel.
-  lanHost: ingest.ismatthealthy.int.matthewpsimons.com
+  # LAN-only ingest + ops. .internal is the ICANN-reserved private-use TLD:
+  # it cannot appear in public DNS. Clients resolve it via a hosts entry
+  # (192.168.2.244). NEVER routed to the tunnel.
+  lanHost: ingest.ismatthealthy.internal
 
 # Litestream -> Cloudflare R2 (decision D8). Credentials: templates/
 # r2-sealed-secret.yaml (sealed 2026-07-06).
