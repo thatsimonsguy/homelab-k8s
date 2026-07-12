@@ -1,4 +1,8 @@
 minio:
+  image:
+    # Bitnami purged versioned tags from docker.io/bitnami in 2024; the
+    # frozen archive lives under bitnamilegacy.
+    repository: bitnamilegacy/minio
   auth:
     existingSecret: minio-secret  # created out-of-band (root-user/root-password keys)
   mode: standalone
