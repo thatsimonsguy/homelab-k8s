@@ -1,0 +1,16 @@
+# Plain-HTTP route on the internal host, matching the other *.int apps
+# (radarr, sonarr, grafana): Traefik just host-routes to the backend.
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: thermostat
+  namespace: {{ .Values.namespace }}
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`{{ .Values.host }}`)
+      kind: Rule
+      services:
+        - name: thermostat-rpi
+          port: {{ .Values.controller.port }}

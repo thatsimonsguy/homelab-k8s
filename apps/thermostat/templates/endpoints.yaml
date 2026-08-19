@@ -1,0 +1,13 @@
+# Manual backend for the selector-less Service: the Pi's rpi-hvac web UI on the
+# LAN. (The cluster must be able to route to this IP:port.)
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: thermostat-rpi
+  namespace: {{ .Values.namespace }}
+subsets:
+  - addresses:
+      - ip: {{ .Values.controller.ip }}
+    ports:
+      - name: http
+        port: {{ .Values.controller.port }}

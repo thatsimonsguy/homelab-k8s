@@ -1,0 +1,12 @@
+# Selector-less Service + matching Endpoints below = a stable in-cluster name
+# that points at the rpi-hvac controller on the LAN.
+apiVersion: v1
+kind: Service
+metadata:
+  name: thermostat-rpi
+  namespace: {{ .Values.namespace }}
+spec:
+  ports:
+    - name: http
+      port: {{ .Values.controller.port }}
+      targetPort: {{ .Values.controller.port }}

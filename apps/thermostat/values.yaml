@@ -1,0 +1,27 @@
+# Internal route for the rpi-hvac thermostat controller.
+#
+# Exposure model — LAN-ONLY, and the gate is DNS, not Traefik:
+#   *.int.matthewpsimons.com is a DNS-only (grey-cloud) Cloudflare record
+#   pointing at 192.168.2.244, the k3s Traefik LoadBalancer. That is an
+#   RFC1918 address, so the record resolves publicly but only a client
+#   already on the LAN can route to it. thermostat.int... is covered by the
+#   existing wildcard — no new DNS record is needed.
+#
+#   NEVER add this host as a public hostname on the Cloudflare Tunnel
+#   (cloudflared.service on the k3s host, remote-managed from the Zero Trust
+#   dashboard). That is the only thing that would make the thermostat
+#   internet-reachable; a tunnel public hostname bypasses the DNS gate above.
+#   Compare apps/sauna, which IS deliberately tunnel-backed and mTLS-gated.
+#
+# Path: LAN browser --> thermostat.int.matthewpsimons.com (192.168.2.244)
+#       --> Traefik (web) --> rpi-hvac web UI on the Pi.
+
+host: thermostat.int.matthewpsimons.com
+
+# rpi-hvac controller on the Raspberry Pi (external LAN device — not a pod;
+# static DHCP reservation). Verified reachable from the cluster host.
+controller:
+  ip: 192.168.1.48
+  port: 8081
+
+namespace: thermostat
