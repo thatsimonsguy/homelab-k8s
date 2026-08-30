@@ -29,6 +29,17 @@ spec:
             - "0.0.0.0:{{ .Values.hub.publicPort }}"
             - "-lan-addr"
             - "0.0.0.0:{{ .Values.hub.lanPort }}"
+          env:
+            # NOOP push receiver bearer token (repo ADR-0003 D21 amendment).
+            # optional: with the secret absent the hub starts normally and
+            # keeps /api/v1/push unmounted (fail closed), instead of
+            # crash-looping on a missing ref.
+            - name: PUSH_BEARER_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.hub.pushSecretName }}
+                  key: bearer-token
+                  optional: true
           ports:
             - name: public
               containerPort: {{ .Values.hub.publicPort }}

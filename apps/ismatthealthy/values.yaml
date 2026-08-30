@@ -10,11 +10,15 @@ namespace: ismatthealthy
 hub:
   image:
     repository: 192.168.2.17:5000/ismatthealthy-hub
-    tag: 0.1.10
+    tag: 0.1.12
     pullPolicy: Always
   publicPort: 8080
   lanPort: 8081
   dbPath: /data/ismatthealthy.db
+  # Bearer token for the NOOP push receiver (repo ADR-0003 D21 amendment):
+  # templates/push-sealed-secret.yaml. The route pair /api/v1/push is only
+  # mounted when the secret exists.
+  pushSecretName: ismatthealthy-push
 
 web:
   image:
