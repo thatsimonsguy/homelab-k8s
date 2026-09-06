@@ -1,8 +1,8 @@
 image:
   registry: 192.168.2.17:5000
   # Set both to the tag printed by `task sandbox-images` in the aggsys repo.
-  erpServerTag: 20260906-17e5ed1
-  toolsTag: 20260906-daadf13-fix1
+  erpServerTag: 20260906-10070bd
+  toolsTag: 20260906-10070bd
   pullPolicy: Always
 
 # Public, daytime erp-server: config-driven tax (TAX_PROVIDER unset), OIDC on.
@@ -35,12 +35,28 @@ nightly:
   # Pin a backup file name to skip the blob lookup (proof runs); empty = newest .bak in the container.
   bakFile: ""
   env:
+    KEYCLOAK_URL: http://keycloak.int.matthewpsimons.com
+    KEYCLOAK_REALM: wieser
+    SANDBOX_IDENTITY_FILE: /etc/aggsys/identity.yaml
+    SANDBOX_IDENTITY_CREDENTIALS: /data/identity-credentials.txt
     REPLAY_OIDC_TOKEN_URL: http://keycloak.int.matthewpsimons.com/realms/wieser/protocol/openid-connect/token
     REPLAY_OIDC_CLIENT_ID: erp-api
     REPLAY_ENTRY_USERNAME: replay-entry
     REPLAY_APPROVER_USERNAME: replay-approver
     OIDC_ISSUER_URL: http://keycloak.int.matthewpsimons.com/realms/wieser
     OIDC_CLIENT_ID: erp-api
+  # Identity manifest (AGG-359): people, aggsys role, scope. Keycloak accounts
+  # are ensured through the admin API (KEYCLOAK_ADMIN_* in the sealed secret);
+  # a new local account's temporary password lands in
+  # /data/identity-credentials.txt on the PVC (kubectl exec to read it).
+  identity: |
+    users:
+      - email: matt@brightbadgerstudios.com
+        display_name: Matt Simons
+        roles: [super_admin]
+      - email: thatsimonsguy@gmail.com
+        display_name: Matt Simons
+        roles: [super_admin]
   mssql:
     image: mcr.microsoft.com/mssql/server:2022-latest
     memoryLimitMB: "5120"
@@ -55,7 +71,8 @@ nightly:
 # Secret `aggsys-sandbox-secrets` (sealed): DATABASE_URL, TITAN_MIRROR_URL,
 # REPLAY_STATE_URL, REPLAY_OIDC_CLIENT_SECRET, REPLAY_ENTRY_PASSWORD,
 # REPLAY_APPROVER_PASSWORD, MSSQL_SA_PASSWORD, SANDBOX_BAK_SAS_URL,
-# TREASURY_ENCRYPTION_KEY. Re-seal with apps/aggsys/seal-secrets.sh.
+# TREASURY_ENCRYPTION_KEY, KEYCLOAK_ADMIN_USER, KEYCLOAK_ADMIN_PASSWORD.
+# Re-seal with apps/aggsys/seal-secrets.sh.
 secretName: aggsys-sandbox-secrets
 
 storage:

@@ -80,12 +80,16 @@ spec:
                     name: {{ .Values.secretName }}
               volumeMounts:
                 - { name: data, mountPath: /data }
+                - { name: identity, mountPath: /etc/aggsys, readOnly: true }
               resources:
                 {{- toYaml .Values.nightly.resources | nindent 16 }}
           volumes:
             - name: data
               persistentVolumeClaim:
                 claimName: aggsys-sandbox-data
+            - name: identity
+              configMap:
+                name: aggsys-identity
             - name: mssql-data
               emptyDir:
                 sizeLimit: {{ .Values.nightly.mssql.dataSizeLimit }}

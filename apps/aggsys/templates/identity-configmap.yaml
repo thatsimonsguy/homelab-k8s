@@ -1,0 +1,11 @@
+# The sandbox identity manifest (aggsys repo: deploy/sandbox/identity.example.yaml).
+# Deployment configuration, not repository content: who may use the sandbox,
+# with which aggsys role and scope. Re-applied after every nightly rebuild.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aggsys-identity
+  namespace: aggsys
+data:
+  identity.yaml: |
+{{ .Values.nightly.identity | indent 4 }}
