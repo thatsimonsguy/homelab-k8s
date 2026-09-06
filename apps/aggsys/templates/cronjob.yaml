@@ -81,6 +81,7 @@ spec:
               volumeMounts:
                 - { name: data, mountPath: /data }
                 - { name: identity, mountPath: /etc/aggsys, readOnly: true }
+                - { name: secrets, mountPath: /etc/aggsys/secrets, readOnly: true }
               resources:
                 {{- toYaml .Values.nightly.resources | nindent 16 }}
           volumes:
@@ -90,6 +91,10 @@ spec:
             - name: identity
               configMap:
                 name: aggsys-identity
+            - name: secrets
+              secret:
+                secretName: {{ .Values.secretName }}
+                defaultMode: 0400
             - name: mssql-data
               emptyDir:
                 sizeLimit: {{ .Values.nightly.mssql.dataSizeLimit }}

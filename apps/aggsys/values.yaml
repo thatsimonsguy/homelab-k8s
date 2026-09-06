@@ -1,8 +1,8 @@
 image:
   registry: 192.168.2.17:5000
   # Set both to the tag printed by `task sandbox-images` in the aggsys repo.
-  erpServerTag: 20260906-261472d
-  toolsTag: 20260906-261472d
+  erpServerTag: 20260906-b29a30b
+  toolsTag: 20260906-b29a30b
   pullPolicy: Always
 
 # Public, daytime erp-server: config-driven tax (TAX_PROVIDER unset), OIDC on.
@@ -35,11 +35,16 @@ nightly:
   # Pin a backup file name to skip the blob lookup (proof runs); empty = newest .bak in the container.
   bakFile: ""
   env:
-    # Titan backup source (titan-etl backup-sync; AZURE_* in the sealed secret)
-    SANDBOX_BAK_ACCOUNT: stpulumistatewieser
-    SANDBOX_BAK_CONTAINER: titan-nightly
+    # Titan backup source: Bastion tunnel + SFTP pull as a read-only key
+    # (titan-etl backup-sync; AZURE_* service principal + the private key in
+    # the sealed secret). Quoin's only tie to Wieser's Azure.
     SANDBOX_VM_RG: rg-titan
     SANDBOX_VM_NAME: vm-sql-titan
+    SANDBOX_BASTION_NAME: bastion-titan
+    SANDBOX_SSH_USER: quoin-backup-ro
+    SANDBOX_SSH_KEY_FILE: /etc/aggsys/secrets/SANDBOX_SSH_PRIVATE_KEY
+    SANDBOX_SSH_KNOWN_HOST: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPOaSpjnAxNAWWUyuoVeZWXlmhWBXz86Kj4wvIN2aiD6"
+    SANDBOX_VM_BACKUP_DIR: /F:/Titan/backups
     KEYCLOAK_URL: http://keycloak.int.matthewpsimons.com
     KEYCLOAK_REALM: wieser
     SANDBOX_IDENTITY_FILE: /etc/aggsys/identity.yaml
@@ -75,10 +80,11 @@ nightly:
 
 # Secret `aggsys-sandbox-secrets` (sealed): DATABASE_URL, TITAN_MIRROR_URL,
 # REPLAY_STATE_URL, REPLAY_OIDC_CLIENT_SECRET, REPLAY_ENTRY_PASSWORD,
-# REPLAY_APPROVER_PASSWORD, MSSQL_SA_PASSWORD, SANDBOX_BAK_SAS_URL,
-# TREASURY_ENCRYPTION_KEY, KEYCLOAK_ADMIN_USER, KEYCLOAK_ADMIN_PASSWORD,
-# AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, AZURE_SUBSCRIPTION_ID
-# (the sp-quoin-sandbox-nightly service principal). Re-seal with apps/aggsys/seal-secrets.sh.
+# REPLAY_APPROVER_PASSWORD, MSSQL_SA_PASSWORD, TREASURY_ENCRYPTION_KEY,
+# KEYCLOAK_ADMIN_USER, KEYCLOAK_ADMIN_PASSWORD, AZURE_TENANT_ID, AZURE_CLIENT_ID,
+# AZURE_CLIENT_SECRET, AZURE_SUBSCRIPTION_ID (sp-quoin-sandbox-nightly, Reader
+# on the VM/NIC/Bastion only), SANDBOX_SSH_PRIVATE_KEY (the quoin-backup-ro key,
+# a file). Re-seal with apps/aggsys/seal-secrets.sh <envfile> <keyfile>.
 secretName: aggsys-sandbox-secrets
 
 storage:
