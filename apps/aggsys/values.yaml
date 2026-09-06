@@ -1,8 +1,8 @@
 image:
   registry: 192.168.2.17:5000
   # Set both to the tag printed by `task sandbox-images` in the aggsys repo.
-  erpServerTag: 20260906-8dcbc57
-  toolsTag: 20260906-8dcbc57
+  erpServerTag: 20260906-2bdec9c
+  toolsTag: 20260906-2bdec9c
   pullPolicy: Always
 
 # Public, daytime erp-server: config-driven tax (TAX_PROVIDER unset), OIDC on.
@@ -23,16 +23,18 @@ erpServer:
 
 # The nightly from-zero rebuild (aggsys repo: deploy/sandbox/nightly.sh).
 nightly:
-  # Titan's own SQL full backup finishes ~02:10 Central; start after it.
+  # Titan's own SQL full backup finishes ~02:05 Central (compressed since
+  # 2026-09-06, so earlier from here on); start after it. If the file is
+  # still being written, the fetch waits for it to settle (up to 45m).
   schedule: "30 2 * * *"
   timeZone: America/Chicago
-  suspend: true
+  suspend: false
   activeDeadlineSeconds: 14400
   tenant: wieser
   tenantName: Wieser Concrete Products
   t0: "2026-01-01"
   replayPort: "8091"
-  # Pin a backup file name to skip the blob lookup (proof runs); empty = newest .bak in the container.
+  # Pin a backup file name to skip the pull (proof runs); empty = newest .bak on the Titan VM.
   bakFile: ""
   env:
     # Titan backup source: Bastion tunnel + SFTP pull as a read-only key
