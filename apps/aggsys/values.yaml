@@ -1,8 +1,8 @@
 image:
   registry: 192.168.2.17:5000
   # Set both to the tag printed by `task sandbox-images` in the aggsys repo.
-  erpServerTag: 20260906-b29a30b
-  toolsTag: 20260906-b29a30b
+  erpServerTag: 20260906-8dcbc57
+  toolsTag: 20260906-8dcbc57
   pullPolicy: Always
 
 # Public, daytime erp-server: config-driven tax (TAX_PROVIDER unset), OIDC on.
