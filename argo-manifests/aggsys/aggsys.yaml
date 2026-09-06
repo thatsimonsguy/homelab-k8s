@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: aggsys
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/thatsimonsguy/homelab-k8s'
+    targetRevision: main
+    path: apps/aggsys
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: aggsys
+  revisionHistoryLimit: 3
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

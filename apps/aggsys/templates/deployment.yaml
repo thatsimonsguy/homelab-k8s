@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aggsys-erp-server
+  namespace: aggsys
+  labels:
+    {{- include "aggsys.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.erpServer.replicas }}
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: aggsys-erp-server
+  template:
+    metadata:
+      labels:
+        app: aggsys-erp-server
+        app.kubernetes.io/name: {{ include "aggsys.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: erp-server
+          image: "{{ .Values.image.registry }}/aggsys-erp-server:{{ .Values.image.erpServerTag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 8080
+          env:
+            {{- range $k, $v := .Values.erpServer.env }}
+            - name: {{ $k }}
+              value: {{ $v | quote }}
+            {{- end }}
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef: { name: {{ .Values.secretName }}, key: DATABASE_URL }
+            - name: TREASURY_ENCRYPTION_KEY
+              valueFrom:
+                secretKeyRef: { name: {{ .Values.secretName }}, key: TREASURY_ENCRYPTION_KEY }
+          readinessProbe:
+            tcpSocket: { port: 8080 }
+            initialDelaySeconds: 3
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket: { port: 8080 }
+            initialDelaySeconds: 15
+            periodSeconds: 30
+          resources:
+            {{- toYaml .Values.erpServer.resources | nindent 12 }}

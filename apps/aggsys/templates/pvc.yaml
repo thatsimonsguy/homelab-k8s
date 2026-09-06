@@ -1,0 +1,13 @@
+# Nightly working storage: the downloaded Titan backup (kept until the next
+# one replaces it), per-night artifacts, and the last-good tenant dump.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: aggsys-sandbox-data
+  namespace: aggsys
+spec:
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: {{ .Values.storage.className }}
+  resources:
+    requests:
+      storage: {{ .Values.storage.size }}

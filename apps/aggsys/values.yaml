@@ -1,0 +1,63 @@
+image:
+  registry: 192.168.2.17:5000
+  # Set both to the tag printed by `task sandbox-images` in the aggsys repo.
+  erpServerTag: 20260906-17e5ed1
+  toolsTag: 20260906-17e5ed1
+  pullPolicy: Always
+
+# Public, daytime erp-server: config-driven tax (TAX_PROVIDER unset), OIDC on.
+erpServer:
+  replicas: 1
+  env:
+    ENVIRONMENT: production
+    LOG_LEVEL: info
+    PORT: "8080"
+    OIDC_ENABLED: "true"
+    OIDC_ISSUER_URL: http://keycloak.int.matthewpsimons.com/realms/wieser
+    OIDC_CLIENT_ID: erp-api
+    OIDC_APP_CLIENT_ID: aggsys-app
+    OIDC_AGENT_CLIENT_ID: aggsys-agent
+  resources:
+    requests: { cpu: 250m, memory: 512Mi }
+    limits: { memory: 2Gi }
+
+# The nightly from-zero rebuild (aggsys repo: deploy/sandbox/nightly.sh).
+nightly:
+  # Titan's own SQL full backup finishes ~02:10 Central; start after it.
+  schedule: "30 2 * * *"
+  timeZone: America/Chicago
+  suspend: false
+  activeDeadlineSeconds: 14400
+  tenant: wieser
+  tenantName: Wieser Concrete Products
+  t0: "2026-01-01"
+  replayPort: "8091"
+  # Pin a backup file name to skip the blob lookup (proof runs); empty = newest .bak in the container.
+  bakFile: ""
+  env:
+    REPLAY_OIDC_TOKEN_URL: http://keycloak.int.matthewpsimons.com/realms/wieser/protocol/openid-connect/token
+    REPLAY_OIDC_CLIENT_ID: erp-api
+    REPLAY_ENTRY_USERNAME: replay-entry
+    REPLAY_APPROVER_USERNAME: replay-approver
+    OIDC_ISSUER_URL: http://keycloak.int.matthewpsimons.com/realms/wieser
+    OIDC_CLIENT_ID: erp-api
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    memoryLimitMB: "5120"
+    resources:
+      requests: { cpu: 500m, memory: 2Gi }
+      limits: { memory: 6Gi }
+    dataSizeLimit: 60Gi
+  resources:
+    requests: { cpu: 500m, memory: 1Gi }
+    limits: { memory: 4Gi }
+
+# Secret `aggsys-sandbox-secrets` (sealed): DATABASE_URL, TITAN_MIRROR_URL,
+# REPLAY_STATE_URL, REPLAY_OIDC_CLIENT_SECRET, REPLAY_ENTRY_PASSWORD,
+# REPLAY_APPROVER_PASSWORD, MSSQL_SA_PASSWORD, SANDBOX_BAK_SAS_URL,
+# TREASURY_ENCRYPTION_KEY. Re-seal with apps/aggsys/seal-secrets.sh.
+secretName: aggsys-sandbox-secrets
+
+storage:
+  className: local-path
+  size: 80Gi

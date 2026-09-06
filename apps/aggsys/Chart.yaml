@@ -1,0 +1,6 @@
+apiVersion: v2
+name: aggsys
+description: "Quoin ERP (dev codename aggsys) - Wieser development-period sandbox: public erp-server + the nightly from-zero rebuild job (aggsys repo deploy/sandbox, Linear AGG-357)"
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

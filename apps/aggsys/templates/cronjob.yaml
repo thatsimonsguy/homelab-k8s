@@ -1,0 +1,91 @@
+# The Wieser sandbox nightly rebuild (aggsys repo: deploy/sandbox/nightly.sh).
+# SQL Server runs as a native sidecar (initContainer with restartPolicy
+# Always): it holds the restored copy of Titan's backup for the length of
+# the job and is discarded with the pod — the only Titan touch is the file
+# copy into blob.
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: aggsys-nightly
+  namespace: aggsys
+  labels:
+    {{- include "aggsys.labels" . | nindent 4 }}
+spec:
+  schedule: {{ .Values.nightly.schedule | quote }}
+  timeZone: {{ .Values.nightly.timeZone | quote }}
+  suspend: {{ .Values.nightly.suspend }}
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 3600
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 5
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      activeDeadlineSeconds: {{ .Values.nightly.activeDeadlineSeconds }}
+      ttlSecondsAfterFinished: 604800
+      template:
+        metadata:
+          labels:
+            app: aggsys-nightly
+        spec:
+          serviceAccountName: aggsys-nightly
+          restartPolicy: Never
+          securityContext:
+            fsGroup: 10001
+          initContainers:
+            - name: mssql
+              image: {{ .Values.nightly.mssql.image }}
+              restartPolicy: Always
+              env:
+                - { name: ACCEPT_EULA, value: "Y" }
+                - { name: MSSQL_PID, value: Developer }
+                - { name: MSSQL_MEMORY_LIMIT_MB, value: {{ .Values.nightly.mssql.memoryLimitMB | quote }} }
+                - name: MSSQL_SA_PASSWORD
+                  valueFrom:
+                    secretKeyRef: { name: {{ .Values.secretName }}, key: MSSQL_SA_PASSWORD }
+              volumeMounts:
+                - { name: data, mountPath: /bak, subPath: bak, readOnly: true }
+                - { name: mssql-data, mountPath: /var/opt/mssql }
+              resources:
+                {{- toYaml .Values.nightly.mssql.resources | nindent 16 }}
+          containers:
+            - name: nightly
+              image: "{{ .Values.image.registry }}/aggsys-tools:{{ .Values.image.toolsTag }}"
+              imagePullPolicy: {{ .Values.image.pullPolicy }}
+              command: ["/bin/bash", "-c"]
+              args:
+                - |
+                  set -euo pipefail
+                  export TITAN_MSSQL_URL="sqlserver://sa:${MSSQL_SA_PASSWORD}@localhost:1433?database=Titan&encrypt=disable"
+                  export SANDBOX_WORK_DIR="/data/work/$(date -u +%F)"
+                  mkdir -p /data/bak "$SANDBOX_WORK_DIR"
+                  exec /usr/local/bin/nightly.sh
+              env:
+                {{- range $k, $v := .Values.nightly.env }}
+                - name: {{ $k }}
+                  value: {{ $v | quote }}
+                {{- end }}
+                - { name: SANDBOX_TENANT, value: {{ .Values.nightly.tenant | quote }} }
+                - { name: SANDBOX_TENANT_NAME, value: {{ .Values.nightly.tenantName | quote }} }
+                - { name: SANDBOX_T0, value: {{ .Values.nightly.t0 | quote }} }
+                - { name: SANDBOX_REPLAY_PORT, value: {{ .Values.nightly.replayPort | quote }} }
+                - { name: SANDBOX_BAK_FILE, value: {{ .Values.nightly.bakFile | quote }} }
+                - { name: SANDBOX_BAK_DIR, value: /data/bak }
+                - { name: SANDBOX_MSSQL_BAK_DIR, value: /bak }
+                - { name: SANDBOX_LASTGOOD, value: /data/lastgood.dump }
+                - { name: SANDBOX_MSSQL_WAIT, value: 10m }
+                - { name: SANDBOX_POST_REBUILD_CMD, value: "kubectl -n aggsys rollout restart deployment/aggsys-erp-server && kubectl -n aggsys rollout status deployment/aggsys-erp-server --timeout=180s" }
+              envFrom:
+                - secretRef:
+                    name: {{ .Values.secretName }}
+              volumeMounts:
+                - { name: data, mountPath: /data }
+              resources:
+                {{- toYaml .Values.nightly.resources | nindent 16 }}
+          volumes:
+            - name: data
+              persistentVolumeClaim:
+                claimName: aggsys-sandbox-data
+            - name: mssql-data
+              emptyDir:
+                sizeLimit: {{ .Values.nightly.mssql.dataSizeLimit }}
