@@ -26,7 +26,7 @@ nightly:
   # Titan's own SQL full backup finishes ~02:10 Central; start after it.
   schedule: "30 2 * * *"
   timeZone: America/Chicago
-  suspend: false
+  suspend: true
   activeDeadlineSeconds: 14400
   tenant: wieser
   tenantName: Wieser Concrete Products
