@@ -1,0 +1,38 @@
+# Backups (AGG-362): pg_dump of the databases the sandbox cannot rebuild —
+# Keycloak (logins) and replay_state (run history, the curated waiver
+# registry) — to MinIO. BACKUP_DATABASES (name=url,…) rides the sealed
+# secret with the S3 credentials; retention is the bucket's lifecycle rule.
+# The tenant itself is disposable: the nightly's last-good dump is its backup.
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: aggsys-backup
+  namespace: aggsys
+spec:
+  schedule: {{ .Values.backup.schedule | quote }}
+  timeZone: {{ .Values.backup.timeZone | quote }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      activeDeadlineSeconds: 1800
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: backup
+              image: "{{ .Values.image.registry }}/aggsys-tools:{{ .Values.image.toolsTag }}"
+              imagePullPolicy: {{ .Values.image.pullPolicy }}
+              command: ["/usr/local/bin/backup.sh"]
+              env:
+                - { name: SANDBOX_S3_URL, value: {{ .Values.s3.url | quote }} }
+                - { name: BACKUP_S3_BUCKET, value: {{ .Values.backup.bucket | quote }} }
+                - { name: NTFY_URL, value: {{ .Values.ntfy.url | quote }} }
+              envFrom:
+                - secretRef:
+                    name: {{ .Values.secretName }}
+              resources:
+                requests: { cpu: 100m, memory: 256Mi }
+                limits: { memory: 1Gi }

@@ -33,7 +33,35 @@ kube-prometheus-stack:
 
   alertmanager:
     enabled: true
+    # Routing (AGG-362): only aggsys-labelled alerts leave the cluster — to
+    # the self-hosted ntfy (topic aggsys-alerts, publish token in the
+    # ntfy-alertmanager secret mounted below). Everything else keeps the
+    # chart's silent default until a homelab-wide receiver is wanted.
+    config:
+      global:
+        resolve_timeout: 5m
+      route:
+        receiver: "null"
+        group_by: ["alertname", "namespace"]
+        routes:
+          - receiver: ntfy-aggsys
+            matchers:
+              - team = "aggsys"
+            group_wait: 1m
+            repeat_interval: 12h
+      receivers:
+        - name: "null"
+        - name: ntfy-aggsys
+          webhook_configs:
+            - url: http://ntfy.ntfy.svc.cluster.local/aggsys-alerts?title=Alertmanager&priority=high&tags=rotating_light
+              send_resolved: true
+              http_config:
+                authorization:
+                  type: Bearer
+                  credentials_file: /etc/alertmanager/secrets/ntfy-alertmanager/token
     alertmanagerSpec:
+      secrets:
+        - ntfy-alertmanager
       resources:
         requests:
           memory: 64Mi

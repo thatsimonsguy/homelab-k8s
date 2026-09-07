@@ -1,0 +1,29 @@
+# Alertmanager backstop (AGG-362): a job that dies before it can notify, or
+# a nightly that has not succeeded in a day and a half. Picked up by the
+# kube-prometheus-stack operator through the release label; routed to ntfy
+# by the aggsys route in that chart's Alertmanager config.
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: aggsys-sandbox
+  namespace: aggsys
+  labels:
+    release: kube-prometheus-stack
+spec:
+  groups:
+    - name: aggsys-sandbox
+      rules:
+        - alert: AggsysSandboxJobFailed
+          expr: kube_job_status_failed{namespace="aggsys"} > 0
+          for: 5m
+          labels: { severity: critical, team: aggsys }
+          annotations:
+            summary: "aggsys job {{ "{{" }} $labels.job_name {{ "}}" }} failed"
+            description: "A job in the aggsys namespace reported failure (the nightly rebuild or the backup). See kubectl -n aggsys get jobs."
+        - alert: AggsysSandboxNightlyStale
+          expr: (time() - max(kube_cronjob_status_last_successful_time{namespace="aggsys", cronjob="aggsys-nightly"})) > 36 * 3600
+          for: 30m
+          labels: { severity: warning, team: aggsys }
+          annotations:
+            summary: "aggsys nightly has not succeeded in 36 hours"
+            description: "The Wieser sandbox is stale: no successful aggsys-nightly run in 36h."

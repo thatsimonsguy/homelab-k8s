@@ -1,0 +1,18 @@
+# The reconciliation waiver registry (aggsys repo: `titan-replay waivers
+# export`). Deployment configuration, not product content: what the parity
+# checks have judged for THIS customer's data (Titan quirks, characterized
+# residue), keyed by scope pattern. Imported before every nightly plan
+# (upsert by key; a waiver leaves by expiry, never by omission). Edit the
+# file under waivers/ and let the nightly carry it in — never the database.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aggsys-waivers
+  namespace: aggsys
+  annotations:
+    # ~480 KB of data: server-side apply keeps kubectl's last-applied copy
+    # off the object, which would otherwise double it toward the 1 MiB cap.
+    argocd.argoproj.io/sync-options: ServerSideApply=true
+data:
+  wieser-replay-waivers.json: |
+{{ .Files.Get "waivers/wieser-replay-waivers.json" | indent 4 }}

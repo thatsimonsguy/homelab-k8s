@@ -1,8 +1,8 @@
 image:
   registry: 192.168.2.17:5000
   # Set both to the tag printed by `task sandbox-images` in the aggsys repo.
-  erpServerTag: 20260906-aed2356
-  toolsTag: 20260906-aed2356
+  erpServerTag: 20260906-fade584
+  toolsTag: 20260906-fade584
   pullPolicy: Always
 
 # Public, daytime erp-server: config-driven tax (TAX_PROVIDER unset), OIDC on.
@@ -50,6 +50,12 @@ nightly:
     KEYCLOAK_URL: http://keycloak.int.matthewpsimons.com
     KEYCLOAK_REALM: wieser
     SANDBOX_IDENTITY_FILE: /etc/aggsys/identity.yaml
+    SANDBOX_WAIVERS_FILE: /etc/aggsys/waivers/wieser-replay-waivers.json
+    # Alerting + artifacts (AGG-362): the outcome line to ntfy (token in the
+    # sealed secret), the night's record to MinIO (credentials likewise).
+    NTFY_URL: http://ntfy.ntfy.svc.cluster.local/aggsys-sandbox
+    SANDBOX_S3_URL: http://minio.minio.svc.cluster.local:9000
+    SANDBOX_S3_BUCKET: aggsys-sandbox-reports
     SANDBOX_IDENTITY_CREDENTIALS: /data/identity-credentials.txt
     REPLAY_OIDC_TOKEN_URL: http://keycloak.int.matthewpsimons.com/realms/wieser/protocol/openid-connect/token
     REPLAY_OIDC_CLIENT_ID: erp-api
@@ -88,6 +94,19 @@ nightly:
 # on the VM/NIC/Bastion only), SANDBOX_SSH_PRIVATE_KEY (the quoin-backup-ro key,
 # a file). Re-seal with apps/aggsys/seal-secrets.sh <envfile> <keyfile>.
 secretName: aggsys-sandbox-secrets
+
+# Shared endpoints for the nightly and the backup job (AGG-362).
+s3:
+  url: http://minio.minio.svc.cluster.local:9000
+ntfy:
+  url: http://ntfy.ntfy.svc.cluster.local/aggsys-sandbox
+
+# pg_dump of keycloak + replay_state to MinIO (bucket lifecycle: 14 days).
+# After the nightly (02:30 + ~1h) so the run it captures is the night's.
+backup:
+  schedule: "30 4 * * *"
+  timeZone: America/Chicago
+  bucket: aggsys-backups
 
 storage:
   className: local-path
