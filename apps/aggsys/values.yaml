@@ -1,8 +1,8 @@
 image:
   registry: 192.168.2.17:5000
   # Set both to the tag printed by `task sandbox-images` in the aggsys repo.
-  erpServerTag: 20260906-fade584
-  toolsTag: 20260906-fade584
+  erpServerTag: 20260907-2519a46
+  toolsTag: 20260907-2519a46
   pullPolicy: Always
 
 # Public, daytime erp-server: config-driven tax (TAX_PROVIDER unset), OIDC on.
@@ -51,6 +51,9 @@ nightly:
     KEYCLOAK_REALM: wieser
     SANDBOX_IDENTITY_FILE: /etc/aggsys/identity.yaml
     SANDBOX_WAIVERS_FILE: /etc/aggsys/waivers/wieser-replay-waivers.json
+    # Tenant configuration (AGG-361): tax strategy + CoA purpose defaults,
+    # applied through the public API after every rebuild (nightly.tenantConfig).
+    SANDBOX_TENANT_CONFIG_FILE: /etc/aggsys/tenant-config/tenant-config.yaml
     # Alerting + artifacts (AGG-362): the outcome line to ntfy (token in the
     # sealed secret), the night's record to MinIO (credentials likewise).
     NTFY_URL: http://ntfy.ntfy.svc.cluster.local/aggsys-sandbox
@@ -67,6 +70,18 @@ nightly:
   # are ensured through the admin API (KEYCLOAK_ADMIN_* in the sealed secret);
   # a new local account's temporary password lands in
   # /data/identity-credentials.txt on the PVC (kubectl exec to read it).
+  # What a controller sets on day one and the ETL leaves alone: the tax
+  # calculation strategy (the public server is config-driven; tenant_rates
+  # rides the Titan-migrated county rate tables) and the default revenue
+  # account. Per-entity tax overrides for Trucking/Form go here once Wieser
+  # decides them (G7 sign-off). Format: aggsys deploy/sandbox/tenant-config.example.yaml.
+  tenantConfig: |
+    tax_strategy:
+      tenant: tenant_rates
+      legal_entities: {}
+    purpose_defaults:
+      - purpose: core.ar.revenue
+        account: "4000"
   identity: |
     users:
       - email: matt@brightbadgerstudios.com

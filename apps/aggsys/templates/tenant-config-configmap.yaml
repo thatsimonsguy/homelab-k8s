@@ -1,0 +1,11 @@
+# The sandbox tenant configuration (aggsys repo: deploy/sandbox/tenant-config.example.yaml).
+# Deployment configuration: the tax strategy and CoA purpose defaults the
+# nightly re-applies through the public API after every rebuild (AGG-361).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aggsys-tenant-config
+  namespace: aggsys
+data:
+  tenant-config.yaml: |
+{{ .Values.nightly.tenantConfig | indent 4 }}

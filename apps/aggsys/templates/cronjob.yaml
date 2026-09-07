@@ -82,6 +82,7 @@ spec:
                 - { name: data, mountPath: /data }
                 - { name: identity, mountPath: /etc/aggsys, readOnly: true }
                 - { name: waivers, mountPath: /etc/aggsys/waivers, readOnly: true }
+                - { name: tenant-config, mountPath: /etc/aggsys/tenant-config, readOnly: true }
                 - { name: secrets, mountPath: /etc/aggsys/secrets, readOnly: true }
               resources:
                 {{- toYaml .Values.nightly.resources | nindent 16 }}
@@ -95,6 +96,9 @@ spec:
             - name: waivers
               configMap:
                 name: aggsys-waivers
+            - name: tenant-config
+              configMap:
+                name: aggsys-tenant-config
             - name: secrets
               secret:
                 secretName: {{ .Values.secretName }}
