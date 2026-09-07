@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ntfy
+  namespace: argocd
+spec:
+  destination:
+    namespace: ntfy
+    server: https://kubernetes.default.svc
+  source:
+    repoURL: 'https://github.com/thatsimonsguy/homelab-k8s.git'
+    path: 'apps/ntfy'
+    targetRevision: main
+  project: default
+  revisionHistoryLimit: 3
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
