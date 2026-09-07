@@ -1,20 +1,18 @@
 image:
   repository: binwiederhier/ntfy
-  tag: v2.11.0
+  tag: v2.28.0
   pullPolicy: IfNotPresent
 
-# Internal only (LAN / VPN), behind traefik. Auth is deny-all by default:
-# users, topic grants and publish tokens are created imperatively —
-#   kubectl -n ntfy exec deploy/ntfy -- ntfy user add --role=user matt
-#   kubectl -n ntfy exec deploy/ntfy -- ntfy access matt 'aggsys-*' ro
-#   kubectl -n ntfy exec deploy/ntfy -- ntfy user add nightly; ntfy token add nightly; ntfy access nightly aggsys-sandbox wo
-# The user database lives on the PVC.
+# Internal only (LAN / VPN), behind traefik. Auth is deny-all by default;
+# users, topic grants and publish tokens are DECLARED in server.yml, which
+# is a SealedSecret (templates/sealed-config.yaml — it carries bcrypt hashes
+# and tokens). Re-seal to change them:
+#   kubectl create secret generic ntfy-config -n ntfy --from-file=server.yml \
+#     --dry-run=client -o yaml | kubeseal -o yaml > templates/sealed-config.yaml
+# Cache and the provisioned user db live on an emptyDir on purpose: the
+# local-path class sits on the NAS, where SQLite cannot lock ("database is
+# locked" crash loop); a restart loses at most the 72h message cache.
 host: ntfy.int.matthewpsimons.com
-baseUrl: http://ntfy.int.matthewpsimons.com
-
-storage:
-  className: local-path
-  size: 1Gi
 
 resources:
   requests: { cpu: 20m, memory: 32Mi }
