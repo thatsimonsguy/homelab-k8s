@@ -4921,70 +4921,6 @@
       "created_at": "2026-07-25T10:17:26Z"
     },
     {
-      "key_pattern": "R3_ar_open_items:customer=AmesConst",
-      "classification": "TITAN_QUIRK",
-      "reason": "Sub-nickel rounding residue between Titan per-ticket balance columns and replayed application arithmetic (discount/penny rounding). Stable across regens.",
-      "author": "aggsys-replay AGG-320",
-      "expires_at": null,
-      "created_at": "2026-07-24T22:57:45Z"
-    },
-    {
-      "key_pattern": "R3_ar_open_items:customer=BeemerCo",
-      "classification": "TITAN_QUIRK",
-      "reason": "Sub-nickel rounding residue between Titan per-ticket balance columns and replayed application arithmetic (discount/penny rounding). Stable across regens.",
-      "author": "aggsys-replay AGG-320",
-      "expires_at": null,
-      "created_at": "2026-07-24T22:57:45Z"
-    },
-    {
-      "key_pattern": "R3_ar_open_items:customer=BirdPlbg",
-      "classification": "TITAN_QUIRK",
-      "reason": "Sub-nickel rounding residue between Titan per-ticket balance columns and replayed application arithmetic (discount/penny rounding). Stable across regens.",
-      "author": "aggsys-replay AGG-320",
-      "expires_at": null,
-      "created_at": "2026-07-24T22:57:45Z"
-    },
-    {
-      "key_pattern": "R3_ar_open_items:customer=DanckwartCo",
-      "classification": "TITAN_QUIRK",
-      "reason": "Sub-nickel rounding residue between Titan per-ticket balance columns and replayed application arithmetic (discount/penny rounding). Stable across regens.",
-      "author": "aggsys-replay AGG-320",
-      "expires_at": null,
-      "created_at": "2026-07-24T22:57:45Z"
-    },
-    {
-      "key_pattern": "R3_ar_open_items:customer=FoxCitiesBuilders",
-      "classification": "TITAN_QUIRK",
-      "reason": "AGG-324 residual: sub-nickel billing-time rounding (+$0.0196).",
-      "author": "AGG-324 loop",
-      "expires_at": null,
-      "created_at": "2026-07-25T10:17:26Z"
-    },
-    {
-      "key_pattern": "R3_ar_open_items:customer=HartertSeptic",
-      "classification": "TITAN_QUIRK",
-      "reason": "Sub-nickel rounding residue between Titan per-ticket balance columns and replayed application arithmetic (discount/penny rounding). Stable across regens.",
-      "author": "aggsys-replay AGG-320",
-      "expires_at": null,
-      "created_at": "2026-07-24T22:57:45Z"
-    },
-    {
-      "key_pattern": "R3_ar_open_items:customer=HopkinsSand",
-      "classification": "TITAN_QUIRK",
-      "reason": "Sub-nickel rounding residue between Titan per-ticket balance columns and replayed application arithmetic (discount/penny rounding). Stable across regens.",
-      "author": "aggsys-replay AGG-320",
-      "expires_at": null,
-      "created_at": "2026-07-24T22:57:45Z"
-    },
-    {
-      "key_pattern": "R3_ar_open_items:customer=JohnsonStanley",
-      "classification": "TITAN_QUIRK",
-      "reason": "Sub-nickel rounding residue between Titan per-ticket balance columns and replayed application arithmetic (discount/penny rounding). Stable across regens.",
-      "author": "aggsys-replay AGG-320",
-      "expires_at": null,
-      "created_at": "2026-07-24T22:57:45Z"
-    },
-    {
       "key_pattern": "R3_ar_open_items:customer=KomroSales",
       "classification": "TITAN_QUIRK",
       "reason": "Ticket 19211: the one in-window POSITIVE-total line-less shell (a balance-forward receivable stub). The shell translator maps shells as open credits (Abs), sign-flipping this one into a floating $1,070.15 credit whose own payment the D2 range guard clamps away. Single instance; translator carries the caveat comment; a recurring population needs a GL-neutral open-DEBIT mapping.",
@@ -4993,89 +4929,9 @@
       "created_at": "2026-07-24T22:57:45Z"
     },
     {
-      "key_pattern": "R3_ar_open_items:customer=LukeBechelTrucking",
-      "classification": "TITAN_QUIRK",
-      "reason": "Sub-nickel rounding residue between Titan per-ticket balance columns and replayed application arithmetic (discount/penny rounding). Stable across regens.",
-      "author": "aggsys-replay AGG-320",
-      "expires_at": null,
-      "created_at": "2026-07-24T22:57:45Z"
-    },
-    {
-      "key_pattern": "R3_ar_open_items:customer=NFConstr",
-      "classification": "TITAN_QUIRK",
-      "reason": "AGG-324 residual: sub-nickel billing-time rounding — Titan's per-ticket balance columns round line amounts at 2dp; the consolidated invoice computes qty x override-price at 4dp. Net -$0.057.",
-      "author": "AGG-324 loop",
-      "expires_at": null,
-      "created_at": "2026-07-25T10:17:26Z"
-    },
-    {
-      "key_pattern": "R3_ar_open_items:customer=NorthlandConcrete",
-      "classification": "TITAN_QUIRK",
-      "reason": "Sub-nickel rounding residue between Titan per-ticket balance columns and replayed application arithmetic (discount/penny rounding). Stable across regens.",
-      "author": "aggsys-replay AGG-320",
-      "expires_at": null,
-      "created_at": "2026-07-24T22:57:45Z"
-    },
-    {
-      "key_pattern": "R3_ar_open_items:customer=OlympicBuilders",
-      "classification": "TITAN_QUIRK",
-      "reason": "AGG-324 residual: sub-nickel billing-time rounding (+$0.0176).",
-      "author": "AGG-324 loop",
-      "expires_at": null,
-      "created_at": "2026-07-25T10:17:26Z"
-    },
-    {
-      "key_pattern": "R3_ar_open_items:customer=PerkinsFarms",
-      "classification": "TITAN_QUIRK",
-      "reason": "AGG-324 residual: sub-nickel billing-time rounding (+$0.0002).",
-      "author": "AGG-324 loop",
-      "expires_at": null,
-      "created_at": "2026-07-25T10:17:26Z"
-    },
-    {
-      "key_pattern": "R3_ar_open_items:customer=PollardandSons",
-      "classification": "TITAN_QUIRK",
-      "reason": "AGG-324 residual: sub-nickel billing-time rounding (+$0.0037).",
-      "author": "AGG-324 loop",
-      "expires_at": null,
-      "created_at": "2026-07-25T10:17:26Z"
-    },
-    {
       "key_pattern": "R3_ar_open_items:customer=PremierPlbg",
       "classification": "TITAN_QUIRK",
       "reason": "Intentional AGG-314 D2 divergence, AR side: Titan ticket 19447 carries a -$30.00 over-paid balance in its own columns; aggsys refuses over-application and routes the excess to unapplied/deposits — the modern posture (same class as the Cottingham/Cityofmenom vendor advances).",
-      "author": "aggsys-replay AGG-320",
-      "expires_at": null,
-      "created_at": "2026-07-24T22:57:45Z"
-    },
-    {
-      "key_pattern": "R3_ar_open_items:customer=SmiliesSewer",
-      "classification": "TITAN_QUIRK",
-      "reason": "Sub-nickel rounding residue between Titan per-ticket balance columns and replayed application arithmetic (discount/penny rounding). Stable across regens.",
-      "author": "aggsys-replay AGG-320",
-      "expires_at": null,
-      "created_at": "2026-07-24T22:57:45Z"
-    },
-    {
-      "key_pattern": "R3_ar_open_items:customer=TapcoTraffic",
-      "classification": "TITAN_QUIRK",
-      "reason": "AGG-324 residual: sub-nickel billing-time rounding (+$0.008).",
-      "author": "AGG-324 loop",
-      "expires_at": null,
-      "created_at": "2026-07-25T10:17:26Z"
-    },
-    {
-      "key_pattern": "R3_ar_open_items:customer=WalkinRRPIT",
-      "classification": "TITAN_QUIRK",
-      "reason": "Sub-nickel rounding residue between Titan per-ticket balance columns and replayed application arithmetic (discount/penny rounding). Stable across regens.",
-      "author": "aggsys-replay AGG-320",
-      "expires_at": null,
-      "created_at": "2026-07-24T22:57:45Z"
-    },
-    {
-      "key_pattern": "R3_ar_open_items:customer=YaleMech",
-      "classification": "TITAN_QUIRK",
-      "reason": "Sub-nickel rounding residue between Titan per-ticket balance columns and replayed application arithmetic (discount/penny rounding). Stable across regens.",
       "author": "aggsys-replay AGG-320",
       "expires_at": null,
       "created_at": "2026-07-24T22:57:45Z"
