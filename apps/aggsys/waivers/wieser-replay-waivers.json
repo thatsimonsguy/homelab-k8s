@@ -1825,30 +1825,6 @@
       "created_at": "2026-07-13T00:28:33Z"
     },
     {
-      "key_pattern": "R1_gl_trial_balance:entity=Main|account=2210|period=2026-02",
-      "classification": "TITAN_QUIRK",
-      "reason": "Sub-materiality residual of a characterized AGG-320 family (see the campaign log); cell verified stable across v314-v320.",
-      "author": "aggsys-replay AGG-320",
-      "expires_at": null,
-      "created_at": "2026-07-24T21:29:46Z"
-    },
-    {
-      "key_pattern": "R1_gl_trial_balance:entity=Main|account=2210|period=2026-03",
-      "classification": "TITAN_QUIRK",
-      "reason": "Sub-materiality residual of a characterized AGG-320 family (see the campaign log); cell verified stable across v314-v320.",
-      "author": "aggsys-replay AGG-320",
-      "expires_at": null,
-      "created_at": "2026-07-24T21:29:46Z"
-    },
-    {
-      "key_pattern": "R1_gl_trial_balance:entity=Main|account=2210|period=2026-04",
-      "classification": "TITAN_QUIRK",
-      "reason": "Mirror of the 6150 2026-04 waiver: Titan debited 6150 instead of 2210 for ticket 20309's down-payment application, so Titan's 2210 stays high by $32,000 where aggsys correctly relieved it. See the 6150 waiver for evidence.",
-      "author": "aggsys-replay AGG-320",
-      "expires_at": null,
-      "created_at": "2026-07-24T07:10:29Z"
-    },
-    {
       "key_pattern": "R1_gl_trial_balance:entity=Main|account=2215|period=2026-03",
       "classification": "GAAP_DIVERGENCE",
       "reason": "Entity attribution: Titan books this journal's lines across legal entities without per-entity balance (no due-to/due-from legs — e.g. payroll cash drawn on Main against Trucking/Form expense) or with line plants outside the document's owning entity. Entity-scoped double-entry cannot express a per-entity-unbalanced posting without fabricating IC legs Titan never booked. The consolidated (all-entity) net for this account+period matches Titan to the cent: the discrepancy group for this account+period sums to < $0.01 (verified per-cell on the 2026-07-13 run). Rationale documented per RPL-REC-004.",
@@ -2082,38 +2058,6 @@
     },
     {
       "key_pattern": "R1_gl_trial_balance:entity=Main|account=4000|period=2025-12",
-      "classification": "TITAN_QUIRK",
-      "reason": "Mirror of operator line-account overrides (6330 warranty line et al) under AGG-297 config-authoritative routing; the 2026-03 cell is EXCLUDED from waivers (uncharacterized, tracked on AGG-320).",
-      "author": "aggsys-replay AGG-320",
-      "expires_at": null,
-      "created_at": "2026-07-24T21:29:46Z"
-    },
-    {
-      "key_pattern": "R1_gl_trial_balance:entity=Main|account=4000|period=2026-01",
-      "classification": "TITAN_QUIRK",
-      "reason": "Mirror of operator line-account overrides (6330 warranty line et al) under AGG-297 config-authoritative routing; the 2026-03 cell is EXCLUDED from waivers (uncharacterized, tracked on AGG-320).",
-      "author": "aggsys-replay AGG-320",
-      "expires_at": null,
-      "created_at": "2026-07-24T21:29:46Z"
-    },
-    {
-      "key_pattern": "R1_gl_trial_balance:entity=Main|account=4000|period=2026-02",
-      "classification": "TITAN_QUIRK",
-      "reason": "Mirror of operator line-account overrides (6330 warranty line et al) under AGG-297 config-authoritative routing; the 2026-03 cell is EXCLUDED from waivers (uncharacterized, tracked on AGG-320).",
-      "author": "aggsys-replay AGG-320",
-      "expires_at": null,
-      "created_at": "2026-07-24T21:29:46Z"
-    },
-    {
-      "key_pattern": "R1_gl_trial_balance:entity=Main|account=4000|period=2026-03",
-      "classification": "GAAP_DIVERGENCE",
-      "reason": "Titan production-ticket revenue/COGS gross-up: the SJ for tickettype=production tickets books an EXTRA CR 4000 / DR 5000 at the ticket's cost (net-zero income, no inventory basis — the custom-relieve legs move quantity only). aggsys posts ASC-606 transaction-price revenue from the ticket lines, which is the GAAP-correct presentation. Decomposed to the cent (2026-07-25, v322): 17 March journals sum to +11,771.42; 15 diffs equal their journal's 5000 gross-up leg exactly (SJ207968 dominates at 10,596.34); the two standard-ticket residues (SJ207726 −225.00, SJ207954 +228.15) net to +3.15 of sales-account reclass dust. Same-month 5000 Main carries the mirrored overstatement (waived valuation family).",
-      "author": "AGG-320 tranche-2 loop",
-      "expires_at": null,
-      "created_at": "2026-07-25T00:36:59Z"
-    },
-    {
-      "key_pattern": "R1_gl_trial_balance:entity=Main|account=4000|period=2026-04",
       "classification": "TITAN_QUIRK",
       "reason": "Mirror of operator line-account overrides (6330 warranty line et al) under AGG-297 config-authoritative routing; the 2026-03 cell is EXCLUDED from waivers (uncharacterized, tracked on AGG-320).",
       "author": "aggsys-replay AGG-320",
@@ -3583,14 +3527,6 @@
       "author": "AGG-236 R6 loop",
       "expires_at": null,
       "created_at": "2026-07-13T00:28:33Z"
-    },
-    {
-      "key_pattern": "R1_gl_trial_balance:entity=Main|account=8050|period=2026-02",
-      "classification": "TITAN_QUIRK",
-      "reason": "Operator line-account override pair (fee-income vs disposal lines) under AGG-297 config-authoritative routing.",
-      "author": "aggsys-replay AGG-320",
-      "expires_at": null,
-      "created_at": "2026-07-24T21:29:46Z"
     },
     {
       "key_pattern": "R1_gl_trial_balance:entity=Main|account=8150|period=2026-01",
