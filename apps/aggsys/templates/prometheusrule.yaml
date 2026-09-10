@@ -27,3 +27,10 @@ spec:
           annotations:
             summary: "aggsys nightly has not succeeded in 36 hours"
             description: "The Wieser sandbox is stale: no successful aggsys-nightly run in 36h."
+        - alert: AggsysErpServerDown
+          expr: kube_deployment_status_replicas_available{namespace="aggsys", deployment="aggsys-erp-server"} < 1
+          for: 5m
+          labels: { severity: critical, team: aggsys }
+          annotations:
+            summary: "aggsys-erp-server has no available replica"
+            description: "The public Wieser sandbox API has had no ready pod for 5 minutes (readiness probe failing or the deployment scaled to zero). See kubectl -n aggsys get deploy,pods."
