@@ -7,8 +7,7 @@ minio:
     existingSecret: minio-secret  # created out-of-band (root-user/root-password keys)
   mode: standalone
   service:
-    type: LoadBalancer
-    loadBalancerIP: 192.168.2.19
+    type: ClusterIP  # AGG-377 D4: no LAN address; dev access via scripts/dev/homelab-tunnel.sh (aggsys repo)
   persistence:
     enabled: true
     size: 20Gi

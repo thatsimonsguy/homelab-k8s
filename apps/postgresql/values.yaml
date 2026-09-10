@@ -9,8 +9,7 @@ postgresql:
     forcePassword: true
   primary:
     service:
-      type: LoadBalancer
-      loadBalancerIP: 192.168.2.20
+      type: ClusterIP  # AGG-377 D4: no LAN address; dev access via scripts/dev/homelab-tunnel.sh (aggsys repo)
     # Explicit resources: chart 15.5.2 defaults unset resources to the
     # Bitnami "nano" preset (192Mi limit), which OOMKilled the pod 44+ times
     # under aggsys ETL/replay scans (2026-07-12). Node has ~32Gi at ~27% use.
