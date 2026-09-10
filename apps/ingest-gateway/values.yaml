@@ -18,7 +18,7 @@ ingress:
 postgres:
   db: mydatabase # <- TODO: give this a real name https://github.com/thatsimonsguy/treddit/issues/4
   user: myuser # <- TODO: move to secret later https://github.com/thatsimonsguy/treddit/issues/4
-  host: 192.168.2.20
+  host: postgresql.postgresql.svc.cluster.local  # AGG-377 D4: in-cluster service, no LAN address
   port: 5432
   passwordSecretName: postgresql-secret
   passwordSecretKey: password

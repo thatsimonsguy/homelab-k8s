@@ -10,7 +10,7 @@ service:
   port: 8080
 
 db:
-  host: "192.168.2.20"
+  host: postgresql.postgresql.svc.cluster.local  # AGG-377 D4: in-cluster service, no LAN address
   port: "5432"
   name: keycloak
   existingSecret: keycloak-secret
