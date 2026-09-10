@@ -8,5 +8,3 @@ adminPasswordSecretName: argocd-admin-secret
 applicationSetController:
   allowPrivilegeEscalation: true
 
-sealedSecret:
-  adminPassword: "admin-password"
