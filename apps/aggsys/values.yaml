@@ -28,7 +28,7 @@ nightly:
   # still being written, the fetch waits for it to settle (up to 45m).
   schedule: "30 2 * * *"
   timeZone: America/Chicago
-  suspend: true
+  suspend: false
   activeDeadlineSeconds: 14400
   tenant: wieser
   tenantName: Wieser Concrete Products
