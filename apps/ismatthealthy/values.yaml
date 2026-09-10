@@ -10,7 +10,7 @@ namespace: ismatthealthy
 hub:
   image:
     repository: 192.168.2.17:5000/ismatthealthy-hub
-    tag: 0.1.15
+    tag: 0.1.16
     pullPolicy: Always
   publicPort: 8080
   lanPort: 8081
@@ -23,7 +23,7 @@ hub:
 web:
   image:
     repository: 192.168.2.17:5000/ismatthealthy-web
-    tag: 0.1.15
+    tag: 0.1.16
     pullPolicy: Always
   port: 80
 
