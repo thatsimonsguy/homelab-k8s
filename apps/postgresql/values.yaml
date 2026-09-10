@@ -20,6 +20,14 @@ postgresql:
       limits:
         cpu: "2"
         memory: 2Gi
+    # AGG-377 D5: scram-sha-256 only (every role's stored password is already a
+    # SCRAM hash); exposure is bounded by the network (ClusterIP + ssh tunnel).
+    pgHbaConfiguration: |-
+      host     all   all   0.0.0.0/0      scram-sha-256
+      host     all   all   ::/0           scram-sha-256
+      local    all   all                  scram-sha-256
+      host     all   all   127.0.0.1/32   scram-sha-256
+      host     all   all   ::1/128        scram-sha-256
     extendedConfiguration: |
       shared_preload_libraries = 'pg_stat_statements'
       pg_stat_statements.max = 10000
