@@ -1,8 +1,8 @@
 image:
   registry: 192.168.2.17:5000
   # Set both to the tag printed by `task sandbox-images` in the aggsys repo.
-  erpServerTag: 20260909-f281b01
-  toolsTag: 20260909-f281b01
+  erpServerTag: 20260909-42e8389
+  toolsTag: 20260909-42e8389
   pullPolicy: Always
 
 # Public, daytime erp-server: config-driven tax (TAX_PROVIDER unset), OIDC on.
@@ -82,7 +82,27 @@ nightly:
     purpose_defaults:
       - purpose: core.ar.revenue
         account: "4000"
+    # Document-number prefixes (AGG-375) — Wieser's choice is still open; set
+    # the keys here once decided (any subset of: ap_invoice ap_payment
+    # ap_payment_run ap_credit_memo ap_debit_memo ap_prepayment ar_invoice
+    # ar_credit_memo ar_debit_memo sales_order purchase_order delivery
+    # delivery_return; "" = plain numeric series). Applied via
+    # PATCH /api/v1/settings/document-numbering each night.
+    # document_numbering:
+    #   ar_invoice: "INV-"
+    # Approval policy dial (AGG-353) — decision pending; example:
+    # approval_policies:
+    #   - { type: ap_invoice, require_sod: true, auto_approve_threshold: "2500" }
   identity: |
+    # Realm security posture, re-applied every night (drift corrected).
+    # Password rules bind at the next password change (first-login change
+    # for new accounts); brute-force lockout is temporary, never permanent.
+    realm:
+      password_policy: "length(12) and notUsername and notEmail and passwordHistory(3)"
+      brute_force: { enabled: true, failure_factor: 10, wait_increment_seconds: 60, max_failure_wait_seconds: 900 }
+      sso_session_idle_seconds: 1800
+      sso_session_max_seconds: 36000
+      access_token_lifespan_seconds: 300
     users:
       - email: matt@brightbadgerstudios.com
         display_name: Matt Simons
