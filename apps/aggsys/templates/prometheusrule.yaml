@@ -34,3 +34,11 @@ spec:
           annotations:
             summary: "aggsys-erp-server has no available replica"
             description: "The public Wieser sandbox API has had no ready pod for 5 minutes (readiness probe failing or the deployment scaled to zero). See kubectl -n aggsys get deploy,pods."
+        - alert: AggsysEncryptedVolumeMissing
+          expr: absent(node_filesystem_size_bytes{mountpoint="/srv/crypt/pgdata"}) or absent(node_filesystem_size_bytes{mountpoint="/srv/crypt/bulk"})
+          for: 5m
+          labels: { severity: critical, team: aggsys }
+          annotations:
+            summary: "an encrypted data volume is not mounted on burdturglar"
+            description: "/srv/crypt/pgdata (Postgres) or /srv/crypt/bulk (MinIO + sandbox) is missing from the node exporter — most likely the Clevis/Tang unlock did not happen after a boot. Postgres, MinIO and the sandbox pods crash-loop on immutable empty directories until it is mounted. Unlock per apps/aggsys/RUNBOOK-encrypted-volumes.md (AGG-377)."
+
