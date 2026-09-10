@@ -121,7 +121,7 @@ nightly:
     requests: { cpu: 500m, memory: 1Gi }
     limits: { memory: 4Gi }
 
-# Secret `aggsys-sandbox-secrets` (sealed): DATABASE_URL, TITAN_MIRROR_URL,
+# Secret `aggsys-sandbox-secrets` (sealed): DATABASE_URL, TITAN_SOURCE_URL (the ETL source database),
 # REPLAY_STATE_URL, REPLAY_OIDC_CLIENT_SECRET, REPLAY_ENTRY_PASSWORD,
 # REPLAY_APPROVER_PASSWORD, MSSQL_SA_PASSWORD, TREASURY_ENCRYPTION_KEY,
 # KEYCLOAK_ADMIN_USER, KEYCLOAK_ADMIN_PASSWORD, AZURE_TENANT_ID, AZURE_CLIENT_ID,
