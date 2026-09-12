@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: traceroute-migrate-0-1-32
+  name: traceroute-migrate-0-1-33
   namespace: traceroute
 spec:
   backoffLimit: 0
@@ -18,7 +18,7 @@ spec:
         seccompProfile: {type: RuntimeDefault}
       containers:
         - name: migrate
-          image: 192.168.2.17:5000/traceroute:0.1.32
+          image: 192.168.2.17:5000/traceroute:0.1.33
           command: [traceroute-admin]
           args: [-operation, migrate, -runtime-role, traceroute_runtime]
           envFrom:
