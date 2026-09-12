@@ -39,3 +39,10 @@ the reusable owner scope. A failed test must not be worked around by dropping sc
 audience, token-type or session checks. This probe creates no hub account, workspace
 or connection grant and writes no health data. It does not establish full MCP-client
 compatibility, application onboarding or deployment readiness.
+
+The permanent browser client is `browser-client.json`, with `browser-scope.json`
+attached only to that client. It uses the exact app `/auth/callback` redirect and
+S256 PKCE. Default scope is `basic`; optional scopes are `email` and
+`traceroute:browser`. Browser audience is `/api/v1/`, separate from the MCP audience.
+Keycloak adds server defaults to the attributes map; verify the declared keys and
+exact scope memberships when comparing the returned representation.

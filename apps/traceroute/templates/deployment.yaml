@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: traceroute
+  namespace: traceroute
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels: {app: traceroute}
+  template:
+    metadata:
+      labels: {app: traceroute}
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: traceroute
+          image: {{ .Values.image | quote }}
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - secretRef: {name: traceroute-runtime}
+          ports:
+            - {name: http, containerPort: 8090}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+          startupProbe:
+            tcpSocket: {port: http}
+            periodSeconds: 5
+            failureThreshold: 12
+          readinessProbe:
+            tcpSocket: {port: http}
+            periodSeconds: 5
+          livenessProbe:
+            tcpSocket: {port: http}
+            periodSeconds: 20
+          resources:
+            requests: {cpu: 50m, memory: 64Mi}
+            limits: {cpu: '1', memory: 256Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: traceroute
+  namespace: traceroute
+spec:
+  selector: {app: traceroute}
+  ports:
+    - {name: http, port: 8090, targetPort: http}
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: traceroute
+  namespace: traceroute
+spec:
+  entryPoints: [web]
+  routes:
+    - match: Host(`app.traceroutehealth.com`)
+      kind: Rule
+      services:
+        - {name: traceroute, port: 8090}

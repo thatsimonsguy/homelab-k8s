@@ -1,0 +1,31 @@
+{
+  "clientId": "traceroute-web",
+  "name": "Traceroute",
+  "enabled": true,
+  "protocol": "openid-connect",
+  "publicClient": true,
+  "standardFlowEnabled": true,
+  "directAccessGrantsEnabled": false,
+  "implicitFlowEnabled": false,
+  "serviceAccountsEnabled": false,
+  "consentRequired": false,
+  "fullScopeAllowed": false,
+  "redirectUris": [
+    "https://app.traceroutehealth.com/auth/callback"
+  ],
+  "webOrigins": [],
+  "defaultClientScopes": [
+    "basic"
+  ],
+  "optionalClientScopes": [
+    "email",
+    "traceroute:browser"
+  ],
+  "attributes": {
+    "pkce.code.challenge.method": "S256",
+    "access.token.signed.response.alg": "RS256",
+    "id.token.signed.response.alg": "RS256",
+    "client.use.lightweight.access.token.enabled": "false",
+    "access.token.lifespan": "300"
+  }
+}
