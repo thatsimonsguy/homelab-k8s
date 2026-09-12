@@ -1,0 +1,24 @@
+{
+  "name": "traceroute:owner",
+  "description": "Full owner scope ceiling; Traceroute separately enforces explicit workspace connection grants.",
+  "protocol": "openid-connect",
+  "attributes": {
+    "include.in.token.scope": "true",
+    "display.on.consent.screen": "true",
+    "consent.screen.text": "Request full management of your Traceroute workspace: logging, corrections, settings, sharing, and deletion. An approved Traceroute connection is also required."
+  },
+  "protocolMappers": [
+    {
+      "name": "traceroute-mcp-audience",
+      "protocol": "openid-connect",
+      "protocolMapper": "oidc-audience-mapper",
+      "consentRequired": false,
+      "config": {
+        "included.custom.audience": "https://app.traceroutehealth.com/mcp",
+        "id.token.claim": "false",
+        "access.token.claim": "true",
+        "introspection.token.claim": "true"
+      }
+    }
+  ]
+}
