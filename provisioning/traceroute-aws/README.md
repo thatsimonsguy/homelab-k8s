@@ -36,3 +36,25 @@ and delete the replaced key. Do not log credentials or put plaintext in Git.
 The cluster recovery key is required to decrypt these files after a disaster.
 Keep that key in the off-cluster encrypted recovery storage. Workload configuration,
 backup uploads and restore rehearsal are separate implementation tasks.
+
+## Kubernetes names and initialization
+
+IAM user names above differ from the Kubernetes Secret names:
+
+| Purpose | Kubernetes Secret |
+| --- | --- |
+| Backup writer | `traceroute-aws-backup-writer` |
+| Journal writer | `traceroute-aws-journal-writer` |
+| Recovery reader | `traceroute-aws-recovery-reader` |
+
+The chart includes only the backup-writer sealed manifest for its scheduled backup
+job. Journal/recovery manifests remain explicit provisioning inputs.
+
+For initial provisioning only, run `python3 initialize-journal.py --initialize`
+from the operator workstation (requires AWS CLI, PyYAML and SSH access to k3s).
+It reads the UUID retained in chart values, temporarily unseals the journal writer
+and recovery reader, conditionally writes the canonical initialization marker,
+verifies its exact bytes using the independent reader, and removes those temporary
+cluster credentials. It refuses preexisting provisioning secrets to avoid disturbing
+another consumer. No credentials or health payloads are printed. Never invoke this
+script during recovery: a missing marker must instead keep restored access closed.

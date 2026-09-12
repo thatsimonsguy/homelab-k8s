@@ -44,3 +44,34 @@ A zero-count successful run proves connectivity and permission configuration wit
 creating deletion requests or touching active workspace data. Functional deletion and
 isolation tests run only against disposable fixture databases. Mailform acceptance is
 not proof of inbox delivery; cluster-wide outages need the separate tunnel-down signal.
+
+## Nightly database backups
+
+The `traceroute-database-backup` CronJob uses its own PostgreSQL 16 image and runs
+at 07:37 UTC daily. It captures `traceroute_trial` and `keycloak` separately, uploads
+both to the private backup bucket, and publishes a completion manifest last. Its
+25-minute execution deadline leaves room for the command's 20-minute backup bound
+and bounded Mailform failure alert. A failed process alerts through the existing
+maintenance-alert secret; missed schedules, image/startup failures and node loss
+still require external monitoring.
+
+Provision database access by running `prepare-backup-roles.py` on the K3s host.
+It emits only SealedSecret ciphertext. It creates `traceroute_backup_health` with
+SELECT privileges and RLS bypass, and `traceroute_backup_identity` with SELECT
+privileges and no bypass. Neither role receives table-write privileges, memberships
+or access to privileged application functions. Default SELECT grants cover new
+public-schema tables/sequences created by the respective reviewed database owner.
+The script refuses unexpected owners and large objects; review their backup access
+before changing the contract. A preexisting role without private staging is an
+inspection condition, not permission to rotate or replace its password.
+
+Keep staging `/tmp/traceroute-backup-provision-037/database-secret.json` private
+until the deployed Secret matches it and a real backup succeeds, then remove it.
+Never print connection strings. Store the emitted SealedSecret as the chart's
+`backup-databases-sealed-secret.yaml`. Backup AWS credentials are mounted only into
+this job. Recovery-reader credentials must not be mounted into any scheduled job.
+
+The journal UUID is independently retained in `apps/traceroute/values.yaml` and
+Git history. Initialize it explicitly using the AWS provisioning instructions;
+restoration must never create a missing journal. A manifest and successful upload
+are not a restore rehearsal or authority to reopen access after recovery.
