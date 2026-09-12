@@ -37,5 +37,11 @@ spec:
               readOnly: true
       volumes:
         - name: targets
-          secret:
-            secretName: {{ .Values.existingTargetsSecret | quote }}
+          projected:
+            sources:
+              - secret:
+                  name: {{ .Values.existingTargetsSecret | quote }}
+              {{- range .Values.additionalTargetsSecrets }}
+              - secret:
+                  name: {{ . | quote }}
+              {{- end }}

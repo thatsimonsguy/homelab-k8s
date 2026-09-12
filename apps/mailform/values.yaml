@@ -28,6 +28,8 @@ affinity: {}
 # Name of the Kubernetes Secret that holds the MailForm target file(s).
 # In git, this will be a **SealedSecret** which creates this Secret at deploy time.
 existingTargetsSecret: mailform-targets
+additionalTargetsSecrets:
+  - mailform-traceroute-targets
 
 # File name (without extension) for the endpoint — hitting /contact will use contact.json
 primaryTargetName: contact
