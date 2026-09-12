@@ -46,3 +46,20 @@ S256 PKCE. Default scope is `basic`; optional scopes are `email` and
 `traceroute:browser`. Browser audience is `/api/v1/`, separate from the MCP audience.
 Keycloak adds server defaults to the attributes map; verify the declared keys and
 exact scope memberships when comparing the returned representation.
+
+## ChatGPT registration
+
+`chatgpt-client.json` defines the confidential `traceroute-chatgpt` client for
+ChatGPT's User-Defined OAuth Client option. Its sole redirect is the callback
+shown by ChatGPT: `https://chatgpt.com/connector_platform_oauth_redirect`.
+Use `client_secret_post`, request `openid` as a base scope and keep
+`traceroute:owner` selected. Only `basic` is a default client scope; owner scope
+is explicitly optional. S256 PKCE, short access tokens and separate browser
+connection approval remain required. Do not enable dynamic registration or
+add wildcard callbacks for this integration.
+
+Retrieve the generated secret with the authenticated admin API and deliver it
+through a private local file to the operator. Never commit the secret or include
+it in console output. Read back the client settings and exact scope assignments
+after provisioning. Creating this client does not grant workspace access; the
+user must sign in from ChatGPT and approve the returned Traceroute consent link.

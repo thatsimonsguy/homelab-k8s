@@ -1,0 +1,31 @@
+{
+  "clientId": "traceroute-chatgpt",
+  "name": "Traceroute for ChatGPT",
+  "enabled": true,
+  "protocol": "openid-connect",
+  "publicClient": false,
+  "standardFlowEnabled": true,
+  "directAccessGrantsEnabled": false,
+  "implicitFlowEnabled": false,
+  "serviceAccountsEnabled": false,
+  "consentRequired": true,
+  "fullScopeAllowed": false,
+  "redirectUris": [
+    "https://chatgpt.com/connector_platform_oauth_redirect"
+  ],
+  "webOrigins": [],
+  "defaultClientScopes": [
+    "basic"
+  ],
+  "optionalClientScopes": [
+    "traceroute:owner"
+  ],
+  "attributes": {
+    "pkce.code.challenge.method": "S256",
+    "access.token.signed.response.alg": "RS256",
+    "id.token.signed.response.alg": "RS256",
+    "client.use.lightweight.access.token.enabled": "false",
+    "access.token.lifespan": "300"
+  },
+  "clientAuthenticatorType": "client-secret"
+}
