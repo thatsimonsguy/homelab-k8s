@@ -18,6 +18,8 @@
     "basic"
   ],
   "optionalClientScopes": [
+    "email",
+    "offline_access",
     "traceroute:owner"
   ],
   "attributes": {
