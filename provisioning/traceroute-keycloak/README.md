@@ -65,3 +65,22 @@ through a private local file to the operator. Never commit the secret or include
 it in console output. Read back the client settings and exact scope assignments
 after provisioning. Creating this client does not grant workspace access; the
 user must sign in from ChatGPT and approve the returned Traceroute consent link.
+
+## Owner maintenance CLI
+
+`owner-cli-client.json` is a public device-authorization client. It has no redirect
+URIs, password grants, service accounts, implicit flow or authorization-code flow.
+Only `basic` is default and `traceroute:owner` is optional. Its 15-minute access
+token permits the separate browser workspace approval followed by owner maintenance;
+the CLI discards refresh tokens and never creates its own workspace grant.
+
+Provision this representation only in the Traceroute realm. Read back all declared
+settings, the device-grant attribute and exact default/optional scope memberships.
+An existing same-name client with conflicting settings must be investigated rather
+than overwritten. Realm default scopes remain unchanged.
+
+Run `traceroute-owner -operation login -owner-token-file /private/new-token`.
+After browser login, `request-connection` takes that private token file and a workspace
+UUID, with the existing runtime database environment. Follow the returned browser
+approval link before invoking provisioning or import. Tokens must never appear in
+command arguments, logs or version control.

@@ -1,0 +1,28 @@
+{
+  "clientId": "traceroute-owner-cli",
+  "name": "Traceroute owner maintenance",
+  "enabled": true,
+  "protocol": "openid-connect",
+  "publicClient": true,
+  "standardFlowEnabled": false,
+  "directAccessGrantsEnabled": false,
+  "implicitFlowEnabled": false,
+  "serviceAccountsEnabled": false,
+  "consentRequired": true,
+  "fullScopeAllowed": false,
+  "redirectUris": [],
+  "webOrigins": [],
+  "defaultClientScopes": [
+    "basic"
+  ],
+  "optionalClientScopes": [
+    "traceroute:owner"
+  ],
+  "attributes": {
+    "access.token.signed.response.alg": "RS256",
+    "id.token.signed.response.alg": "RS256",
+    "client.use.lightweight.access.token.enabled": "false",
+    "access.token.lifespan": "900",
+    "oauth2.device.authorization.grant.enabled": "true"
+  }
+}
