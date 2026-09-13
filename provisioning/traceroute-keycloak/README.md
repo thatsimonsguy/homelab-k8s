@@ -6,8 +6,8 @@ import them into another realm or change realm-wide default scopes.
 
 - `owner-scope.json`: optional `traceroute:owner` scope with the fixed access-token
   audience `https://app.traceroutehealth.com/mcp`. The mapper excludes ID tokens.
-  Scope consent describes full owner management; an approved application connection
-  grant remains separately required by the hub.
+  Scope consent describes full owner management. ChatGPT sign-in establishes the
+  default connection automatically; legacy maintenance clients retain explicit approval.
 - `token-check-client.json`: temporary public authorization-code client with one
   exact loopback redirect, S256 PKCE and consent. It has only `basic` as a default
   scope and `traceroute:owner` as an optional scope. No password, implicit, service
@@ -56,15 +56,16 @@ Use `client_secret_post`, request `openid` as a base scope and keep
 `traceroute:owner` selected. Only `basic` is a default client scope; `email`, `offline_access`, and owner scope
 are explicitly optional. ChatGPT requests email and offline refresh access during
 connection. These scopes are assigned only to this client; refreshed access tokens
-still require the current workspace grant on every tool call. S256 PKCE, short access tokens and separate browser
-connection approval remain required. Do not enable dynamic registration or
-add wildcard callbacks for this integration.
+still require the current workspace grant on every tool call. S256 PKCE, short-lived
+access tokens and OAuth consent remain required. ChatGPT needs no second application
+approval. Do not enable dynamic registration or add wildcard callbacks.
 
 Retrieve the generated secret with the authenticated admin API and deliver it
 through a private local file to the operator. Never commit the secret or include
 it in console output. Read back the client settings and exact scope assignments
 after provisioning. Creating this client does not grant workspace access; the
-user must sign in from ChatGPT and approve the returned Traceroute consent link.
+user signs in from ChatGPT and grants the owner scope. The first workspace tool call
+binds that verified session to the default workspace; no UUID or second link is needed.
 
 ## Owner maintenance CLI
 
