@@ -85,3 +85,18 @@ After browser login, `request-connection` takes that private token file and a wo
 UUID, with the existing runtime database environment. Follow the returned browser
 approval link before invoking provisioning or import. Tokens must never appear in
 command arguments, logs or version control.
+
+## Claude hosted registration
+
+`claude-client.json` registers `traceroute-claude` independently from ChatGPT.
+The exact hosted callback is `https://claude.ai/api/mcp/auth_callback`; no loopback
+or wildcard redirects are permitted. Require S256, explicit full-owner consent,
+and confidential client authentication. Only `basic` is default; email, owner and
+offline refresh scopes are optional. Verify these settings and scope assignments
+after provisioning; preserve an existing secret on retries.
+
+In Claude's custom connector settings use `https://app.traceroutehealth.com/mcp`,
+client ID `traceroute-claude`, and the secret delivered in a private local file.
+Sign-in automatically selects the user's default workspace; no additional approval
+link is required. Claude Code is a separate future integration. Callback and setup
+requirements: https://claude.com/docs/connectors/building/authentication .

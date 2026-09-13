@@ -1,11 +1,11 @@
 {
   "name": "traceroute:owner",
-  "description": "Full owner management. Reviewed ChatGPT OAuth sign-in establishes the default account connection.",
+  "description": "Full owner management. Reviewed ChatGPT and Claude OAuth sign-in establishes the default account connection.",
   "protocol": "openid-connect",
   "attributes": {
     "include.in.token.scope": "true",
     "display.on.consent.screen": "true",
-    "consent.screen.text": "Allow this app to read and manage your Traceroute health data: logging, corrections, settings, sharing, and deletion. ChatGPT connects to your account automatically after sign-in."
+    "consent.screen.text": "Allow this app to read and manage your Traceroute health data: logging, corrections, settings, sharing, and deletion. ChatGPT and Claude connect to your account automatically after sign-in."
   },
   "protocolMappers": [
     {
