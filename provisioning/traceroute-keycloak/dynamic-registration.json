@@ -1,0 +1,110 @@
+{
+  "profile": {
+    "name": "traceroute-hosted-dcr",
+    "description": "Constrained hosted connector registrations and registration-token updates.",
+    "executors": [
+      {
+        "executor": "pkce-enforcer",
+        "configuration": {
+          "auto-configure": true
+        }
+      },
+      {
+        "executor": "consent-required",
+        "configuration": {
+          "auto-configure": true
+        }
+      },
+      {
+        "executor": "full-scope-disabled",
+        "configuration": {
+          "auto-configure": true
+        }
+      },
+      {
+        "executor": "reject-implicit-grant",
+        "configuration": {
+          "auto-configure": true
+        }
+      },
+      {
+        "executor": "reject-ropc-grant",
+        "configuration": {
+          "auto-configure": true
+        }
+      },
+      {
+        "executor": "secure-redirect-uris-enforcer",
+        "configuration": {
+          "oauth-2-1-compliant": true,
+          "allow-permitted-domains": [
+            "claude\\.ai",
+            "chatgpt\\.com"
+          ]
+        }
+      }
+    ]
+  },
+  "policy": {
+    "name": "traceroute-hosted-dcr",
+    "enabled": true,
+    "conditions": [
+      {
+        "condition": "client-updater-context",
+        "configuration": {
+          "update-client-source": [
+            "ByAnonymous",
+            "ByRegistrationAccessToken"
+          ]
+        }
+      }
+    ],
+    "profiles": [
+      "traceroute-hosted-dcr"
+    ]
+  },
+  "registrationPolicies": {
+    "trusted-hosts": {
+      "host-sending-registration-request-must-match": [
+        "false"
+      ],
+      "trusted-hosts": [
+        "claude.ai",
+        "chatgpt.com"
+      ],
+      "client-uris-must-match": [
+        "true"
+      ]
+    },
+    "allowed-client-templates": {
+      "allow-default-scopes": [
+        "false"
+      ],
+      "allowed-client-scopes": [
+        "basic",
+        "email",
+        "offline_access",
+        "traceroute:owner",
+        "traceroute:connect",
+        "openid"
+      ]
+    },
+    "allowed-protocol-mappers": {
+      "allowed-protocol-mapper-types": []
+    },
+    "max-clients": {
+      "max-clients": [
+        "200"
+      ]
+    }
+  },
+  "defaultScopes": [
+    "basic"
+  ],
+  "optionalScopes": [
+    "email",
+    "offline_access",
+    "traceroute:owner",
+    "traceroute:connect"
+  ]
+}

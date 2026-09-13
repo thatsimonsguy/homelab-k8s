@@ -1,0 +1,10 @@
+{
+  "name": "traceroute:connect",
+  "description": "Link this OAuth session to the signed-in account default workspace. Requires owner scope.",
+  "protocol": "openid-connect",
+  "attributes": {
+    "include.in.token.scope": "true",
+    "display.on.consent.screen": "true",
+    "consent.screen.text": "Connect this app to your Traceroute account automatically after sign-in."
+  }
+}

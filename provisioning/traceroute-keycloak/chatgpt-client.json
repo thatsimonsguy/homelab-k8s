@@ -20,7 +20,8 @@
   "optionalClientScopes": [
     "email",
     "offline_access",
-    "traceroute:owner"
+    "traceroute:owner",
+    "traceroute:connect"
   ],
   "attributes": {
     "pkce.code.challenge.method": "S256",

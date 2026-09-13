@@ -2,11 +2,11 @@
 
 These explicit Keycloak Admin API representations target only the `traceroute`
 realm. They are provisioning inputs, outside Argo's workload templates; do not
-import them into another realm or change realm-wide default scopes.
+import them into another realm. Dynamic registration narrows defaults for future clients as described below.
 
 - `owner-scope.json`: optional `traceroute:owner` scope with the fixed access-token
   audience `https://app.traceroutehealth.com/mcp`. The mapper excludes ID tokens.
-  Scope consent describes full owner management. ChatGPT sign-in establishes the
+  Scope consent describes full owner management. Hosted OAuth sign-in establishes the
   default connection automatically; legacy maintenance clients retain explicit approval.
 - `token-check-client.json`: temporary public authorization-code client with one
   exact loopback redirect, S256 PKCE and consent. It has only `basic` as a default
@@ -16,7 +16,7 @@ import them into another realm or change realm-wide default scopes.
 Create the scope through `POST /admin/realms/traceroute/client-scopes`. Inspect an
 existing same-name scope before changing it. Create the test client through
 `POST /admin/realms/traceroute/clients`, then read back the client, mappings and scope
-assignments. Keep owner scope out of both realm-wide default scope lists.
+assignments. Owner scope is never a default token permission; it is optional for hosted dynamic registrations.
 Future approved MCP clients must be explicitly assigned the optional owner scope
 and request `openid traceroute:owner`; do not relax audience checks for compatibility.
 
@@ -58,7 +58,7 @@ are explicitly optional. ChatGPT requests email and offline refresh access durin
 connection. These scopes are assigned only to this client; refreshed access tokens
 still require the current workspace grant on every tool call. S256 PKCE, short-lived
 access tokens and OAuth consent remain required. ChatGPT needs no second application
-approval. Do not enable dynamic registration or add wildcard callbacks.
+approval. Dynamic registrations use the constrained policy below; wildcard callbacks remain forbidden.
 
 Retrieve the generated secret with the authenticated admin API and deliver it
 through a private local file to the operator. Never commit the secret or include
@@ -95,8 +95,38 @@ and confidential client authentication. Only `basic` is default; email, owner an
 offline refresh scopes are optional. Verify these settings and scope assignments
 after provisioning; preserve an existing secret on retries.
 
-In Claude's custom connector settings use `https://app.traceroutehealth.com/mcp`,
+For the optional fixed-client fallback, use `https://app.traceroutehealth.com/mcp`,
 client ID `traceroute-claude`, and the secret delivered in a private local file.
 Sign-in automatically selects the user's default workspace; no additional approval
 link is required. Claude Code is a separate future integration. Callback and setup
 requirements: https://claude.com/docs/connectors/building/authentication .
+
+## Hosted dynamic registration
+
+Claude can use the MCP server URL alone with its optional client credentials blank.
+`configure-dcr.py` applies `dynamic-registration.json` and `connect-scope.json` using
+cluster operator access (`kubectl` for the existing Keycloak admin secret). Run it
+on the cluster host with the adjacent JSON files; it preserves existing client
+secrets, assignments and unrelated client policies. Read back settings and run
+`verify-dcr.py` after changes (it removes its disposable registrations). No application admin credentials are deployed.
+
+Anonymous DCR and registration-token updates are constrained to HTTPS callbacks on
+exact hosts `claude.ai` and `chatgpt.com`, without wildcards, fragments or loopback.
+The policy does not authenticate the caller as Anthropic/OpenAI; consent and PKCE
+remain mandatory, and authorization returns only to a permitted registered URI.
+Source-IP filtering is disabled because requests traverse the shared tunnel proxy.
+PKCE S256, consent, and disabled full-scope, password and implicit grants are enforced.
+Caller-supplied protocol mappers and browser scope are forbidden. The realm's 200-client
+cap bounds registrations; remove abandoned registrations through operator tooling if
+it is reached. Claude Code loopback registrations remain outside this integration.
+
+New clients get only `basic` by default; optional scopes are email, offline refresh,
+owner and connect. Existing client scope assignments are preserved. The empty `openid`
+marker accommodates Keycloak 26.3 DCR scope validation. `traceroute:connect` expresses
+consent to automatic account linking; the API requires a verified owner token as well.
+The realm rotates refresh tokens with zero reuse, including public clients. Clients
+must retain the newly returned refresh token. Fixed hosted registrations remain valid.
+
+Registration does not provision a user or grant access. Social sign-in, invitation
+eligibility and OAuth consent still apply. Dynamic IDs need no application allowlist;
+verified issuer/subject identify the account, and client/session identify its connection.
