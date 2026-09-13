@@ -8,6 +8,7 @@ spec:
   schedule: "17 * * * *"
   timeZone: Etc/UTC
   concurrencyPolicy: Forbid
+  suspend: {{ .Values.maintenance.suspend | default false }}
   startingDeadlineSeconds: 900
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 3

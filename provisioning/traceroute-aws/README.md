@@ -47,8 +47,13 @@ IAM user names above differ from the Kubernetes Secret names:
 | Journal writer | `traceroute-aws-journal-writer` |
 | Recovery reader | `traceroute-aws-recovery-reader` |
 
-The chart includes only the backup-writer sealed manifest for its scheduled backup
-job. Journal/recovery manifests remain explicit provisioning inputs.
+The chart includes the backup-writer sealed manifest only for its scheduled backup
+job. `publication.enabled` adds the journal-writer sealed manifest and mounts it only
+into the product service. Its bucket is `publication.bucket`; the expected account
+and independently retained journal UUID share the `backup` values. Disabling
+publication removes the service flags/mount and the managed journal SealedSecret.
+Wait for Secret removal and the replacement rollout before a recovery journal read.
+The recovery-reader manifest remains an explicit operator-only provisioning input.
 
 For initial provisioning only, run `python3 initialize-journal.py --initialize`
 from the operator workstation (requires AWS CLI, PyYAML and SSH access to k3s).

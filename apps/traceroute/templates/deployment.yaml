@@ -24,8 +24,22 @@ spec:
         - name: traceroute
           image: {{ .Values.image | quote }}
           imagePullPolicy: IfNotPresent
+          {{- if .Values.publication.enabled }}
+          args:
+            - -listen
+            - 0.0.0.0:8090
+            - -publication-journal-bucket
+            - {{ required "publication.bucket is required" .Values.publication.bucket | quote }}
+            - -publication-journal-account
+            - {{ required "backup.expectedAccount is required" .Values.backup.expectedAccount | quote }}
+            - -publication-journal-id
+            - {{ required "backup.journalID is required" .Values.backup.journalID | quote }}
+          {{- end }}
           envFrom:
             - secretRef: {name: traceroute-runtime}
+            {{- if .Values.publication.enabled }}
+            - secretRef: {name: traceroute-aws-journal-writer}
+            {{- end }}
           ports:
             - {name: http, containerPort: 8090}
           securityContext:
