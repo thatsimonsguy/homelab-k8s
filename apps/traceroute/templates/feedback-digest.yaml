@@ -1,0 +1,50 @@
+{{- if .Values.feedbackDigest.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: traceroute-feedback-digest
+  namespace: traceroute
+spec:
+  schedule: "7 7 * * *"
+  timeZone: America/Chicago
+  concurrencyPolicy: Forbid
+  suspend: {{ .Values.feedbackDigest.suspend | default false }}
+  startingDeadlineSeconds: 3600
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      activeDeadlineSeconds: 600
+      ttlSecondsAfterFinished: 86400
+      template:
+        metadata:
+          labels: {app: traceroute-feedback-digest}
+        spec:
+          automountServiceAccountToken: false
+          restartPolicy: Never
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 10001
+            runAsGroup: 10001
+            seccompProfile: {type: RuntimeDefault}
+          containers:
+            - name: digest
+              image: {{ .Values.image | quote }}
+              imagePullPolicy: IfNotPresent
+              command: [traceroute-feedback-digest]
+              envFrom:
+                - secretRef: {name: traceroute-feedback-digest}
+                - secretRef: {name: traceroute-maintenance-alerts}
+              env:
+                - name: POD_NAME
+                  valueFrom:
+                    fieldRef: {fieldPath: metadata.name}
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities: {drop: [ALL]}
+              resources:
+                requests: {cpu: 25m, memory: 64Mi}
+                limits: {cpu: '1', memory: 256Mi}
+{{- end }}

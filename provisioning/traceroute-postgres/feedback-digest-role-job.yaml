@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: traceroute-configure-purge-0-1-48
+  name: traceroute-configure-feedback-digest-0-1-48
   namespace: traceroute
 spec:
   backoffLimit: 0
@@ -20,7 +20,7 @@ spec:
         - name: migrate
           image: 192.168.2.17:5000/traceroute:0.1.48
           command: [traceroute-admin]
-          args: [-operation, configure-purge-role, -purge-role, traceroute_workspace_purge]
+          args: [-operation, configure-feedback-digest-role, -feedback-digest-role, traceroute_feedback_digest]
           envFrom:
             - secretRef: {name: traceroute-migration}
           securityContext:

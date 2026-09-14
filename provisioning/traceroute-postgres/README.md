@@ -45,6 +45,25 @@ creating deletion requests or touching active workspace data. Functional deletio
 isolation tests run only against disposable fixture databases. Mailform acceptance is
 not proof of inbox delivery; cluster-wide outages need the separate tunnel-down signal.
 
+## Feedback digest
+
+The separate `traceroute_feedback_digest` login is NOSUPERUSER, NOBYPASSRLS, NOCREATEDB,
+NOCREATEROLE, NOREPLICATION and NOINHERIT with no memberships and only CONNECT on
+`traceroute_trial`. Provision it by running `prepare-feedback-digest-role.py` on the
+K3s host; it emits only SealedSecret ciphertext, which becomes the chart's
+`feedback-digest-sealed-secret.yaml`. After the versioned migration, run
+`feedback-digest-role-job.yaml` with the temporary migration credential to grant the
+column-limited feedback reads, workspace display-name reads and delivery-only updates
+(ADR-0025 in the application repository). Remove the provisioning Jobs and the
+temporary migration Secret/SealedSecret afterward, then set `feedbackDigest.enabled`.
+
+The `traceroute-feedback-digest` CronJob runs once a day at 07:07 America/Chicago from
+the product image, forbids overlap, and sends one email through the existing
+maintenance-alert Mailform credential only when undelivered feedback exists. Its
+output is a JSON count report; feedback text never reaches logs. A zero-count run from
+an explicitly named one-off Job proves connectivity and role configuration without
+sending mail. Never submit fabricated feedback against the trial database.
+
 ## Nightly database backups
 
 The `traceroute-database-backup` CronJob uses its own PostgreSQL 16 image and runs

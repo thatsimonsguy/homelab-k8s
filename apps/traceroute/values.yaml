@@ -1,5 +1,10 @@
-image: 192.168.2.17:5000/traceroute:0.1.47
+image: 192.168.2.17:5000/traceroute:0.1.48
 maintenance:
+  enabled: true
+  suspend: false
+# Daily feedback digest (ADR-0025). Enable only once the sealed digest credential
+# exists and the role has been configured; see provisioning/traceroute-postgres/README.md.
+feedbackDigest:
   enabled: true
   suspend: false
 backup:
