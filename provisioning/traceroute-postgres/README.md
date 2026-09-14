@@ -22,7 +22,8 @@ Owner invitations are issued by `traceroute-admin -operation invite -email EMAIL
 `https://app.traceroutehealth.com/onboarding#token=TOKEN` link and deliver it manually.
 Do not put invocation output into pod logs or commit the invitation file. The
 nightly backup and restore rehearsal requirements remain ADR-0006/0022 in the
-application repository; finish them before inviting trial participants.
+application repository; the restore rehearsal does not gate trial invitations
+(ADR-0006 amendment, 2026-09-14).
 
 ## Workspace purge maintenance
 
