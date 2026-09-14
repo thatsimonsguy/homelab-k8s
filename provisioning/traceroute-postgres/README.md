@@ -59,8 +59,12 @@ temporary migration Secret/SealedSecret afterward, then set `feedbackDigest.enab
 
 The `traceroute-feedback-digest` CronJob runs once a day at 07:07 America/Chicago from
 the product image, forbids overlap, and sends one email through the existing
-maintenance-alert Mailform credential only when undelivered feedback exists. Its
-output is a JSON count report; feedback text never reaches logs. A zero-count run from
+maintenance-alert Mailform credential only when undelivered feedback exists. Every run
+also deletes delivered feedback older than 30 days; undelivered feedback is never
+deleted, and workspace purge removes only delivered rows, so a parting message still
+reaches the next digest. Its output is a JSON count report; feedback text never reaches
+logs. Re-run both `purge-role-job.yaml` and `feedback-digest-role-job.yaml` after any
+release that changes the purge access map or the feedback grants (0.1.49 did both). A zero-count run from
 an explicitly named one-off Job proves connectivity and role configuration without
 sending mail. Never submit fabricated feedback against the trial database.
 
