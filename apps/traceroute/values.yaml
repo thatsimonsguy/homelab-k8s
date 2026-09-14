@@ -1,4 +1,4 @@
-image: 192.168.2.17:5000/traceroute:0.1.50
+image: 192.168.2.17:5000/traceroute:0.1.51
 maintenance:
   enabled: true
   suspend: false
