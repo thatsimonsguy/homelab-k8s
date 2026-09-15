@@ -141,8 +141,10 @@ skips that step silently when SMTP is unconfigured.
 
 Trust Email is on for `google` (2026-09-14). Google is an OIDC provider, so Keycloak copies
 Google's own `email_verified` claim and an exact verified invitation match approves without
-an operator. Trust Email stays off for `microsoft` (tenant `common`): its provider takes the
-Graph `mail` or `userPrincipalName`, which a work tenant's admin controls, and would mark every
-such address verified. Microsoft claims go to approval (ADR-0017 amendment, 2026-09-14).
+an operator. The `microsoft` provider uses tenant `consumers` (2026-09-14), personal accounts
+only: a work tenant's admin controls the Graph `mail`/`userPrincipalName` this provider reads,
+and Trust Email would mark any such address verified. Trust Email stays off for Microsoft
+until a live personal-account sign-in confirms Keycloak records the account's sign-in address;
+until then Microsoft claims go to approval (ADR-0017 amendment, 2026-09-14).
 Change a provider by reading its representation and writing it back whole; Keycloak keeps
 the stored client secret when the masked `**********` value is written back.
