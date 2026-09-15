@@ -130,3 +130,19 @@ must retain the newly returned refresh token. Fixed hosted registrations remain 
 Registration does not provision a user or grant access. Social sign-in, invitation
 eligibility and OAuth consent still apply. Dynamic IDs need no application allowlist;
 verified issuer/subject identify the account, and client/session identify its connection.
+
+## Social identity providers
+
+The realm's `google` and `microsoft` identity providers exist only in Keycloak; no
+representation lives in this repository. Both use the `traceroute-first-broker` flow, whose
+single step is Create User If Unique, so a social login never links to an existing user by
+matching email (ADR-0016). A future email-confirmed linking step needs realm SMTP; Keycloak
+skips that step silently when SMTP is unconfigured.
+
+Trust Email is on for `google` (2026-09-14). Google is an OIDC provider, so Keycloak copies
+Google's own `email_verified` claim and an exact verified invitation match approves without
+an operator. Trust Email stays off for `microsoft` (tenant `common`): its provider takes the
+Graph `mail` or `userPrincipalName`, which a work tenant's admin controls, and would mark every
+such address verified. Microsoft claims go to approval (ADR-0017 amendment, 2026-09-14).
+Change a provider by reading its representation and writing it back whole; Keycloak keeps
+the stored client secret when the masked `**********` value is written back.
