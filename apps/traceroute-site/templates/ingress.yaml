@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "traceroute-site.fullname" . }}
+  labels:
+    {{- include "traceroute-site.labels" . | nindent 4 }}
+spec:
+  ingressClassName: {{ .Values.ingress.class }}
+  rules:
+    - host: {{ .Values.ingress.host | quote }}
+      http:
+        paths:
+          # Traefik ranks routers by rule length, so mailform's longer
+          # Host && PathPrefix(/trial-request) rule wins over this catch-all.
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "traceroute-site.fullname" . }}
+                port:
+                  number: {{ .Values.service.port }}
