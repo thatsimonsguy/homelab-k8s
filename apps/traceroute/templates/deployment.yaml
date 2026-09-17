@@ -44,6 +44,9 @@ spec:
           {{- end }}
           envFrom:
             - secretRef: {name: traceroute-runtime}
+            # Seals the pending-login cookie so an anonymous page view allocates no
+            # server-side session (ADR-0013 amendment, TRA-31).
+            - secretRef: {name: traceroute-login-seal}
             {{- if .Values.publication.enabled }}
             - secretRef: {name: traceroute-aws-journal-writer}
             {{- end }}
