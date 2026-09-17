@@ -1,3 +1,4 @@
+import json
 import os
 import pathlib
 import subprocess
@@ -90,3 +91,65 @@ class FeedbackDigestChartTest(unittest.TestCase):
         self.assertFalse(any(d['kind'] == 'CronJob' and d['metadata']['name'] == 'traceroute-feedback-digest' for d in docs))
         self.assertFalse(any(d['metadata']['name'] == 'traceroute-feedback-digest' for d in docs))
         self.assertNotIn('TRACEROUTE_FEEDBACK_DATABASE_URL', str(docs))
+
+
+class ObservabilityChartTest(unittest.TestCase):
+    """TRA-4: metrics and probes on their own port, never on the routed one."""
+
+    def test_operations_port_is_scraped_and_probed_but_never_routed(self):
+        docs = render('observability.enabled=true')
+        app = next(d for d in docs if d['kind'] == 'Deployment')['spec']['template']['spec']['containers'][0]
+        args = app['args']
+        self.assertEqual(args[:2], ['-listen', '0.0.0.0:8090'])
+        self.assertEqual(args[args.index('-ops-listen')+1], '0.0.0.0:9090')
+        self.assertEqual([p['containerPort'] for p in app['ports']], [8090, 9090])
+        # Startup gates first traffic on the database; readiness and liveness answer for
+        # the process, so a dependency outage degrades rather than removing the pod.
+        self.assertEqual(app['startupProbe']['httpGet'], {'path': '/readyz', 'port': 'ops'})
+        self.assertEqual(app['readinessProbe']['httpGet'], {'path': '/healthz', 'port': 'ops'})
+        self.assertEqual(app['livenessProbe']['httpGet'], {'path': '/healthz', 'port': 'ops'})
+        service = next(d for d in docs if d['kind'] == 'Service')
+        self.assertEqual(service['metadata']['labels'], {'app': 'traceroute'})
+        self.assertEqual([p['port'] for p in service['spec']['ports']], [8090, 9090])
+        # The tunnel reaches the product port alone.
+        route = next(d for d in docs if d['kind'] == 'IngressRoute')
+        self.assertEqual([s['port'] for s in route['spec']['routes'][0]['services']], [8090])
+        monitor = next(d for d in docs if d['kind'] == 'ServiceMonitor')
+        self.assertEqual(monitor['metadata']['labels']['release'], 'kube-prometheus-stack')
+        self.assertEqual(monitor['spec']['selector']['matchLabels'], {'app': 'traceroute'})
+        self.assertEqual(monitor['spec']['endpoints'][0]['port'], 'ops')
+        self.assertEqual(monitor['spec']['endpoints'][0]['path'], '/metrics')
+
+    def test_disabled_leaves_the_listener_exactly_as_it_was(self):
+        docs = render('observability.enabled=false', 'observability.rules=false', 'observability.dashboard=false')
+        app = next(d for d in docs if d['kind'] == 'Deployment')['spec']['template']['spec']['containers'][0]
+        self.assertNotIn('-ops-listen', app['args'])
+        self.assertEqual([p['containerPort'] for p in app['ports']], [8090])
+        self.assertEqual(app['readinessProbe']['tcpSocket'], {'port': 'http'})
+        self.assertFalse(any(d['kind'] in ('ServiceMonitor', 'PrometheusRule') for d in docs))
+        self.assertEqual([p['port'] for p in next(d for d in docs if d['kind'] == 'Service')['spec']['ports']], [8090])
+
+    def test_alerts_cover_the_listener_and_every_scheduled_job(self):
+        docs = render('observability.rules=true')
+        rule = next(d for d in docs if d['kind'] == 'PrometheusRule')
+        self.assertEqual(rule['metadata']['labels']['release'], 'kube-prometheus-stack')
+        alerts = {r['alert']: r for g in rule['spec']['groups'] for r in g['rules']}
+        for name in ['TracerouteListenerDown', 'TracerouteServerErrors', 'TracerouteLatencyHigh',
+                     'TracerouteRestarting', 'TracerouteJobFailed', 'TraceroutePurgeStale',
+                     'TracerouteBackupStale', 'TracerouteFeedbackDigestStale']:
+            self.assertIn(name, alerts)
+            self.assertEqual(alerts[name]['labels']['team'], 'traceroute')
+        for cronjob in ['traceroute-workspace-purge', 'traceroute-database-backup', 'traceroute-feedback-digest']:
+            self.assertIn(cronjob, str(rule))
+
+    def test_dashboard_is_valid_json_the_grafana_sidecar_will_import(self):
+        docs = render('observability.dashboard=true')
+        board = next(d for d in docs if d['kind'] == 'ConfigMap' and d['metadata']['name'] == 'traceroute-dashboard')
+        self.assertEqual(board['metadata']['labels']['grafana_dashboard'], '1')
+        dashboard = json.loads(board['data']['traceroute.json'])
+        self.assertEqual(dashboard['uid'], 'traceroute')
+        queries = [t['expr'] for p in dashboard['panels'] for t in p.get('targets', [])]
+        self.assertTrue(any('traceroute_http_requests_total' in q for q in queries))
+        self.assertTrue(any('traceroute_mcp_tool_calls_total' in q for q in queries))
+        self.assertTrue(any('traceroute_browser_sessions' in q for q in queries))
+        self.assertTrue(any('traceroute_db_pool_' in q for q in queries))

@@ -1,0 +1,96 @@
+{{- if .Values.observability.rules }}
+# Traceroute's own alerts (TRA-4). Picked up by the kube-prometheus-stack
+# operator through the release label. Delivery is a separate decision: the
+# Alertmanager route in apps/kube-prometheus-stack only sends team="aggsys"
+# anywhere, so until a traceroute route exists these fire into Alertmanager and
+# stay there. Nothing here reads a series with an identifying label, because no
+# such series is published.
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: traceroute
+  namespace: traceroute
+  labels:
+    release: kube-prometheus-stack
+spec:
+  groups:
+    - name: traceroute-listener
+      rules:
+        - alert: TracerouteListenerDown
+          expr: kube_deployment_status_replicas_available{namespace="traceroute", deployment="traceroute"} < 1
+          for: 5m
+          labels: { severity: critical, team: traceroute }
+          annotations:
+            summary: "the Traceroute listener has no ready pod"
+            description: "app.traceroutehealth.com has had no ready pod for 5 minutes: the process is down, or readiness is failing because the database is unreachable. See kubectl -n traceroute get pods and the pod log."
+        - alert: TracerouteTargetMissing
+          expr: up{namespace="traceroute", service="traceroute"} == 0
+          for: 10m
+          labels: { severity: warning, team: traceroute }
+          annotations:
+            summary: "Traceroute is not being scraped"
+            description: "Prometheus cannot reach the Traceroute operations port. The dashboard and every alert below go blind while this is true."
+        - alert: TracerouteServerErrors
+          expr: |
+            sum(rate(traceroute_http_requests_total{status=~"5.."}[5m]))
+              / sum(rate(traceroute_http_requests_total[5m])) > 0.05
+          for: 10m
+          labels: { severity: critical, team: traceroute }
+          annotations:
+            summary: "more than 5% of Traceroute requests are failing"
+            description: "The listener has been returning 5xx for 10 minutes. Break it down by route on the Traceroute board."
+        - alert: TracerouteLatencyHigh
+          expr: |
+            histogram_quantile(0.95, sum by (le) (rate(traceroute_http_request_duration_seconds_bucket[5m]))) > 1
+          for: 15m
+          labels: { severity: warning, team: traceroute }
+          annotations:
+            summary: "Traceroute p95 latency is over a second"
+            description: "The 95th percentile request has been over a second for 15 minutes. Check the database pool gauges on the Traceroute board first."
+        - alert: TracerouteToolCallsFailing
+          expr: |
+            sum(rate(traceroute_mcp_tool_calls_total{outcome="error"}[15m]))
+              / sum(rate(traceroute_mcp_tool_calls_total[15m])) > 0.5
+          for: 15m
+          labels: { severity: warning, team: traceroute }
+          annotations:
+            summary: "more than half of Traceroute tool calls are failing"
+            description: "Agents are being refused. A revoked connection or a storage failure both look like this; the board breaks it down by tool."
+        - alert: TracerouteRestarting
+          expr: increase(kube_pod_container_status_restarts_total{namespace="traceroute", container="traceroute"}[1h]) > 2
+          for: 5m
+          labels: { severity: warning, team: traceroute }
+          annotations:
+            summary: "the Traceroute pod is restarting"
+            description: "More than two container restarts in an hour: a crash loop, an OOM kill, or a failing liveness probe. See kubectl -n traceroute describe pod."
+    - name: traceroute-jobs
+      rules:
+        - alert: TracerouteJobFailed
+          expr: kube_job_status_failed{namespace="traceroute"} > 0
+          for: 5m
+          labels: { severity: critical, team: traceroute }
+          annotations:
+            summary: "Traceroute job {{ "{{" }} $labels.job_name {{ "}}" }} failed"
+            description: "A job in the traceroute namespace reported failure: the hourly workspace purge, the nightly backup or the feedback digest. See kubectl -n traceroute get jobs."
+        - alert: TraceroutePurgeStale
+          expr: (time() - max(kube_cronjob_status_last_successful_time{namespace="traceroute", cronjob="traceroute-workspace-purge"})) > 6 * 3600
+          for: 30m
+          labels: { severity: warning, team: traceroute }
+          annotations:
+            summary: "the workspace purge has not succeeded in 6 hours"
+            description: "The purge runs hourly at :17 UTC. Deleted workspaces are still holding health data until it runs."
+        - alert: TracerouteBackupStale
+          expr: (time() - max(kube_cronjob_status_last_successful_time{namespace="traceroute", cronjob="traceroute-database-backup"})) > 36 * 3600
+          for: 30m
+          labels: { severity: critical, team: traceroute }
+          annotations:
+            summary: "the database backup has not succeeded in 36 hours"
+            description: "The 07:37 UTC backup has not completed. The record is running without a recent restore point (ADR-0006)."
+        - alert: TracerouteFeedbackDigestStale
+          expr: (time() - max(kube_cronjob_status_last_successful_time{namespace="traceroute", cronjob="traceroute-feedback-digest"})) > 36 * 3600
+          for: 30m
+          labels: { severity: warning, team: traceroute }
+          annotations:
+            summary: "the feedback digest has not succeeded in 36 hours"
+            description: "Undelivered feedback is piling up unread (ADR-0025). Purge keeps it, so nothing is lost, but nobody is reading it."
+{{- end }}
