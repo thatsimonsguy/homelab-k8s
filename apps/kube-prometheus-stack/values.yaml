@@ -34,7 +34,7 @@ kube-prometheus-stack:
   alertmanager:
     enabled: true
     # Routing (AGG-362): only aggsys-labelled alerts leave the cluster — to
-    # the self-hosted ntfy (topic aggsys-alerts, publish token in the
+    # the self-hosted ntfy (topics aggsys-alerts and traceroute-alerts, publish token in the
     # ntfy-alertmanager secret mounted below). Everything else keeps the
     # chart's silent default until a homelab-wide receiver is wanted.
     config:
@@ -49,11 +49,27 @@ kube-prometheus-stack:
               - team = "aggsys"
             group_wait: 1m
             repeat_interval: 12h
+          - receiver: ntfy-traceroute
+            matchers:
+              - team = "traceroute"
+            group_wait: 1m
+            repeat_interval: 12h
       receivers:
         - name: "null"
         - name: ntfy-aggsys
           webhook_configs:
             - url: http://ntfy.ntfy.svc.cluster.local/aggsys-alerts?title=Alertmanager&priority=high&tags=rotating_light
+              send_resolved: true
+              http_config:
+                authorization:
+                  type: Bearer
+                  credentials_file: /etc/alertmanager/secrets/ntfy-alertmanager/token
+        # Traceroute (ADR-0027) publishes team=traceroute alerts. Its own ntfy topic, so it
+        # can be muted or subscribed separately; same alertmanager token, which ntfy grants
+        # per user and topic (apps/ntfy sealed config).
+        - name: ntfy-traceroute
+          webhook_configs:
+            - url: http://ntfy.ntfy.svc.cluster.local/traceroute-alerts?title=Traceroute&priority=high&tags=rotating_light
               send_resolved: true
               http_config:
                 authorization:
