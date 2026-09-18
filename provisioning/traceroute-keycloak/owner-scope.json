@@ -5,7 +5,7 @@
   "attributes": {
     "include.in.token.scope": "true",
     "display.on.consent.screen": "true",
-    "consent.screen.text": "Allow this app to read and manage everything in your Traceroute record: logging, corrections, settings, sharing and deletion. Your record holds whatever you choose to track, whatever your connected devices send, and values calculated from those, and all of it is treated as health data. Anything this app handles also passes through the company that provides it. To withdraw, remove the Traceroute connector in the app. Full detail at traceroutehealth.com/privacy"
+    "consent.screen.text": "Allow this app to read and manage everything in your Traceroute record: logging, corrections, settings, sharing and deletion. Your record holds whatever you choose to track, whatever your connected devices send, and values calculated from those, including anything about your reproductive or sexual health you choose to record, and all of it is treated as health data. Traceroute keeps it only to hold your record, show it to you and publish what you choose, and never sells it. Anything this app handles also passes through the company that provides it. To withdraw, remove the Traceroute connector in the app. Full detail at traceroutehealth.com/privacy"
   },
   "protocolMappers": [
     {
