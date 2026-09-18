@@ -1,0 +1,14 @@
+{
+  "requiredAction": {
+    "alias": "TERMS_AND_CONDITIONS",
+    "enabled": true,
+    "defaultAction": true
+  },
+  "localization": {
+    "en": {
+      "termsTitle": "Terms of service",
+      "termsText": "<p>Traceroute is for adults 18 and older in the United States. Using it means agreeing to the <a href=\"https://traceroutehealth.com/terms\" target=\"_blank\" rel=\"noopener\">terms of service</a>. The <a href=\"https://traceroutehealth.com/privacy\" target=\"_blank\" rel=\"noopener\">privacy notice</a> and the <a href=\"https://traceroutehealth.com/consumer-health-data\" target=\"_blank\" rel=\"noopener\">consumer health data policy</a> describe how your data is handled.</p><p>We send notices, including breach notices, to the email address on your account.</p>",
+      "doAccept": "I'm 18 or older and agree to the Terms"
+    }
+  }
+}

@@ -161,3 +161,14 @@ one Yes consents to the named AI provider receiving the data (Washington, Nevada
 Traceroute processing health data (Connecticut, Virginia). Sign-in events record `LOGIN`
 only, kept 90 days, so a breach notice can estimate each state's affected residents from
 sign-in IPs (resolved no finer than state). The privacy notice discloses both.
+
+## Terms step for new accounts
+
+`configure-terms.py` turns on Keycloak's Terms and Conditions required action as a default
+action, so every account created from then on accepts the terms once, at first sign-in,
+and Keycloak records when. It never adds the action to existing accounts: the people
+already in the trial are not asked again. `terms-and-conditions.json` holds the English
+text the page shows: the 18+ and United States statement, links to the terms, privacy
+notice and consumer health data policy, the statement that notices (breach notices
+included) go to the account's email address, and the accept button "I'm 18 or older and
+agree to the Terms". Run it from the cluster host after `/terms` is live.
