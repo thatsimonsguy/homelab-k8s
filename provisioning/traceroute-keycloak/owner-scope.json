@@ -5,7 +5,7 @@
   "attributes": {
     "include.in.token.scope": "true",
     "display.on.consent.screen": "true",
-    "consent.screen.text": "Allow this app to read and manage your Traceroute health data: logging, corrections, settings, sharing, and deletion. ChatGPT and Claude connect to your account automatically after sign-in."
+    "consent.screen.text": "Allow this app to read and manage everything in your Traceroute record: logging, corrections, settings, sharing and deletion. Your record holds whatever you choose to track, whatever your connected devices send, and values calculated from those, and all of it is treated as health data. Anything this app handles also passes through the company that provides it. To withdraw, remove the Traceroute connector in the app. Full detail at traceroutehealth.com/privacy"
   },
   "protocolMappers": [
     {

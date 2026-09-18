@@ -5,6 +5,6 @@
   "attributes": {
     "include.in.token.scope": "true",
     "display.on.consent.screen": "true",
-    "consent.screen.text": "Connect this app to your Traceroute account automatically after sign-in."
+    "consent.screen.text": "Link this app to your Traceroute account when you sign in, so you are not asked to approve it again."
   }
 }
