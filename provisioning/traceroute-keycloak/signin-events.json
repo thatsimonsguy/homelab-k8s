@@ -1,0 +1,5 @@
+{
+  "eventsEnabled": true,
+  "eventsExpiration": 7776000,
+  "enabledEventTypes": ["LOGIN"]
+}

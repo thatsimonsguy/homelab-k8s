@@ -148,3 +148,16 @@ until a live personal-account sign-in confirms Keycloak records the account's si
 until then Microsoft claims go to approval (ADR-0017 amendment, 2026-09-14).
 Change a provider by reading its representation and writing it back whole; Keycloak keeps
 the stored client secret when the masked `**********` value is written back.
+
+## Consent text and sign-in events
+
+`configure-consent-and-events.py` applies the consent-screen text of `connect-scope.json`
+and `owner-scope.json` and the realm's user-event settings in `signin-events.json`, then
+reads each back. It changes nothing else: scope mappers, event listeners and admin-event
+settings stay as they are. Run it from the cluster host, like `configure-dcr.py`.
+
+The owner scope's text is the consent the person gives when they connect an agent:
+one Yes consents to the named AI provider receiving the data (Washington, Nevada) and to
+Traceroute processing health data (Connecticut, Virginia). Sign-in events record `LOGIN`
+only, kept 90 days, so a breach notice can estimate each state's affected residents from
+sign-in IPs (resolved no finer than state). The privacy notice discloses both.
