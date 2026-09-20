@@ -14,7 +14,8 @@ retain this encrypted recovery source. Never add this credential to the runtime
 Deployment. Repeatable migrations do not seed users or health data.
 
 The runtime SealedSecret lives in `apps/traceroute/templates`. The product uses a
-single replica and Recreate because browser sessions live in process memory.
+single replica and Recreate. Browser sessions are stored sealed in Postgres, so a
+restart signs nobody out; migrate before the tag bump all the same.
 TLS terminates at Cloudflare; the database connection stays within the cluster.
 
 Owner invitations are issued by `traceroute-admin -operation invite -email EMAIL
