@@ -1,5 +1,11 @@
 # Traceroute trial database
 
+> **Traceroute's product moved to AWS on 2026-09-21** (ADR-0031 and ADR-0032 in the private
+> `traceroute-ops` repository; the procedures are its `infra/README.md` and `infra/cutover.md`).
+> What this directory describes is the homelab deployment, which is stopped, not deleted,
+> through the rollback window and is removed when the homelab side is decommissioned. Nothing
+> here is the production procedure. The marketing site (`apps/traceroute-site`) still runs here.
+
 Use dedicated database `traceroute_trial` on the existing Postgres 16 service.
 `traceroute_owner` owns the database/schema; `traceroute_runtime` is the restricted
 application login. Both are non-superusers without role/database creation,

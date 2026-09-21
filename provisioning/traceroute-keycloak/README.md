@@ -1,5 +1,11 @@
 # Traceroute owner-token configuration
 
+> **Traceroute's product moved to AWS on 2026-09-21** (ADR-0031 and ADR-0032 in the private
+> `traceroute-ops` repository; the procedures are its `infra/README.md` and `infra/cutover.md`).
+> What this directory describes is the homelab deployment, which is stopped, not deleted,
+> through the rollback window and is removed when the homelab side is decommissioned. Nothing
+> here is the production procedure. The marketing site (`apps/traceroute-site`) still runs here.
+
 These explicit Keycloak Admin API representations target only the `traceroute`
 realm. They are provisioning inputs, outside Argo's workload templates; do not
 import them into another realm. Dynamic registration narrows defaults for future clients as described below.

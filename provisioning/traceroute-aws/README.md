@@ -1,5 +1,11 @@
 # Traceroute trial AWS credentials
 
+> **Traceroute's product moved to AWS on 2026-09-21** (ADR-0031 and ADR-0032 in the private
+> `traceroute-ops` repository; the procedures are its `infra/README.md` and `infra/cutover.md`).
+> What this directory describes is the homelab deployment, which is stopped, not deleted,
+> through the rollback window and is removed when the homelab side is decommissioned. Nothing
+> here is the production procedure. The marketing site (`apps/traceroute-site`) still runs here.
+
 These sealed manifests are provisioning inputs, outside ArgoCD application paths.
 Do not include the whole directory in a chart or apply all credentials together.
 They target namespace `traceroute`; Sealed Secrets ciphertext is bound to the exact
