@@ -1,12 +1,15 @@
 image: 192.168.2.17:5000/traceroute:0.1.67
+# AWS cutover (ADR-0031), 2026-09-21: the listener is stopped and the purge and digest are
+# suspended. Nothing is deleted. Rolling back is replicas: 1 and both suspends false.
+replicas: 0
 maintenance:
   enabled: true
-  suspend: false
+  suspend: true
 # Daily feedback digest (ADR-0025). Enable only once the sealed digest credential
 # exists and the role has been configured; see provisioning/traceroute-postgres/README.md.
 feedbackDigest:
   enabled: true
-  suspend: false
+  suspend: true
 backup:
   enabled: true
   image: 192.168.2.17:5000/traceroute-backup:0.1.37

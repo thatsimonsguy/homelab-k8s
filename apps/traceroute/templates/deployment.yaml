@@ -4,7 +4,9 @@ metadata:
   name: traceroute
   namespace: traceroute
 spec:
-  replicas: 1
+  # Zero while the service is paused: the AWS cutover's write pause, and the stopped-not-
+  # deleted copy kept through the rollback window (ADR-0031). `default` would turn 0 into 1.
+  replicas: {{ if hasKey .Values "replicas" }}{{ .Values.replicas }}{{ else }}1{{ end }}
   revisionHistoryLimit: 3
   strategy:
     type: Recreate
