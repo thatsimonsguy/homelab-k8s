@@ -18,11 +18,6 @@ ingress:
       paths:
         - path: /contact
           pathType: Prefix
-    # Traceroute closed-trial requests from the marketing site (target trial-request.json).
-    - host: traceroutehealth.com
-      paths:
-        - path: /trial-request
-          pathType: Prefix
   tls: []
 
 resources: {}
@@ -33,9 +28,7 @@ affinity: {}
 # Name of the Kubernetes Secret that holds the MailForm target file(s).
 # In git, this will be a **SealedSecret** which creates this Secret at deploy time.
 existingTargetsSecret: mailform-targets
-additionalTargetsSecrets:
-  - mailform-traceroute-targets
-  - mailform-traceroute-trial-targets
+additionalTargetsSecrets: []
 
 # File name (without extension) for the endpoint — hitting /contact will use contact.json
 primaryTargetName: contact

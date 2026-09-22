@@ -1,6 +1,0 @@
-apiVersion: v2
-name: traceroute-site
-description: "Traceroute marketing site (traceroutehealth.com): static landing page and trial request form"
-type: application
-version: 0.1.0
-appVersion: "0.1.9"
