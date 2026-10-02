@@ -9,8 +9,8 @@ resources:
   requests: {cpu: 25m, memory: 64Mi}
   limits: {cpu: 500m, memory: 256Mi}
 ingress:
-  enabled: false
+  enabled: true
   # tunnel: edge HTTPS, encrypted tunnel, HTTP origin matching existing routes.
-  mode: directTLS
-  host: ""
+  mode: tunnel
+  host: notify.matthewpsimons.com
   tlsSecret: ""
