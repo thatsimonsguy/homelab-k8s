@@ -1,0 +1,22 @@
+{{- if .Values.ingress.enabled }}
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: gotify
+  namespace: gotify
+spec:
+  {{- if eq .Values.ingress.mode "tunnel" }}
+  entryPoints: [web]
+  {{- else }}
+  entryPoints: [websecure]
+  {{- end }}
+  routes:
+    - match: Host(`{{ required "approved hostname required" .Values.ingress.host }}`)
+      kind: Rule
+      services:
+        - {name: gotify, port: 80}
+  {{- if ne .Values.ingress.mode "tunnel" }}
+  tls:
+    secretName: {{ required "verified TLS secret required" .Values.ingress.tlsSecret }}
+  {{- end }}
+{{- end }}

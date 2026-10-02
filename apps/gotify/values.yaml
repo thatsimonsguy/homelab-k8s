@@ -1,0 +1,16 @@
+image: gotify/server:3.1.1@sha256:44fc5bbd1c0618878e33073d38c2c13126b48f245c3fe12236b1da48eb203b86
+# Start only after the separately approved bootstrap Secret exists.
+bootstrapSecret: gotify-bootstrap
+storage:
+  size: 1Gi
+  node: burdturglar
+  path: /var/lib/rancher/k3s/storage/gotify-data
+resources:
+  requests: {cpu: 25m, memory: 64Mi}
+  limits: {cpu: 500m, memory: 256Mi}
+ingress:
+  enabled: false
+  # tunnel: edge HTTPS, encrypted tunnel, HTTP origin matching existing routes.
+  mode: directTLS
+  host: ""
+  tlsSecret: ""

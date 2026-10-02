@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: gotify
+  namespace: argocd
+spec:
+  destination:
+    namespace: gotify
+    server: https://kubernetes.default.svc
+  source:
+    repoURL: https://github.com/thatsimonsguy/homelab-k8s.git
+    path: apps/gotify
+    targetRevision: main
+  project: default
+  revisionHistoryLimit: 3
+  syncPolicy:
+    automated:
+      selfHeal: true
