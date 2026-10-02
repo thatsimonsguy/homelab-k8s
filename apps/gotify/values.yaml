@@ -14,3 +14,5 @@ ingress:
   mode: tunnel
   host: notify.matthewpsimons.com
   tlsSecret: ""
+  # Home egress address: the phone app may sign in only from here (Cf-Connecting-IP).
+  loginFrom: 140.106.46.155

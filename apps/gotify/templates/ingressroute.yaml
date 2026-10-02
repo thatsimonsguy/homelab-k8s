@@ -1,4 +1,5 @@
 {{- if .Values.ingress.enabled }}
+{{- $host := required "approved hostname required" .Values.ingress.host }}
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
@@ -11,12 +12,32 @@ spec:
   entryPoints: [websecure]
   {{- end }}
   routes:
-    # Public: message submission only (an app token in the request). The web UI, the
-    # admin sign-in, the client API and the stream are not routed from this hostname.
-    - match: Host(`{{ required "approved hostname required" .Values.ingress.host }}`) && Path(`/message`) && Method(`POST`)
+    # Public, by token only: senders POST /message with an app token, and the phone app
+    # reads its stream, messages and application icons with its client token
+    # (X-Gotify-Key header, or ?token= on the stream). A request carrying an Authorization
+    # header is refused, so the account password cannot be tried from the internet. The
+    # web UI, users, clients, plugins and sign-in are not routed here.
+    - match: >-
+        Host(`{{ $host }}`) && !HeaderRegexp(`Authorization`, `.*`) && (
+        (Method(`POST`) && Path(`/message`)) ||
+        (Method(`GET`) && (Path(`/stream`) || Path(`/message`) || Path(`/application`) ||
+        PathRegexp(`^/application/[0-9]+/message$`) || PathPrefix(`/image/`) ||
+        Path(`/current/user`) || Path(`/version`) || Path(`/health`) || Path(`/gotifyinfo`))) ||
+        (Method(`DELETE`) && (Path(`/message`) || PathRegexp(`^/message/[0-9]+$`) ||
+        PathRegexp(`^/application/[0-9]+/message$`))))
       kind: Rule
       services:
         - {name: gotify, port: 80}
+    {{- with .Values.ingress.loginFrom }}
+    # The phone app's one-time sign-in (password, then a new client token), only from the
+    # home connection's address as Cloudflare saw it. A changed address fails closed.
+    - match: >-
+        Host(`{{ $host }}`) && Header(`Cf-Connecting-IP`, `{{ . }}`) &&
+        ((Method(`GET`) && Path(`/current/user`)) || (Method(`POST`) && Path(`/client`)))
+      kind: Rule
+      services:
+        - {name: gotify, port: 80}
+    {{- end }}
   {{- if ne .Values.ingress.mode "tunnel" }}
   tls:
     secretName: {{ required "verified TLS secret required" .Values.ingress.tlsSecret }}
