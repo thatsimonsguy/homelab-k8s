@@ -1,0 +1,11 @@
+# The tenant's entity manifest (aggsys repo: deploy/sandbox/entities.example.yaml).
+# The legal entity model the nightly ETL load, replay plan and config passes
+# read (AGG-391/392).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aggsys-entities
+  namespace: aggsys
+data:
+  entities.yaml: |
+{{ .Values.nightly.entities | indent 4 }}

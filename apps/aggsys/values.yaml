@@ -1,8 +1,8 @@
 image:
   registry: 192.168.2.17:5000
   # Set both to the tag printed by `task sandbox-images` in the aggsys repo.
-  erpServerTag: 20260910-9a6d37c
-  toolsTag: 20260910-9a6d37c
+  erpServerTag: 20261012-0ea8552
+  toolsTag: 20261012-0ea8552
   pullPolicy: Always
 
 # Public, daytime erp-server: config-driven tax (TAX_PROVIDER unset), OIDC on.
@@ -54,6 +54,9 @@ nightly:
     # Tenant configuration (AGG-361): tax strategy + CoA purpose defaults,
     # applied through the public API after every rebuild (nightly.tenantConfig).
     SANDBOX_TENANT_CONFIG_FILE: /etc/aggsys/tenant-config/tenant-config.yaml
+    # Entity manifest (AGG-391/392): the tenant's legal entity model for the
+    # ETL load, the replay plan and the config passes (nightly.entities).
+    SANDBOX_ENTITY_MANIFEST_FILE: /etc/aggsys/entities/entities.yaml
     # Alerting + artifacts (AGG-362): the outcome line to ntfy (token in the
     # sealed secret), the night's record to MinIO (credentials likewise).
     NTFY_URL: http://ntfy.ntfy.svc.cluster.local/aggsys-sandbox
@@ -75,6 +78,39 @@ nightly:
   # rides the Titan-migrated county rate tables) and the default revenue
   # account. Per-entity tax overrides for Trucking/Form go here once Wieser
   # decides them (G7 sign-off). Format: aggsys deploy/sandbox/tenant-config.example.yaml.
+  # Entity manifest (AGG-391/392; aggsys deploy/sandbox/entities.example.yaml):
+  # one entry per Titan company label. A company in the source that is not
+  # listed here stops the nightly at the ETL load — verify it, add a line.
+  entities: |
+    # Entity manifest (AGG-391, docs/design/entity-birth-in-window-design.md D3):
+    # the tenant's legal entity model, passed to `titan-etl load --entities`.
+    # One entry per Titan company label (dbo.intercompany_company.company). The
+    # facts — which plants belong to a company, its fiscal calendar, whether it
+    # existed before T0 — come from the source data; this file holds only what a
+    # person decides. A company in the source that is not listed here (or listed
+    # here but absent from the source) stops the load: verify it and add a line.
+    entities:
+      - label: Form
+        period_group: Form Fab        # gl_company_years.period_group spelling
+        name: Wieser Form Fabrication
+        cash_account: "1002"          # core.cash purpose default
+        ic_account: "1230"            # the intercompany account named for this company
+      - label: Main
+        period_group: Main
+        name: Wieser Concrete Products
+        cash_account: "1000"
+        ic_account: "1260"
+      - label: Trucking
+        period_group: Trucking
+        name: Wieser Trucking
+        cash_account: "1001"
+        ic_account: "1250"
+      - label: WW Leasing L           # WW Leasing LLC (plant 910), set up Sept 2026
+        period_group: WW Leasing L
+        name: WW Leasing LLC
+        cash_account: "1015"
+        party_account_policy: explicit
+        # no ic_account: no intercompany account names it in the source data
   tenantConfig: |
     tax_strategy:
       tenant: tenant_rates
