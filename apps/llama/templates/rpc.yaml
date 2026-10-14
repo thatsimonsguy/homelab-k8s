@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: llama-rpc
+spec:
+  replicas: {{ .Values.rpc.replicas }}
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: llama-rpc
+  template:
+    metadata:
+      labels:
+        app: llama-rpc
+    spec:
+      runtimeClassName: nvidia
+      containers:
+        - name: rpc-server
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["/usr/local/bin/ggml-rpc-server"]
+          # -c caches received tensors on the PVC so reloads skip the network
+          args: ["--host", "0.0.0.0", "--port", "50052", "-c"]
+          env:
+            - name: NVIDIA_VISIBLE_DEVICES
+              value: {{ .Values.gpuUUID | quote }}
+            - name: LLAMA_CACHE
+              value: /models/rpc-cache
+          ports:
+            - containerPort: 50052
+          resources:
+            requests:
+              {{- toYaml .Values.rpc.resources.requests | nindent 14 }}
+            limits:
+              nvidia.com/gpu: 1
+              {{- toYaml .Values.rpc.resources.limits | nindent 14 }}
+          volumeMounts:
+            - name: models
+              mountPath: /models
+      volumes:
+        - name: models
+          persistentVolumeClaim:
+            claimName: llama-models
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: llama-rpc
+spec:
+  type: LoadBalancer
+  loadBalancerIP: {{ .Values.rpc.service.loadBalancerIP }}
+  selector:
+    app: llama-rpc
+  ports:
+    - port: {{ .Values.rpc.service.port }}
+      targetPort: 50052

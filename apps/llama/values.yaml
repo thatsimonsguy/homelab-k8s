@@ -1,0 +1,46 @@
+# Custom CUDA 12.4 build (driver 550 can't run upstream's CUDA 12.8 images);
+# source: ~/Projects/thatsimonsguy/planet/images/llama-cuda12
+image:
+  repository: 192.168.2.17:5000/llama-cuda12
+  tag: b11306
+  pullPolicy: IfNotPresent
+
+# GTX 1080 Ti. The GTX 960 stays with Jellyfin.
+gpuUUID: "GPU-a0588968-f48e-059d-e0d7-9be4dfe1bbee"
+
+# solo and rpc share the one GPU, so only one runs at a time. planet
+# (on pop-os) switches between them by scaling; Argo ignores replicas.
+solo:
+  replicas: 1
+  model:
+    repo: unsloth/Qwen3.6-35B-A3B-GGUF
+    file: Qwen3.6-35B-A3B-UD-Q4_K_M.gguf
+    sha256: ac0e2c1189e055faa36eff361580e79c5bd6f8e76bffb4ce547f167d53e31a61
+  alias: k3s
+  ctxSize: 65536
+  extraArgs: []
+  service:
+    loadBalancerIP: 192.168.2.28
+    port: 8080
+  resources:
+    requests:
+      cpu: "2"
+      memory: 16Gi
+    limits:
+      memory: 40Gi
+
+rpc:
+  replicas: 0
+  service:
+    loadBalancerIP: 192.168.2.29
+    port: 50052
+  resources:
+    requests:
+      cpu: "1"
+      memory: 2Gi
+    limits:
+      memory: 8Gi
+
+persistence:
+  size: 80Gi
+  storageClass: local-path

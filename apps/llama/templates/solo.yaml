@@ -1,0 +1,91 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: llama-solo
+spec:
+  replicas: {{ .Values.solo.replicas }}
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: llama-solo
+  template:
+    metadata:
+      labels:
+        app: llama-solo
+    spec:
+      runtimeClassName: nvidia
+      initContainers:
+        - name: fetch-model
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              set -e
+              f=/models/{{ .Values.solo.model.file }}
+              if [ -f "$f" ] && echo "{{ .Values.solo.model.sha256 }}  $f" | sha256sum -c -s; then exit 0; fi
+              curl -fsSL -C - -o "$f" https://huggingface.co/{{ .Values.solo.model.repo }}/resolve/main/{{ .Values.solo.model.file }}
+              echo "{{ .Values.solo.model.sha256 }}  $f" | sha256sum -c
+          volumeMounts:
+            - name: models
+              mountPath: /models
+      containers:
+        - name: llama-server
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            - --model
+            - /models/{{ .Values.solo.model.file }}
+            - --alias
+            - {{ .Values.solo.alias | quote }}
+            - --port
+            - "8080"
+            - --ctx-size
+            - {{ .Values.solo.ctxSize | quote }}
+            - --fit
+            - "on"
+            - --flash-attn
+            - "on"
+            - --jinja
+            - --metrics
+            {{- range .Values.solo.extraArgs }}
+            - {{ . | quote }}
+            {{- end }}
+          env:
+            - name: NVIDIA_VISIBLE_DEVICES
+              value: {{ .Values.gpuUUID | quote }}
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            periodSeconds: 10
+            failureThreshold: 60
+          resources:
+            requests:
+              {{- toYaml .Values.solo.resources.requests | nindent 14 }}
+            limits:
+              nvidia.com/gpu: 1
+              {{- toYaml .Values.solo.resources.limits | nindent 14 }}
+          volumeMounts:
+            - name: models
+              mountPath: /models
+      volumes:
+        - name: models
+          persistentVolumeClaim:
+            claimName: llama-models
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: llama-solo
+spec:
+  type: LoadBalancer
+  loadBalancerIP: {{ .Values.solo.service.loadBalancerIP }}
+  selector:
+    app: llama-solo
+  ports:
+    - port: {{ .Values.solo.service.port }}
+      targetPort: 8080
