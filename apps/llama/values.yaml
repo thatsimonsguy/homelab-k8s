@@ -41,6 +41,6 @@ rpc:
     limits:
       memory: 8Gi
 
-persistence:
-  size: 80Gi
-  storageClass: local-path
+# Node-local disk, not the default local-path class (which lives on the
+# NAS over CIFS): model loads happen on every planet mode switch.
+modelsHostPath: /var/lib/llama-models

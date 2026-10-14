@@ -74,8 +74,9 @@ spec:
               mountPath: /models
       volumes:
         - name: models
-          persistentVolumeClaim:
-            claimName: llama-models
+          hostPath:
+            path: {{ .Values.modelsHostPath }}
+            type: DirectoryOrCreate
 ---
 apiVersion: v1
 kind: Service
