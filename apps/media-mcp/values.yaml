@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: 192.168.2.17:5000/media-mcp
-  tag: 0.2.1
+  tag: 0.3.0
   pullPolicy: IfNotPresent
 
 # LAN listener: no auth, direct MetalLB IP (not Traefik), port 80 -> 8080.
@@ -26,6 +26,15 @@ public:
   secretName: media-mcp-tokens
   host: media.matthewpsimons.com
   path: /mcp
+
+# NAS recycle bin: ONLY the share's #recycle folder is mounted on the node at hostPath
+# (a separate systemd mount, mnt-nas\x2drecycle.mount), so the pod can never see the rest of the NAS.
+# The SMB mount is owned by uid/gid 1000, so the pod runs as 1000 to be able to empty it.
+recycle:
+  enabled: true
+  hostPath: /mnt/nas-recycle
+  mountPath: /recycle
+  runAsUser: 1000
 
 resources:
   requests:
