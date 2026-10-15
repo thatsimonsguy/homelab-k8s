@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: linuxserver/jellyfin
-  tag: latest
+  tag: 12.2ubu2604-ls54
   pullPolicy: IfNotPresent
 
 service:

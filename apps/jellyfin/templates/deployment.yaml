@@ -7,6 +7,9 @@ metadata:
     {{- include "jellyfin.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
+  # Single pinned GPU: the old pod must release it before the new one is admitted
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       {{- include "jellyfin.selectorLabels" . | nindent 6 }}
