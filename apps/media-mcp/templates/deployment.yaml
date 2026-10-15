@@ -65,6 +65,16 @@ spec:
                 secretKeyRef:
                   name: media-mcp-secrets
                   key: JACKETT_API_KEY
+            - name: SEED_RATIO
+              value: {{ .Values.seeding.ratio | quote }}
+            - name: SEED_HOURS
+              value: {{ .Values.seeding.hours | quote }}
+            - name: SEEDING_POLICY_MAX
+              value: {{ .Values.seeding.maxPerRun | quote }}
+            - name: SEEDING_POLICY_AUTO
+              value: {{ .Values.seeding.auto | quote }}
+            - name: SEEDING_POLICY_AT
+              value: {{ .Values.seeding.at | quote }}
             {{- if .Values.recycle.enabled }}
             - name: RECYCLE_DIR
               value: {{ .Values.recycle.mountPath | quote }}

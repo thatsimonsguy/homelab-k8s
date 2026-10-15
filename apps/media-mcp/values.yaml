@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: 192.168.2.17:5000/media-mcp
-  tag: 0.6.1
+  tag: 0.7.0
   pullPolicy: IfNotPresent
 
 # LAN listener: no auth, direct MetalLB IP (not Traefik), port 80 -> 8080.
@@ -37,6 +37,16 @@ recycle:
   hostPath: /mnt/nas-recycle
   mountPath: /recycle
   runAsUser: 1000
+
+# Seeding rule: a finished torrent qualifies at ratio >= ratio OR >= hours of ACTUAL seeding (matches the
+# private tracker: 1:1 or 336h). Qualified torrents proven to be in the library are deleted with their data;
+# qualified torrents that are not proven are only stopped. auto=true runs this daily at `at` (UTC).
+seeding:
+  auto: false
+  at: "09:00"
+  ratio: 1.0
+  hours: 336
+  maxPerRun: 100
 
 resources:
   requests:
