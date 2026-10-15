@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: haugene/transmission-openvpn
-  tag: latest
+  tag: 5.5.2
   pullPolicy: IfNotPresent
 
 service:

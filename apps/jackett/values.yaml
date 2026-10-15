@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: linuxserver/jackett
-  tag: v0.24.2027-ls423
+  tag: v0.24.2850-ls4
   pullPolicy: IfNotPresent
 
 service:

@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: linuxserver/sonarr
-  tag: 4.0.17.2952-ls314
+  tag: 4.0.20.3014-ls328
   pullPolicy: IfNotPresent
 
 service:
