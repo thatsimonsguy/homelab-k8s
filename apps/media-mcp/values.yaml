@@ -1,0 +1,34 @@
+replicaCount: 1
+
+image:
+  repository: 192.168.2.17:5000/media-mcp
+  tag: 0.1.0
+  pullPolicy: IfNotPresent
+
+# LAN listener: no auth, direct MetalLB IP (not Traefik), port 80 -> 8080.
+service:
+  type: LoadBalancer
+  port: 80
+  loadBalancerIP: 192.168.2.32
+
+# Cluster-internal addresses of the managed apps. API keys come from the
+# media-mcp-secrets SealedSecret (SONARR_API_KEY, RADARR_API_KEY, JACKETT_API_KEY).
+upstreams:
+  sonarr: http://sonarr.sonarr.svc.cluster.local
+  radarr: http://radarr.radarr.svc.cluster.local
+  jackett: http://jackett.jackett.svc.cluster.local:9117
+  transmission: http://transmission.default.svc.cluster.local:9091
+
+# Public listener (bearer tokens), reached through the Cloudflare tunnel.
+# Off until the media-mcp-tokens secret exists.
+public:
+  enabled: false
+  secretName: media-mcp-tokens
+
+resources:
+  requests:
+    cpu: 25m
+    memory: 32Mi
+  limits:
+    cpu: 500m
+    memory: 128Mi

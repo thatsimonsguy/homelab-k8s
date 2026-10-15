@@ -1,0 +1,96 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  namespace: media-mcp
+  labels:
+    app: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: media-mcp
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          env:
+            - name: LAN_ADDR
+              value: ":8080"
+            - name: PUBLIC_ADDR
+              value: ":8081"
+            - name: SONARR_URL
+              value: {{ .Values.upstreams.sonarr | quote }}
+            - name: RADARR_URL
+              value: {{ .Values.upstreams.radarr | quote }}
+            - name: JACKETT_URL
+              value: {{ .Values.upstreams.jackett | quote }}
+            - name: TRANSMISSION_URL
+              value: {{ .Values.upstreams.transmission | quote }}
+            - name: SONARR_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: media-mcp-secrets
+                  key: SONARR_API_KEY
+            - name: RADARR_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: media-mcp-secrets
+                  key: RADARR_API_KEY
+            - name: JACKETT_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: media-mcp-secrets
+                  key: JACKETT_API_KEY
+            {{- if .Values.public.enabled }}
+            - name: TOKENS_FILE
+              value: /etc/media-mcp/tokens/tokens
+            {{- end }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+            {{- if .Values.public.enabled }}
+            - name: public
+              containerPort: 8081
+              protocol: TCP
+            {{- end }}
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 30
+          {{- if .Values.public.enabled }}
+          volumeMounts:
+            - name: tokens
+              mountPath: /etc/media-mcp/tokens
+              readOnly: true
+          {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- if .Values.public.enabled }}
+      volumes:
+        - name: tokens
+          secret:
+            secretName: {{ .Values.public.secretName }}
+      {{- end }}

@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}
+  namespace: media-mcp
+  labels:
+    app: {{ .Release.Name }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: {{ .Release.Name }}
+  loadBalancerIP: {{ .Values.service.loadBalancerIP }}
+---
+# Cluster-only service for the public (token-gated) listener; the Cloudflare
+# tunnel targets this, never the LAN LoadBalancer above.
+{{- if .Values.public.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-public
+  namespace: media-mcp
+  labels:
+    app: {{ .Release.Name }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8081
+      targetPort: public
+      protocol: TCP
+      name: public
+  selector:
+    app: {{ .Release.Name }}
+{{- end }}
