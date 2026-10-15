@@ -3,6 +3,6 @@ name: media-mcp
 version: 0.1.0
 description: MCP server for managing the media stack (Sonarr, Radarr, Jackett, Transmission)
 type: application
-appVersion: "0.3.0"
+appVersion: "0.4.0"
 sources:
   - https://github.com/thatsimonsguy/media-mcp
