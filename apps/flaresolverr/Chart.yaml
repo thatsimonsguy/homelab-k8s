@@ -1,0 +1,8 @@
+apiVersion: v2
+name: flaresolverr
+version: 0.1.0
+description: Cloudflare-challenge solver proxy used by Jackett
+type: application
+appVersion: "v3.5.2"
+sources:
+  - https://github.com/FlareSolverr/FlareSolverr
