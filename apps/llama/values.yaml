@@ -18,7 +18,9 @@ solo:
     sha256: ac0e2c1189e055faa36eff361580e79c5bd6f8e76bffb4ce547f167d53e31a61
   alias: k3s
   ctxSize: 65536
-  extraArgs: []
+  # Qwen's recommended thinking-mode sampling; llama.cpp's defaults differ
+  # and are linked to endless reasoning loops.
+  extraArgs: ["--temp", "1.0", "--top-p", "0.95", "--top-k", "20", "--min-p", "0"]
   service:
     loadBalancerIP: 192.168.2.28
     port: 8080
