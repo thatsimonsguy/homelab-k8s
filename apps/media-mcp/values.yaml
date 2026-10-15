@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: 192.168.2.17:5000/media-mcp
-  tag: 0.2.0
+  tag: 0.2.1
   pullPolicy: IfNotPresent
 
 # LAN listener: no auth, direct MetalLB IP (not Traefik), port 80 -> 8080.
