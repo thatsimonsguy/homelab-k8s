@@ -42,7 +42,7 @@ recycle:
 # private tracker: 1:1 or 336h). Qualified torrents proven to be in the library are deleted with their data;
 # qualified torrents that are not proven are only stopped. auto=true runs this daily at `at` (UTC).
 seeding:
-  auto: false
+  auto: true
   at: "09:00"
   ratio: 1.0
   hours: 336
