@@ -48,6 +48,8 @@ spec:
               value: {{ .Values.upstreams.jackett | quote }}
             - name: TRANSMISSION_URL
               value: {{ .Values.upstreams.transmission | quote }}
+            - name: VPNCHECK_URL
+              value: {{ .Values.upstreams.vpncheck | quote }}
             - name: SONARR_API_KEY
               valueFrom:
                 secretKeyRef:
