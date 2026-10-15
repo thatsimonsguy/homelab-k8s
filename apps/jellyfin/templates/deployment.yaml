@@ -53,6 +53,10 @@ spec:
               mountPath: {{ .Values.volumes.tv.mountPath }}
             - name: movies
               mountPath: {{ .Values.volumes.movies.mountPath }}
+            # Transcode segments are throwaway: keep them off the NAS, where the Synology recycle bin
+            # would keep every deleted segment (53 GiB had piled up there).
+            - name: transcodes
+              mountPath: {{ .Values.transcodes.mountPath }}
           {{- if .Values.gpu.enabled }}
           resources:
             limits:
@@ -68,6 +72,9 @@ spec:
         - name: movies
           hostPath:
             path: {{ .Values.volumes.movies.hostPath }}
+        - name: transcodes
+          emptyDir:
+            sizeLimit: {{ .Values.transcodes.sizeLimit }}
         - name: nas-check
           hostPath:
             path: /mnt/nas

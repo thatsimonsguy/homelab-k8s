@@ -34,3 +34,9 @@ env:
 
 gpu:
   enabled: true
+
+# Local scratch for transcode segments (emptyDir on node disk). Exceeding sizeLimit evicts the pod,
+# and the node disk is ~75% full, so keep this modest; Jellyfin trims old segments as it goes.
+transcodes:
+  mountPath: /config/data/transcodes
+  sizeLimit: 16Gi
