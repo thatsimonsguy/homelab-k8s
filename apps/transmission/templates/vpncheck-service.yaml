@@ -1,0 +1,15 @@
+# In-cluster only: lets media-mcp read the public IP seen from inside the VPN tunnel.
+apiVersion: v1
+kind: Service
+metadata:
+  name: transmission-vpncheck
+  labels:
+    app: {{ .Chart.Name }}
+spec:
+  type: ClusterIP
+  ports:
+    - name: vpn-ip
+      port: 8082
+      targetPort: vpn-ip
+  selector:
+    app: {{ .Chart.Name }}
