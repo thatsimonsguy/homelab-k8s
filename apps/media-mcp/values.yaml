@@ -19,11 +19,13 @@ upstreams:
   jackett: http://jackett.jackett.svc.cluster.local:9117
   transmission: http://transmission.default.svc.cluster.local:9091
 
-# Public listener (bearer tokens), reached through the Cloudflare tunnel.
-# Off until the media-mcp-tokens secret exists.
+# Public listener (per-person bearer tokens), reached through the Cloudflare tunnel
+# via Traefik. Tokens are stored as SHA-256 hashes in the media-mcp-tokens SealedSecret.
 public:
-  enabled: false
+  enabled: true
   secretName: media-mcp-tokens
+  host: media.matthewpsimons.com
+  path: /mcp
 
 resources:
   requests:

@@ -1,0 +1,15 @@
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: media-mcp-tokens
+  namespace: media-mcp
+spec:
+  encryptedData:
+    tokens: AgCCdFhB2CRS8AvOWI02cuPQOJvQNOI29pai677NiVKFR5fmpKc3m+YMfSFrYfLOye/1EsRh5PDYzCtVvyfDuokN3OgEAu6GkREhwrpciAoizmJuYth3V3+f4P6cb/h4FeUpoL6i5dQa2nwdNpKtyPRtjr6ZfCDvpQ+/ycTwhj8/p3fmAnFkVy8QGSuG4iPkRFOKGE0DY5AG4kU4va5c7q5K78WKApUe2hLdK/Yx+yv9Qt++07BRUxRGU/lRotHEob2syGFKwv+5o0tMc9G2X5MF63ync3/CQxiFUekMJEwMLvdMi/64bCIA6B/Y4iIz4GWKNtI8a5qX8NnvWC/YOuEPAlw9Y5Muv3d2WtfGIgAxHssSQvZsba3epdduMgXm4G+hq118DQ9mFJKheDixsXgqrPWTZxFhX4ejeHKUzKqdDybtLvEtOEEWuMg5B4mV8EqZKnfqaRhOwGqaMnSAVpC/rcqMRBJrmeQ1qGUTN5toSpD4yMYSXBjWyftjP2ziT97xCkGOQoH3nFM1O+XgFc5yzszuDZeU1aiqosIeVyVp0SbMahKXmYcAFIPw4ZzOPk+UsCqvz851tF5tD060TZ9jf0TwfSTak8YBbMTIrJ1G8wh1ftpcTk0E6gdRgX942SAf5SfOsgZUUbzvOP8BRdj0qIsrTv170PoWryJpH/bM6KIc8qOUWZeLr3xcToIGmuhts5HR0IMZfjnHUxVrC2G0+OYv0xS91j13CQKXN2Gul15GwzyC74vZcri7nGRRWmhIeG+d+foXeCQZZ8nATKCKDK1jpu49nL+87wjzhP/kazJ6BLRIROtMYLyU7YePdSsju69O/hRlvE3ELN0fOTJYJ6Uv2RpcG/l4UnALJM9Gpz/EIAVbPzHujuEIhrA=
+  template:
+    metadata:
+      creationTimestamp: null
+      name: media-mcp-tokens
+      namespace: media-mcp

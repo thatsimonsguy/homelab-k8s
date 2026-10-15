@@ -1,0 +1,18 @@
+{{- if .Values.public.enabled }}
+# Public entry: Cloudflare tunnel -> Traefik -> token-gated listener (:8081).
+# Only the exact MCP path is routed; the LAN listener (:8080) is never reachable this way.
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ .Release.Name }}-public
+  namespace: media-mcp
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`{{ .Values.public.host }}`) && Path(`{{ .Values.public.path }}`)
+      kind: Rule
+      services:
+        - name: {{ .Release.Name }}-public
+          port: 8081
+{{- end }}
