@@ -1,8 +1,8 @@
 image:
   registry: 192.168.2.17:5000
   # Set both to the tag printed by `task sandbox-images` in the aggsys repo.
-  erpServerTag: 20261012-0ea8552
-  toolsTag: 20261012-0ea8552
+  erpServerTag: 20261028-55abb3a6
+  toolsTag: 20261028-55abb3a6
   pullPolicy: Always
 
 # Public, daytime erp-server: config-driven tax (TAX_PROVIDER unset), OIDC on.
@@ -111,6 +111,15 @@ nightly:
         cash_account: "1015"
         party_account_policy: explicit
         # no ic_account: no intercompany account names it in the source data
+    # Pending entities (entity-birth design D12): companies the source already
+    # has GL / bank accounts for but no company, calendar or activity yet. Their
+    # accounts are set aside while dormant; any activity on them, or the label
+    # appearing as a source company, stops the load — then move the entry up to
+    # `entities` (adding period_group, cash_account, ic_account/policy).
+    pending:
+      - label: NE Ohio Concrete       # acquisition (60% Wieser), expected close 2026-10-30/31; the label Titan will use is a guess
+        name: NE Ohio Concrete
+        cash_accounts: ["1018", "1019"] # 1018 Checking NE OH, 1019 MMA NE OH
   tenantConfig: |
     tax_strategy:
       tenant: tenant_rates
