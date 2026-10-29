@@ -33,3 +33,7 @@ spec:
   headers:
     customRequestHeaders:
       X-Forwarded-Proto: https
+      # The visitor reached Cloudflare on 443. Without this Traefik forwards the
+      # tunnel hop's port (80), and Keycloak's dynamic back-channel URLs come out
+      # as https://auth.quoinerp.com:80/... (token, certs), breaking code exchange.
+      X-Forwarded-Port: "443"
