@@ -215,16 +215,15 @@ nightly:
         display_name: Matt Simons
         roles: [super_admin]
         keycloak: false
-      # TEMPORARILY DISABLED 2026-10-29: PUT /users/{id}/locations 404s for
-      # Rob's plant list (bootstrap fails, last-good restored). Re-enable once fixed.
-      # # First Wieser user (AGG-360 stage 1): Rob Tartaglia, CFO. Admin across
-      # # every entity and plant; approval limits come with AGG-454.
-      # - email: robt@wieserconcrete.com
-      #   display_name: Rob Tartaglia
-      #   roles: [admin]
-      #   keycloak: false
-      #   legal_entities: ["Wieser Concrete Products", "Wieser Trucking", "Wieser Form Fabrication", "WW Leasing LLC"]
-      #   locations: ["100", "110", "150", "151", "190", "200", "250", "300", "350", "400", "450", "500", "550", "600", "610", "650", "651", "700", "750", "910", "999", "LOCAL"]
+      # First Wieser user (AGG-360 stage 1): Rob Tartaglia, CFO. Admin across
+      # every entity and plant; approval limits come with AGG-454.
+      - email: robt@wieserconcrete.com
+        display_name: Rob Tartaglia
+        roles: [admin]
+        keycloak: false
+        legal_entities: ["Wieser Concrete Products", "Wieser Trucking", "Wieser Form Fabrication", "WW Leasing LLC"]
+        # LOCAL is an inactive pseudo-plant (ETL DD-04): not assignable to users.
+        locations: ["100", "110", "150", "151", "190", "200", "250", "300", "350", "400", "450", "500", "550", "600", "610", "650", "651", "700", "750", "910", "999"]
   mssql:
     image: mcr.microsoft.com/mssql/server:2022-latest
     memoryLimitMB: "5120"
