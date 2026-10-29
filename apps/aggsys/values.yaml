@@ -1,8 +1,8 @@
 image:
   registry: 192.168.2.17:5000
   # Set both to the tag printed by `task sandbox-images` in the aggsys repo.
-  erpServerTag: 20261028-15d62978
-  toolsTag: 20261028-15d62978
+  erpServerTag: 20261028-1600e50a
+  toolsTag: 20261028-1600e50a
   pullPolicy: Always
 
 # Keycloak URLs (AGG-462 / AGG-360 D8). The issuer is https://auth.quoinerp.com
@@ -174,14 +174,10 @@ nightly:
     # Entra directory pin (AGG-424/434): Wieser's directory, which also
     # verifies wieserformfab.com. With the entra_tid mapper on and no
     # directory set, every Entra sign-in is refused (fail closed).
-    # BLOCKED: `titan-replay tenant-config` refuses microsoft365 without a
-    # connect_client_id or ingestion_client_id (the API itself accepts the
-    # directory alone), and Wieser's AGG-411 Quoin app does not exist yet —
-    # the Keycloak sign-in app (912c2e52-…) is deliberately NOT that app.
-    # Uncomment once the CLI accepts directory_id alone (or add the AGG-411
-    # app id); uncommented today it would fail the nightly at tenant-config.
-    # microsoft365:
-    #   directory_id: "c179b20c-3d38-4d09-89cf-d9c51912b9ac"
+    # Directory alone is accepted since aggsys 32335e8b (AGG-424); the
+    # Keycloak sign-in app (912c2e52-…) is deliberately NOT the AGG-411 app.
+    microsoft365:
+      directory_id: "c179b20c-3d38-4d09-89cf-d9c51912b9ac"
     # Document-number prefixes (AGG-375) — Wieser's choice is still open; set
     # the keys here once decided (any subset of: ap_invoice ap_payment
     # ap_payment_run ap_credit_memo ap_debit_memo ap_prepayment ar_invoice
@@ -289,7 +285,7 @@ storage:
 # A missing key with enabled: true keeps the new erp-server pod in
 # CreateContainerConfigError (the old one keeps serving).
 documents:
-  enabled: false
+  enabled: true
   s3:
     region: us-east-1        # MinIO's default region (no LocationConstraint)
     endpoint: http://minio.minio.svc.cluster.local:9000
