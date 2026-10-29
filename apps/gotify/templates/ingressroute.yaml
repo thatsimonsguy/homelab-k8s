@@ -7,7 +7,11 @@ metadata:
   namespace: gotify
 spec:
   {{- if eq .Values.ingress.mode "tunnel" }}
-  entryPoints: [web]
+  # cftunnel (apps/traefik-edge) is the only entrypoint that keeps
+  # Cf-Connecting-IP; on web it is stripped, so the sign-in route below never
+  # matches there (fails closed). Point the tunnel's notify hostname at the
+  # cftunnel origin to keep the phone sign-in; `web` stays for the cutover.
+  entryPoints: [web, cftunnel]
   {{- else }}
   entryPoints: [websecure]
   {{- end }}
