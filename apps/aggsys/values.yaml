@@ -1,8 +1,8 @@
 image:
   registry: 192.168.2.17:5000
   # Set both to the tag printed by `task sandbox-images` in the aggsys repo.
-  erpServerTag: 20261029-66f60a6f
-  toolsTag: 20261029-66f60a6f
+  erpServerTag: 20261029-ca6a6930
+  toolsTag: 20261029-ca6a6930
   pullPolicy: Always
 
 # Keycloak URLs (AGG-462 / AGG-360 D8). The issuer is https://auth.quoinerp.com
@@ -28,6 +28,9 @@ erpServer:
     OIDC_CLIENT_ID: erp-api
     OIDC_APP_CLIENT_ID: aggsys-app
     OIDC_AGENT_CLIENT_ID: aggsys-agent
+    # Remote MCP connectors (AGG-360 stage 2): pre-registered Keycloak clients
+    # in each tenant realm; their tokens act as the agent (HumanOnly refused).
+    OIDC_CONNECTOR_CLIENT_IDS: connector-claude,connector-chatgpt
     # Web-shell BFF (AGG-397) on <realm>.quoinerp.com; secrets
     # OIDC_APP_CLIENT_SECRET, OIDC_AGENT_CLIENT_SECRET, BFF_SESSION_KEY come
     # from the sealed secret (templates/deployment.yaml).
@@ -248,14 +251,14 @@ secretName: aggsys-sandbox-secrets
 
 # Public exposure (AGG-360 stage 1, approved 2026-10-28): Cloudflare tunnel ->
 # Traefik's dedicated `cftunnel` entrypoint (apps/traefik-edge) -> erp-server.
-# Apex (unified login) + each listed tenant's shell/BFF. /mcp is NOT exposed
-# (stages 2-3 wait on Matt's green light): set exposeMcp only then.
+# Apex (unified login) + each listed tenant's shell/BFF, and /mcp for remote
+# connectors (stage 2, Matt's green light 2026-10-29).
 public:
   enabled: true
   entrypoint: cftunnel
   baseDomain: quoinerp.com
   tenants: [wieser]
-  exposeMcp: false
+  exposeMcp: true
 
 # Shared endpoints for the nightly and the backup job (AGG-362).
 s3:
