@@ -33,11 +33,10 @@ service:
 persistence:
   # The bitnami chart's PVC (bound to a Retain local-path PV). Size may grow,
   # never shrink; the claim is kept if the chart is ever deleted.
-  # 100Gi for aggsys documents (AGG-466: Titan's 1.6 GB + ~75 MB/month, plus
-  # versions). local-path enforces no quota (the disk, /srv/crypt/bulk, is the
-  # limit); the API server accepts the bigger request only if the StorageClass
-  # has allowVolumeExpansion: true.
-  size: 100Gi
+  # 20Gi: local-path enforces no quota and has no allowVolumeExpansion, so the
+  # request is bookkeeping only (the disk, /srv/crypt/bulk, is the real limit;
+  # AGG-466 adds ~1.6 GB of Titan documents + ~75 MB/month).
+  size: 20Gi
 
 resources:
   requests:
