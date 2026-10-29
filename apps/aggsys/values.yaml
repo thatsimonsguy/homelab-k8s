@@ -127,6 +127,13 @@ nightly:
     purpose_defaults:
       - purpose: core.ar.revenue
         account: "4000"
+      # CFO session 2026-10-28: purchase price variance is tracked, on 5150.
+      # (GRNI on 2010 too, but 2010 isn't in the chart yet; add it once created.)
+      - purpose: core.ap.ppv
+        account: "5150"
+    # CFO session 2026-10-28: anyone with a Wieser email signs in (role-less
+    # until granted).
+    allowed_email_domains: [wieserconcrete.com, wieserformfab.com]
     # Document-number prefixes (AGG-375) — Wieser's choice is still open; set
     # the keys here once decided (any subset of: ap_invoice ap_payment
     # ap_payment_run ap_credit_memo ap_debit_memo ap_prepayment ar_invoice
