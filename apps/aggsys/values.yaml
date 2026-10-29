@@ -5,6 +5,14 @@ image:
   toolsTag: 20261028-15d62978
   pullPolicy: Always
 
+# Keycloak URLs (AGG-462 / AGG-360 D8). The issuer is https://auth.quoinerp.com
+# for every realm, however a token was obtained: Keycloak runs with
+# hostname=https://auth.quoinerp.com + backchannel-dynamic (apps/keycloak).
+# Anything that VERIFIES tokens or redirects a browser uses the public URL;
+# in-cluster back-channel callers that only fetch tokens or call the admin API
+# (the nightly's KEYCLOAK_URL, REPLAY_OIDC_TOKEN_URL) use
+# http://keycloak.keycloak.svc.cluster.local:8080.
+
 # Public, daytime erp-server: config-driven tax (TAX_PROVIDER unset), OIDC on.
 erpServer:
   replicas: 1
@@ -13,10 +21,33 @@ erpServer:
     LOG_LEVEL: info
     PORT: "8080"
     OIDC_ENABLED: "true"
-    OIDC_ISSUER_URL: http://keycloak.int.matthewpsimons.com/realms/wieser
+    # The verifier accepts <base>/realms/<slug> for every active tenant and
+    # fetches discovery/JWKS from there — i.e. over the tunnel (pod -> public
+    # DNS -> Cloudflare -> cloudflared -> Traefik cftunnel -> Keycloak).
+    OIDC_BASE_URL: https://auth.quoinerp.com
     OIDC_CLIENT_ID: erp-api
     OIDC_APP_CLIENT_ID: aggsys-app
     OIDC_AGENT_CLIENT_ID: aggsys-agent
+    # Web-shell BFF (AGG-397) on <realm>.quoinerp.com; secrets
+    # OIDC_APP_CLIENT_SECRET, OIDC_AGENT_CLIENT_SECRET, BFF_SESSION_KEY come
+    # from the sealed secret (templates/deployment.yaml).
+    BFF_ENABLED: "true"
+    BFF_BASE_DOMAIN: quoinerp.com
+    # Tenant sign-in goes straight to the `platform` broker IdP (alias in each
+    # tenant realm). Until that IdP exists (REFERENCE.md apex step 2) Keycloak
+    # ignores the hint and shows the realm's own login page.
+    BFF_IDP_HINT: platform
+    # Unified apex login on quoinerp.com (AGG-402); APEX_CLIENT_SECRET sealed.
+    APEX_ENABLED: "true"
+    APEX_CLIENT_ID: quoin-apex
+    # Client IP (AGG-360): only the tunnel entrypoint passes CF-Connecting-IP
+    # (apps/traefik-edge strips it on web/websecure). The peer erp-server sees
+    # is the Traefik pod, whose IP is dynamic inside the node's podCIDR
+    # 10.42.0.0/24 (single node; cluster-cidr 10.42.0.0/16) — no narrower
+    # stable range exists. templates/networkpolicy.yaml admits only Traefik
+    # pods to :8080, so "a peer in 10.42.0.0/24" can only be Traefik.
+    CLIENT_IP_HEADER: CF-Connecting-IP
+    CLIENT_IP_TRUSTED_PROXIES: 10.42.0.0/24
   resources:
     requests: { cpu: 250m, memory: 512Mi }
     limits: { memory: 2Gi }
@@ -47,7 +78,9 @@ nightly:
     SANDBOX_SSH_KEY_FILE: /etc/aggsys/secrets/SANDBOX_SSH_PRIVATE_KEY
     SANDBOX_SSH_KNOWN_HOST: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPOaSpjnAxNAWWUyuoVeZWXlmhWBXz86Kj4wvIN2aiD6"
     SANDBOX_VM_BACKUP_DIR: /F:/Titan/backups
-    KEYCLOAK_URL: http://keycloak.int.matthewpsimons.com
+    # Admin API (identity manifest): in-cluster back channel. Never the public
+    # host — /admin and the master realm are not routed there.
+    KEYCLOAK_URL: http://keycloak.keycloak.svc.cluster.local:8080
     KEYCLOAK_REALM: wieser
     SANDBOX_IDENTITY_FILE: /etc/aggsys/identity.yaml
     SANDBOX_WAIVERS_FILE: /etc/aggsys/waivers/wieser-replay-waivers.json
@@ -63,11 +96,15 @@ nightly:
     SANDBOX_S3_URL: http://minio.minio.svc.cluster.local:9000
     SANDBOX_S3_BUCKET: aggsys-sandbox-reports
     SANDBOX_IDENTITY_CREDENTIALS: /data/identity-credentials.txt
-    REPLAY_OIDC_TOKEN_URL: http://keycloak.int.matthewpsimons.com/realms/wieser/protocol/openid-connect/token
+    # Password grant on the in-cluster back channel; the token still carries
+    # iss=https://auth.quoinerp.com/realms/wieser (hostname + backchannel-dynamic).
+    REPLAY_OIDC_TOKEN_URL: http://keycloak.keycloak.svc.cluster.local:8080/realms/wieser/protocol/openid-connect/token
     REPLAY_OIDC_CLIENT_ID: erp-api
     REPLAY_ENTRY_USERNAME: replay-entry
     REPLAY_APPROVER_USERNAME: replay-approver
-    OIDC_ISSUER_URL: http://keycloak.int.matthewpsimons.com/realms/wieser
+    # The replay-profile server verifies against the public issuer (discovery
+    # and JWKS over the tunnel, like the public erp-server).
+    OIDC_ISSUER_URL: https://auth.quoinerp.com/realms/wieser
     OIDC_CLIENT_ID: erp-api
   # Identity manifest (AGG-359): people, aggsys role, scope. Keycloak accounts
   # are ensured through the admin API (KEYCLOAK_ADMIN_* in the sealed secret);
@@ -134,6 +171,17 @@ nightly:
     # CFO session 2026-10-28: anyone with a Wieser email signs in (role-less
     # until granted).
     allowed_email_domains: [wieserconcrete.com, wieserformfab.com]
+    # Entra directory pin (AGG-424/434): Wieser's directory, which also
+    # verifies wieserformfab.com. With the entra_tid mapper on and no
+    # directory set, every Entra sign-in is refused (fail closed).
+    # BLOCKED: `titan-replay tenant-config` refuses microsoft365 without a
+    # connect_client_id or ingestion_client_id (the API itself accepts the
+    # directory alone), and Wieser's AGG-411 Quoin app does not exist yet —
+    # the Keycloak sign-in app (912c2e52-…) is deliberately NOT that app.
+    # Uncomment once the CLI accepts directory_id alone (or add the AGG-411
+    # app id); uncommented today it would fail the nightly at tenant-config.
+    # microsoft365:
+    #   directory_id: "c179b20c-3d38-4d09-89cf-d9c51912b9ac"
     # Document-number prefixes (AGG-375) — Wieser's choice is still open; set
     # the keys here once decided (any subset of: ap_invoice ap_payment
     # ap_payment_run ap_credit_memo ap_debit_memo ap_prepayment ar_invoice
@@ -173,7 +221,11 @@ nightly:
     requests: { cpu: 500m, memory: 1Gi }
     limits: { memory: 4Gi }
 
-# Secret `aggsys-sandbox-secrets` (sealed): DATABASE_URL, TITAN_SOURCE_URL (the ETL source database),
+# Secret `aggsys-sandbox-secrets` (sealed): OIDC_APP_CLIENT_SECRET (aggsys-app,
+# confidential), OIDC_AGENT_CLIENT_SECRET (aggsys-agent), BFF_SESSION_KEY
+# (base64 32 bytes), APEX_CLIENT_SECRET (platform realm client quoin-apex),
+# optional M365_CERTIFICATE_KEY (base64 32 bytes; back it up outside the
+# cluster), DATABASE_URL, TITAN_SOURCE_URL (the ETL source database),
 # REPLAY_STATE_URL, REPLAY_OIDC_CLIENT_SECRET, REPLAY_ENTRY_PASSWORD,
 # REPLAY_APPROVER_PASSWORD, MSSQL_SA_PASSWORD, TREASURY_ENCRYPTION_KEY,
 # KEYCLOAK_ADMIN_USER, KEYCLOAK_ADMIN_PASSWORD, AZURE_TENANT_ID, AZURE_CLIENT_ID,
@@ -181,6 +233,17 @@ nightly:
 # on the VM/NIC/Bastion only), SANDBOX_SSH_PRIVATE_KEY (the quoin-backup-ro key,
 # a file). Re-seal with apps/aggsys/seal-secrets.sh <envfile> <keyfile>.
 secretName: aggsys-sandbox-secrets
+
+# Public exposure (AGG-360 stage 1, approved 2026-10-28): Cloudflare tunnel ->
+# Traefik's dedicated `cftunnel` entrypoint (apps/traefik-edge) -> erp-server.
+# Apex (unified login) + each listed tenant's shell/BFF. /mcp is NOT exposed
+# (stages 2-3 wait on Matt's green light): set exposeMcp only then.
+public:
+  enabled: true
+  entrypoint: cftunnel
+  baseDomain: quoinerp.com
+  tenants: [wieser]
+  exposeMcp: false
 
 # Shared endpoints for the nightly and the backup job (AGG-362).
 s3:

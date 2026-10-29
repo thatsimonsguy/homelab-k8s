@@ -7,8 +7,35 @@ spec:
   entryPoints:
     - web
   routes:
-    - match: Host(`keycloak.int.matthewpsimons.com`)
+    - match: Host(`{{ .Values.hostname.internalHost }}`)
       kind: Rule
       services:
         - name: keycloak
           port: 8080
+{{- if .Values.public.enabled }}
+{{- if has "master" .Values.public.realms }}
+{{- fail "public.realms must never include master" }}
+{{- end }}
+---
+# Public (AGG-360 stage 1): Cloudflare tunnel -> Traefik `{{ .Values.public.entrypoint }}`
+# -> Keycloak. Allowlist: /realms/<listed realm>[/...] and /resources/ (login
+# and account themes). Traefik cleans the path (sanitizePath, default on in v3)
+# before matching, so `//`, `/./` and `..` cannot smuggle /realms/master or
+# /admin past it.
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: keycloak-public
+  namespace: keycloak
+spec:
+  entryPoints:
+    - {{ .Values.public.entrypoint }}
+  routes:
+    - match: >-
+        Host(`{{ .Values.public.host }}`) &&
+        (PathRegexp(`^/realms/({{ join "|" .Values.public.realms }})(/|$)`) || PathPrefix(`/resources/`))
+      kind: Rule
+      services:
+        - name: keycloak
+          port: 8080
+{{- end }}

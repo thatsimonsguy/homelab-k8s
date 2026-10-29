@@ -1,0 +1,31 @@
+# erp-server trusts CF-Connecting-IP from any peer in Traefik's pod range
+# (CLIENT_IP_TRUSTED_PROXIES; Traefik's own pod IP is not stable). This makes
+# that range mean "Traefik": only the Traefik pods may open :8080. Kubelet
+# probes come from the node, which k3s's network-policy controller always
+# admits; `kubectl port-forward` enters the pod's own namespace and is
+# unaffected. Nothing else in the cluster calls this server (the nightly
+# restarts it through the API server and runs its own replay-profile copy).
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: aggsys-erp-server
+  namespace: aggsys
+  labels:
+    {{- include "aggsys.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app: aggsys-erp-server
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: traefik
+      ports:
+        - port: 8080
+          protocol: TCP

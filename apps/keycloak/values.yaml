@@ -22,5 +22,26 @@ admin:
   userLiteral: admin
   passwordKey: admin-password
 
+# Hostname v2 (AGG-462 / AGG-360 D8). `frontend` is the ONE issuer for every
+# realm: tokens carry iss=https://auth.quoinerp.com/realms/<realm> whichever
+# host the request used. `backchannelDynamic` lets in-cluster callers keep
+# using the service URL (keycloak.keycloak.svc:8080) for token / JWKS / admin
+# REST calls — the back-channel endpoints follow the request, the issuer does
+# not. `admin` keeps the admin console on the LAN host only; /admin and the
+# master realm are never routed on the public host (templates/ingressroute.yaml).
 hostname:
-  host: "keycloak.int.matthewpsimons.com"
+  frontend: "https://auth.quoinerp.com"
+  admin: "http://keycloak.int.matthewpsimons.com"
+  backchannelDynamic: true
+  # LAN route (Traefik `web`): admin console + LAN-side realm access.
+  internalHost: "keycloak.int.matthewpsimons.com"
+
+# Public route (Traefik's tunnel entrypoint, apps/traefik-edge). Only the
+# listed realms (allowlist — `master` can never be added) and the theme
+# resources their login/account pages load. Everything else on the host —
+# /admin, /realms/master, /js, /metrics, … — matches no router: 404 at Traefik.
+public:
+  enabled: true
+  host: auth.quoinerp.com
+  entrypoint: cftunnel
+  realms: [platform, wieser]

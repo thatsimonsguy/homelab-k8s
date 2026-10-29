@@ -6,6 +6,9 @@
 #       REPLAY_ENTRY_PASSWORD REPLAY_APPROVER_PASSWORD MSSQL_SA_PASSWORD
 #       TREASURY_ENCRYPTION_KEY KEYCLOAK_ADMIN_USER KEYCLOAK_ADMIN_PASSWORD
 #       AZURE_TENANT_ID AZURE_CLIENT_ID AZURE_CLIENT_SECRET AZURE_SUBSCRIPTION_ID
+#       OIDC_APP_CLIENT_SECRET OIDC_AGENT_CLIENT_SECRET BFF_SESSION_KEY
+#       APEX_CLIENT_SECRET (web shell + apex login, AGG-462 — required by the
+#       erp-server Deployment) [M365_CERTIFICATE_KEY (optional)]
 #       + SANDBOX_SSH_PRIVATE_KEY from the key file
 set -euo pipefail
 ENV_FILE="${1:?usage: seal-secrets.sh <env-file> <ssh-private-key-file>}"

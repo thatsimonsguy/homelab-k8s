@@ -35,6 +35,19 @@ spec:
             - name: TREASURY_ENCRYPTION_KEY
               valueFrom:
                 secretKeyRef: { name: {{ .Values.secretName }}, key: TREASURY_ENCRYPTION_KEY }
+            # Web-shell BFF + apex login (AGG-397 / AGG-402). Required: a
+            # missing key keeps the new pod in CreateContainerConfigError and
+            # the old one serving — seal them before this syncs.
+            {{- range list "OIDC_APP_CLIENT_SECRET" "OIDC_AGENT_CLIENT_SECRET" "BFF_SESSION_KEY" "APEX_CLIENT_SECRET" }}
+            - name: {{ . }}
+              valueFrom:
+                secretKeyRef: { name: {{ $.Values.secretName }}, key: {{ . }} }
+            {{- end }}
+            # Microsoft 365 certificates (AGG-411): optional — unset, the
+            # server warns and certificate creation/use fails loud.
+            - name: M365_CERTIFICATE_KEY
+              valueFrom:
+                secretKeyRef: { name: {{ .Values.secretName }}, key: M365_CERTIFICATE_KEY, optional: true }
           readinessProbe:
             tcpSocket: { port: 8080 }
             initialDelaySeconds: 3

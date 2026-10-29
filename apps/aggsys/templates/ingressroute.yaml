@@ -1,0 +1,30 @@
+{{- if .Values.public.enabled }}
+{{- $p := .Values.public }}
+{{- $hosts := list (printf "Host(`%s`)" $p.baseDomain) }}
+{{- range $p.tenants }}
+{{- $hosts = append $hosts (printf "Host(`%s.%s`)" . $p.baseDomain) }}
+{{- end }}
+# Public entry (AGG-360 stage 1): Cloudflare tunnel -> Traefik's dedicated
+# tunnel entrypoint -> erp-server. Only the apex (unified login, D3c) and the
+# listed tenants' shell + BFF hosts are routed; erp-server itself narrows each
+# host to its allowlist (apex.Intercept, the shell/BFF/API routers) and 404s
+# unknown tenants. Nothing here is on web/websecure, so the LAN never reaches
+# erp-server through Traefik.
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: aggsys-erp-server-public
+  namespace: aggsys
+  labels:
+    {{- include "aggsys.labels" . | nindent 4 }}
+spec:
+  entryPoints:
+    - {{ $p.entrypoint }}
+  routes:
+    - match: >-
+        ({{ join " || " $hosts }}){{ if not $p.exposeMcp }} && !PathPrefix(`/mcp`){{ end }}
+      kind: Rule
+      services:
+        - name: aggsys-erp-server
+          port: 80
+{{- end }}

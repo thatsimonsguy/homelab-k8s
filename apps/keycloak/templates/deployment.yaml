@@ -43,7 +43,11 @@ spec:
                   name: {{ .Values.admin.existingSecret }}
                   key: {{ .Values.admin.passwordKey }}
             - name: KC_HOSTNAME
-              value: {{ .Values.hostname.host }}
+              value: {{ .Values.hostname.frontend | quote }}
+            - name: KC_HOSTNAME_ADMIN
+              value: {{ .Values.hostname.admin | quote }}
+            - name: KC_HOSTNAME_BACKCHANNEL_DYNAMIC
+              value: {{ .Values.hostname.backchannelDynamic | quote }}
             - name: KC_PROXY_HEADERS
               value: xforwarded
             - name: KC_HTTP_ENABLED
