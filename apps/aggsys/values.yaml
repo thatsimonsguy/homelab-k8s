@@ -198,3 +198,42 @@ backup:
 storage:
   className: local-path
   size: 80Gi
+
+# Document storage on the homelab MinIO (AGG-466; production will be AWS S3 —
+# the code is S3-generic). Public erp-server: S3_* + the erp-documents MinIO
+# user (AWS_* from the sealed keys below); bucket aggsys-<ENVIRONMENT>-<tenant
+# id> = aggsys-production-<wieser tenant uuid>, created/validated at boot and
+# by the nightly's docsync step (versioning, SSE-S3, lifecycle; no bucket
+# policy — MinIO has no public-access-block API). Nightly: the docsync step
+# (titan-etl documents-sync) copies Titan's document files from Azure Files,
+# incrementally (cache schema titan_blob_cache in the sandbox DB).
+# No S3_PRESIGN_ENDPOINT: documents are served through erp-server (DocMgmt D5;
+# presigned URLs are deferred, DD-03), so MinIO never needs to be
+# browser-reachable and nothing reads that variable.
+# Before enabling: (1) MinIO KMS on (apps/minio kms.enabled — SSE-S3 needs
+# it; PutBucketEncryption fails "KMS is not configured" otherwise); (2) the
+# erp-documents MinIO user, scoped by minio-policy-erp-documents.json to
+# aggsys-production-* (provision + objects; no bucket-policy writes, no
+# DeleteBucket). From the repo root, with the root credentials from minio-secret:
+#   m() { kubectl -n minio exec -i deploy/minio -- env HOME=/tmp mc "$@"; }
+#   m alias set local http://127.0.0.1:9000 "$ROOT_USER" "$ROOT_PASSWORD"
+#   m admin user add local erp-documents "$(openssl rand -hex 24)"   # note it: the secret key
+#   m admin policy create local erp-documents /dev/stdin < apps/aggsys/minio-policy-erp-documents.json
+#   m admin policy attach local erp-documents --user erp-documents
+# (3) sealed keys SANDBOX_DOCS_S3_ACCESS_KEY, SANDBOX_DOCS_S3_SECRET_KEY (that
+# user) and AZURE_FILES_SAS (read-only SAS on share titan-resources, account
+# sttitanclient — permissions r only, signed expiry) in aggsys-sandbox-secrets.
+# A missing key with enabled: true keeps the new erp-server pod in
+# CreateContainerConfigError (the old one keeps serving).
+documents:
+  enabled: false
+  s3:
+    region: us-east-1        # MinIO's default region (no LocationConstraint)
+    endpoint: http://minio.minio.svc.cluster.local:9000
+    bucketPrefix: aggsys
+    publicAccessBlock: unsupported
+  azureFiles:
+    account: sttitanclient
+    share: titan-resources
+    root: ""                 # I:\ maps to the share root ("Titan Resources/..." is a top-level folder)
+  workers: "8"

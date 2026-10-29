@@ -25,6 +25,19 @@ spec:
           ports:
             - containerPort: 8080
           env:
+            {{- if .Values.documents.enabled }}
+            # Document storage on MinIO (AGG-466; values.documents).
+            - { name: S3_REGION, value: {{ .Values.documents.s3.region | quote }} }
+            - { name: S3_ENDPOINT, value: {{ .Values.documents.s3.endpoint | quote }} }
+            - { name: S3_BUCKET_PREFIX, value: {{ .Values.documents.s3.bucketPrefix | quote }} }
+            - { name: S3_PUBLIC_ACCESS_BLOCK, value: {{ .Values.documents.s3.publicAccessBlock | quote }} }
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef: { name: {{ .Values.secretName }}, key: SANDBOX_DOCS_S3_ACCESS_KEY }
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef: { name: {{ .Values.secretName }}, key: SANDBOX_DOCS_S3_SECRET_KEY }
+            {{- end }}
             {{- range $k, $v := .Values.erpServer.env }}
             - name: {{ $k }}
               value: {{ $v | quote }}
