@@ -206,6 +206,12 @@ nightly:
       - email: thatsimonsguy@gmail.com
         display_name: Matt Simons
         roles: [super_admin]
+      # Wieser Entra identity: signs in through the platform realm
+      # (entra-wieser), never with a local password (federated-only, D8b).
+      - email: msimons@wieserconcrete.com
+        display_name: Matt Simons
+        roles: [super_admin]
+        keycloak: false
   mssql:
     image: mcr.microsoft.com/mssql/server:2022-latest
     memoryLimitMB: "5120"
