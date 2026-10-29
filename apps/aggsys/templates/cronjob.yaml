@@ -75,6 +75,21 @@ spec:
                 - { name: SANDBOX_LASTGOOD, value: /data/lastgood.dump }
                 - { name: SANDBOX_MSSQL_WAIT, value: 10m }
                 - { name: SANDBOX_POST_REBUILD_CMD, value: "kubectl -n aggsys rollout restart deployment/aggsys-erp-server && kubectl -n aggsys rollout status deployment/aggsys-erp-server --timeout=180s" }
+                {{- if .Values.documents.enabled }}
+                # docsync step (AGG-466): the share, and the public server's
+                # document store under SANDBOX_DOCS_* names (a plain S3_REGION
+                # would turn storage on in the replay-profile server too).
+                # AZURE_FILES_SAS and SANDBOX_DOCS_S3_*_KEY come from envFrom.
+                - { name: AZURE_FILES_ACCOUNT, value: {{ .Values.documents.azureFiles.account | quote }} }
+                - { name: AZURE_FILES_SHARE, value: {{ .Values.documents.azureFiles.share | quote }} }
+                - { name: AZURE_FILES_ROOT, value: {{ .Values.documents.azureFiles.root | quote }} }
+                - { name: SANDBOX_DOCS_S3_REGION, value: {{ .Values.documents.s3.region | quote }} }
+                - { name: SANDBOX_DOCS_S3_ENDPOINT, value: {{ .Values.documents.s3.endpoint | quote }} }
+                - { name: SANDBOX_DOCS_S3_BUCKET_PREFIX, value: {{ .Values.documents.s3.bucketPrefix | quote }} }
+                - { name: SANDBOX_DOCS_S3_PUBLIC_ACCESS_BLOCK, value: {{ .Values.documents.s3.publicAccessBlock | quote }} }
+                - { name: SANDBOX_DOCS_ENVIRONMENT, value: {{ .Values.erpServer.env.ENVIRONMENT | quote }} }
+                - { name: SANDBOX_DOCS_WORKERS, value: {{ .Values.documents.workers | quote }} }
+                {{- end }}
               envFrom:
                 - secretRef:
                     name: {{ .Values.secretName }}

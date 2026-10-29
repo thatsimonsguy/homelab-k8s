@@ -15,11 +15,13 @@ auth:
   existingSecret: minio-secret  # created out-of-band (root-user/root-password keys)
 
 # Built-in single-key KMS, required for SSE-S3 bucket encryption (aggsys
-# document storage, design D8 / AGG-466). Off until the secret exists. The
-# key ("<name>:<base64 32 bytes>") must also be kept OUTSIDE the cluster:
+# document storage, design D8 / AGG-466). The secret minio-kms (key
+# kms-secret-key = "<name>:<base64 32 bytes>") is created out-of-band like
+# minio-secret, and MUST exist before this syncs (else the pod sits in
+# CreateContainerConfigError). The key must also be kept OUTSIDE the cluster:
 # objects and IAM data encrypted under it are unreadable without it.
 kms:
-  enabled: false
+  enabled: true
   existingSecret: minio-kms
   secretKey: kms-secret-key
 
@@ -31,6 +33,9 @@ service:
 persistence:
   # The bitnami chart's PVC (bound to a Retain local-path PV). Size may grow,
   # never shrink; the claim is kept if the chart is ever deleted.
+  # 20Gi: local-path enforces no quota and has no allowVolumeExpansion, so the
+  # request is bookkeeping only (the disk, /srv/crypt/bulk, is the real limit;
+  # AGG-466 adds ~1.6 GB of Titan documents + ~75 MB/month).
   size: 20Gi
 
 resources:
