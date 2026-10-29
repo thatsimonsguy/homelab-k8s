@@ -1,8 +1,8 @@
 image:
   registry: 192.168.2.17:5000
   # Set both to the tag printed by `task sandbox-images` in the aggsys repo.
-  erpServerTag: 20261029-edddfc78
-  toolsTag: 20261029-edddfc78
+  erpServerTag: 20261029-66f60a6f
+  toolsTag: 20261029-66f60a6f
   pullPolicy: Always
 
 # Keycloak URLs (AGG-462 / AGG-360 D8). The issuer is https://auth.quoinerp.com
@@ -219,10 +219,7 @@ nightly:
         roles: [admin]
         keycloak: false
         legal_entities: ["Wieser Concrete Products", "Wieser Trucking", "Wieser Form Fabrication", "WW Leasing LLC"]
-        # 700/750 (Michigan, Oct 2026) and 910 (WW Leasing, Sept 2026) are born
-        # inside the replay window, so they don't exist when the manifest is
-        # applied at bootstrap; add them back once locations defer like entities.
-        locations: ["100", "110", "150", "151", "190", "200", "250", "300", "350", "400", "450", "500", "550", "600", "610", "650", "651", "999", "LOCAL"]
+        locations: ["100", "110", "150", "151", "190", "200", "250", "300", "350", "400", "450", "500", "550", "600", "610", "650", "651", "700", "750", "910", "999", "LOCAL"]
   mssql:
     image: mcr.microsoft.com/mssql/server:2022-latest
     memoryLimitMB: "5120"
