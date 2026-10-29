@@ -1,0 +1,6 @@
+apiVersion: v2
+name: traefik-edge
+description: "Overrides for k3s's bundled Traefik (kube-system): the dedicated Cloudflare-tunnel entrypoint and CF-Connecting-IP hygiene on every other entrypoint (AGG-360 stage 1)"
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

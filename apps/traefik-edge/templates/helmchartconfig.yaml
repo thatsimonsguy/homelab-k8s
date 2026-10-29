@@ -1,0 +1,32 @@
+{{- $tunnel := .Values.tunnel }}
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: traefik
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    ports:
+      {{- range .Values.stripCFConnectingIPOn }}
+      {{ . }}:
+        # Default entrypoints: an Ingress / IngressRoute with no entryPoints
+        # attaches here only — never to the tunnel entrypoint.
+        asDefault: true
+        middlewares:
+          - kube-system-strip-cf-connecting-ip@kubernetescrd
+      {{- end }}
+      {{ $tunnel.entrypoint }}:
+        port: {{ $tunnel.port }}
+        exposedPort: {{ $tunnel.port }}
+        protocol: TCP
+        expose:
+          default: false
+          {{ $tunnel.entrypoint }}: true
+        middlewares:
+          - kube-system-cftunnel-forwarded-proto@kubernetescrd
+    service:
+      additionalServices:
+        {{ $tunnel.entrypoint }}:
+          type: ClusterIP
+          spec:
+            clusterIP: {{ $tunnel.clusterIP }}

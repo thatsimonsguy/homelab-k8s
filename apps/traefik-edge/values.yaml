@@ -1,0 +1,23 @@
+# The cluster's Traefik is the one k3s bundles (kube-system/traefik, chart
+# traefik-34.2.1+up34.2.0, image 3.3.2), NOT apps/traefik (that chart's Argo
+# app is commented out). k3s's helm-controller merges a HelmChartConfig named
+# `traefik` in kube-system into its own values and re-runs the chart, so this
+# app owns that object — it is the one place Traefik's static config changes.
+
+# Dedicated entrypoint for Cloudflare-tunnel traffic (cloudflared runs as a
+# systemd service on the k3s host and connects to this ClusterIP). It is the
+# only entrypoint where CF-Connecting-IP survives, and it is NOT on the
+# LoadBalancer service, so nothing on the LAN reaches it — only the host and
+# pods (ClusterIPs are not routed beyond the node).
+tunnel:
+  entrypoint: cftunnel
+  port: 8100
+  # Pinned so the tunnel's origin (http://<clusterIP>:<port>) never moves.
+  # From the service CIDR's static band (10.43.0.0/16: 10.43.0.0-255 is the
+  # band the allocator leaves to static assignment); free on 2026-10-28.
+  clusterIP: 10.43.0.80
+
+# Entrypoints whose CF-Connecting-IP is removed before routing: anything that
+# arrives on them did not come through the tunnel's dedicated origin, so the
+# header is caller-supplied.
+stripCFConnectingIPOn: [web, websecure]
