@@ -1,8 +1,8 @@
 image:
   registry: 192.168.2.17:5000
   # Set both to the tag printed by `task sandbox-images` in the aggsys repo.
-  erpServerTag: 20261030-1a80baab
-  toolsTag: 20261030-1a80baab
+  erpServerTag: 20261030-d386eac5
+  toolsTag: 20261030-d386eac5
   pullPolicy: Always
 
 # Keycloak URLs (AGG-462 / AGG-360 D8). The issuer is https://auth.quoinerp.com
