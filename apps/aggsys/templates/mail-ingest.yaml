@@ -1,0 +1,71 @@
+{{- if .Values.mailIngest.enabled }}
+# Source-document ingestion (AGG-398 / AGG-408): polls the tenant's ingestion
+# mailbox through Microsoft Graph and posts each message to erp-server's intake
+# door under its own service principal. Outbound only, no Service. It holds no
+# Microsoft credential: erp-server mints its Graph token with the tenant's
+# certificate. Off until the mailbox, the Entra app and the service-principal
+# secret exist (values.mailIngest; aggsys REFERENCE.md "Microsoft 365 onboarding").
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aggsys-mail-ingest
+  namespace: aggsys
+  labels:
+    {{- include "aggsys.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  strategy: { type: Recreate }
+  selector:
+    matchLabels:
+      app: aggsys-mail-ingest
+  template:
+    metadata:
+      labels:
+        app: aggsys-mail-ingest
+        app.kubernetes.io/name: {{ include "aggsys.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: mail-ingest
+          image: "{{ .Values.image.registry }}/aggsys-mail-ingest:{{ .Values.image.mailIngestTag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            {{- range $k, $v := .Values.mailIngest.env }}
+            - name: {{ $k }}
+              value: {{ $v | quote }}
+            {{- end }}
+            - name: QUOIN_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef: { name: {{ .Values.secretName }}, key: MAIL_INGEST_CLIENT_SECRET }
+          resources:
+            requests: { cpu: 20m, memory: 32Mi }
+            limits: { memory: 128Mi }
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: { drop: ["ALL"] }
+---
+# erp-server admits only Traefik (networkpolicy.yaml); add the ingester.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: aggsys-erp-server-from-mail-ingest
+  namespace: aggsys
+  labels:
+    {{- include "aggsys.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app: aggsys-erp-server
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: aggsys-mail-ingest
+      ports:
+        - port: 8080
+          protocol: TCP
+{{- end }}

@@ -1,8 +1,10 @@
 image:
   registry: 192.168.2.17:5000
   # Set both to the tag printed by `task sandbox-images` in the aggsys repo.
-  erpServerTag: 20261102-b48ff257
-  toolsTag: 20261102-b48ff257
+  erpServerTag: 20261103-ae7e10e7
+  toolsTag: 20261103-ae7e10e7
+  # The aggsys-mail-ingest image (`task sandbox-images`); only read when mailIngest.enabled.
+  mailIngestTag: 20261103-ae7e10e7
   pullPolicy: Always
 
 # Keycloak URLs (AGG-462 / AGG-360 D8). The issuer is https://auth.quoinerp.com
@@ -181,6 +183,10 @@ nightly:
     # Keycloak sign-in app (912c2e52-…) is deliberately NOT the AGG-411 app.
     microsoft365:
       directory_id: "c179b20c-3d38-4d09-89cf-d9c51912b9ac"
+      # The AGG-411/AGG-408 "Quoin" app (single tenant, created 2026-11-03): one app
+      # for per-user Connect Microsoft 365 and the quoin@ ingestion mailbox.
+      connect_client_id: "4899aacc-edcb-4a43-83da-7196da348f69"
+      ingestion_client_id: "4899aacc-edcb-4a43-83da-7196da348f69"
     # Document-number prefixes (AGG-375) — Wieser's choice is still open; set
     # the keys here once decided (any subset of: ap_invoice ap_payment
     # ap_payment_run ap_credit_memo ap_debit_memo ap_prepayment ar_invoice
@@ -202,6 +208,54 @@ nightly:
       sso_session_idle_seconds: 1800
       sso_session_max_seconds: 36000
       access_token_lifespan_seconds: 300
+    roles:
+      # AP/AR clerk (feedback sessions): reads and DRAFTS across AP and AR with
+      # their documents and the records they match against; no approve, post,
+      # disburse, void, payment run, bank file, period close, master-data
+      # write (vendor/customer bank details), user or role admin.
+      - name: ap_ar_clerk
+        description: AP/AR clerk - read and draft AP and AR with evidence; cannot approve, post, pay or close.
+        permissions:
+          - ap:read
+          - ap:write
+          - ar:read
+          - ar:write
+          - vendors:read
+          - customers:read
+          - purchase_orders:read
+          - purchasing:read
+          - procurement:read
+          - sales_orders:read
+          - sales:read
+          - shipping:read
+          - dispatch:read
+          - inventory:read
+          - products:read
+          - pricing:read
+          - documents:write
+          - documents:ingest
+          - approval:read
+          - coa:read
+          - gl:read
+          - treasury:read
+          - tax:read
+          - reporting:read
+          - activity:read
+          - crm:read
+          - crm:write
+          - locations:read
+          - views:read
+          - views:write
+      # Machine identity for the mail-ingest service (AGG-408): may only post
+      # mailbox mail to the intake door and ask for its Graph token.
+      - name: mail_ingest
+        description: Ingestion service principal - mailbox intake door only.
+        permissions:
+          - documents:ingest_mailbox
+    service_principals:
+      - client_id: quoin-mail-ingest
+        display_name: Mail ingest
+        role: mail_ingest
     users:
       - email: matt@brightbadgerstudios.com
         display_name: Matt Simons
@@ -223,6 +277,27 @@ nightly:
         keycloak: false
         legal_entities: ["Wieser Concrete Products", "Wieser Trucking", "Wieser Form Fabrication", "WW Leasing LLC"]
         # LOCAL is an inactive pseudo-plant (ETL DD-04): not assignable to users.
+        locations: ["100", "110", "150", "151", "190", "200", "250", "300", "350", "400", "450", "500", "550", "600", "610", "650", "651", "700", "750", "910", "999"]
+      # Lisa Person, controller. Admin across every entity and plant (Matt, 2026-11-03); approval limits come with AGG-454.
+      - email: lisap@wieserconcrete.com
+        display_name: Lisa Person
+        roles: [admin]
+        keycloak: false
+        legal_entities: ["Wieser Concrete Products", "Wieser Trucking", "Wieser Form Fabrication", "WW Leasing LLC"]
+        locations: ["100", "110", "150", "151", "190", "200", "250", "300", "350", "400", "450", "500", "550", "600", "610", "650", "651", "700", "750", "910", "999"]
+      # Samantha Hilsgen, AP/AR clerk (which of AP or AR still to confirm). Same scope as Rob until AGG-463 narrows it.
+      - email: samanthah@wieserconcrete.com
+        display_name: Samantha Hilsgen
+        roles: [ap_ar_clerk]
+        keycloak: false
+        legal_entities: ["Wieser Concrete Products", "Wieser Trucking", "Wieser Form Fabrication", "WW Leasing LLC"]
+        locations: ["100", "110", "150", "151", "190", "200", "250", "300", "350", "400", "450", "500", "550", "600", "610", "650", "651", "700", "750", "910", "999"]
+      # Kenna Bartell, AP/AR clerk (which of AP or AR still to confirm). Same scope as Rob until AGG-463 narrows it.
+      - email: kennab@wieserconcrete.com
+        display_name: Kenna Bartell
+        roles: [ap_ar_clerk]
+        keycloak: false
+        legal_entities: ["Wieser Concrete Products", "Wieser Trucking", "Wieser Form Fabrication", "WW Leasing LLC"]
         locations: ["100", "110", "150", "151", "190", "200", "250", "300", "350", "400", "450", "500", "550", "600", "610", "650", "651", "700", "750", "910", "999"]
   mssql:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -314,3 +389,18 @@ documents:
     share: titan-resources
     root: ""                 # I:\ maps to the share root ("Titan Resources/..." is a top-level folder)
   workers: "8"
+
+# Source-document ingestion service (AGG-408). Off until: shared mailbox
+# quoin@ + Entra app + certificate configured in Quoin; the identity manifest
+# has applied the quoin-mail-ingest service principal (its client secret, written
+# to the identity credentials file on first creation, sealed as
+# MAIL_INGEST_CLIENT_SECRET in aggsys-sandbox-secrets); mailIngestTag set.
+mailIngest:
+  enabled: false
+  env:
+    MAIL_INGEST_MAILBOX: quoin@wieserconcrete.com
+    MAIL_INGEST_INTERNAL_DOMAINS: wieserconcrete.com,wieserformfab.com
+    QUOIN_BASE_URL: http://aggsys-erp-server.aggsys.svc.cluster.local
+    # In-cluster back channel; the token still carries iss=https://auth.quoinerp.com/realms/wieser.
+    QUOIN_TOKEN_URL: http://keycloak.keycloak.svc.cluster.local:8080/realms/wieser/protocol/openid-connect/token
+    QUOIN_CLIENT_ID: quoin-mail-ingest
