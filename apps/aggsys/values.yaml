@@ -721,6 +721,72 @@ nightly:
           - locations:read
           - views:read
           - views:write
+      - name: ap_clerk
+        description: AP clerk - read and draft AP with evidence, work the shared mailbox queue; reads AR; cannot approve, post, pay or close.
+        permissions:
+          - ap:read
+          - ap:write
+          - ar:read
+          - vendors:read
+          - customers:read
+          - purchase_orders:read
+          - purchasing:read
+          - procurement:read
+          - sales_orders:read
+          - sales:read
+          - shipping:read
+          - dispatch:read
+          - inventory:read
+          - products:read
+          - pricing:read
+          - documents:write
+          - documents:ingest
+          - documents:intake
+          - documents:triage
+          - approval:read
+          - coa:read
+          - gl:read
+          - treasury:read
+          - tax:read
+          - reporting:read
+          - activity:read
+          - crm:read
+          - crm:write
+          - locations:read
+          - views:read
+          - views:write
+      - name: ar_clerk
+        description: AR clerk - read and draft AR with evidence; reads AP; no mailbox queue (it is the AP mailbox); cannot approve, post or close.
+        permissions:
+          - ap:read
+          - ar:read
+          - ar:write
+          - vendors:read
+          - customers:read
+          - purchase_orders:read
+          - purchasing:read
+          - procurement:read
+          - sales_orders:read
+          - sales:read
+          - shipping:read
+          - dispatch:read
+          - inventory:read
+          - products:read
+          - pricing:read
+          - documents:write
+          - documents:ingest
+          - approval:read
+          - coa:read
+          - gl:read
+          - treasury:read
+          - tax:read
+          - reporting:read
+          - activity:read
+          - crm:read
+          - crm:write
+          - locations:read
+          - views:read
+          - views:write
       # Machine identity for the mail-ingest service (AGG-408): may only post
       # mailbox mail to the intake door and ask for its Graph token.
       - name: mail_ingest
@@ -760,17 +826,17 @@ nightly:
         keycloak: false
         legal_entities: ["Wieser Concrete Products", "Wieser Trucking", "Wieser Form Fabrication", "WW Leasing LLC"]
         locations: ["100", "110", "150", "151", "190", "200", "250", "300", "350", "400", "450", "500", "550", "600", "610", "650", "651", "700", "750", "910", "999"]
-      # Samantha Hilsgen, AP/AR clerk (which of AP or AR still to confirm). Same scope as Rob until AGG-463 narrows it.
+      # Samantha Hilsgen, AR clerk (confirmed 2026-11-03). Same entity/plant scope as Rob until AGG-463 narrows it.
       - email: samanthah@wieserconcrete.com
         display_name: Samantha Hilsgen
-        roles: [ap_ar_clerk]
+        roles: [ar_clerk]
         keycloak: false
         legal_entities: ["Wieser Concrete Products", "Wieser Trucking", "Wieser Form Fabrication", "WW Leasing LLC"]
         locations: ["100", "110", "150", "151", "190", "200", "250", "300", "350", "400", "450", "500", "550", "600", "610", "650", "651", "700", "750", "910", "999"]
-      # Kenna Bartell, AP/AR clerk (which of AP or AR still to confirm). Same scope as Rob until AGG-463 narrows it.
+      # Kenna Bartell, AP clerk (confirmed 2026-11-03). Same entity/plant scope as Rob until AGG-463 narrows it.
       - email: kennab@wieserconcrete.com
         display_name: Kenna Bartell
-        roles: [ap_ar_clerk]
+        roles: [ap_clerk]
         keycloak: false
         legal_entities: ["Wieser Concrete Products", "Wieser Trucking", "Wieser Form Fabrication", "WW Leasing LLC"]
         locations: ["100", "110", "150", "151", "190", "200", "250", "300", "350", "400", "450", "500", "550", "600", "610", "650", "651", "700", "750", "910", "999"]
