@@ -4,7 +4,7 @@ image:
   erpServerTag: 20261103-2cca235b
   toolsTag: 20261103-2cca235b
   # The aggsys-mail-ingest image (`task sandbox-images`); only read when mailIngest.enabled.
-  mailIngestTag: 20261103-2cca235b
+  mailIngestTag: 20261103-30c696db
   pullPolicy: Always
 
 # Keycloak URLs (AGG-462 / AGG-360 D8). The issuer is https://auth.quoinerp.com
@@ -865,10 +865,10 @@ documents:
 # to the identity credentials file on first creation, sealed as
 # MAIL_INGEST_CLIENT_SECRET in aggsys-sandbox-secrets); mailIngestTag set.
 mailIngest:
-  enabled: false
+  enabled: true
   env:
     MAIL_INGEST_MAILBOX: quoin@wieserconcrete.com
-    # Empty on purpose: the intake door flags unknown senders (sender_class, AGG-476); the poller must not quarantine them.
+    # No sender filtering here: the intake door flags unknown senders (sender_class, AGG-476).
     QUOIN_BASE_URL: http://aggsys-erp-server.aggsys.svc.cluster.local
     # In-cluster back channel; the token still carries iss=https://auth.quoinerp.com/realms/wieser.
     QUOIN_TOKEN_URL: http://keycloak.keycloak.svc.cluster.local:8080/realms/wieser/protocol/openid-connect/token
