@@ -703,6 +703,8 @@ nightly:
           - pricing:read
           - documents:write
           - documents:ingest
+          - documents:intake   # the shared mailbox queue (AGG-476)
+          - documents:triage   # dismiss / restore non-transactions
           - approval:read
           - coa:read
           - gl:read
