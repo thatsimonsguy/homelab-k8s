@@ -770,6 +770,14 @@ nightly:
         keycloak: false
         legal_entities: ["Wieser Concrete Products", "Wieser Trucking", "Wieser Form Fabrication", "WW Leasing LLC"]
         locations: ["100", "110", "150", "151", "190", "200", "250", "300", "350", "400", "450", "500", "550", "600", "610", "650", "651", "700", "750", "910", "999"]
+      # Matt's clerk test identity (2026-11-03): a plus address on his own mailbox, a LOCAL Keycloak
+      # account (keycloak default true; temporary password in /data/identity-credentials.txt) so he
+      # can sign in as an AP/AR clerk and exercise the clerk role end to end. Same scope as Samantha/Kenna.
+      - email: msimons+clerk@wieserconcrete.com
+        display_name: Matt Simons (clerk test)
+        roles: [ap_ar_clerk]
+        legal_entities: ["Wieser Concrete Products", "Wieser Trucking", "Wieser Form Fabrication", "WW Leasing LLC"]
+        locations: ["100", "110", "150", "151", "190", "200", "250", "300", "350", "400", "450", "500", "550", "600", "610", "650", "651", "700", "750", "910", "999"]
   mssql:
     image: mcr.microsoft.com/mssql/server:2022-latest
     memoryLimitMB: "5120"
