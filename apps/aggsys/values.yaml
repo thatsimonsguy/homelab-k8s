@@ -191,11 +191,15 @@ nightly:
     # unknown senders. Seeded 2026-11-03 from the AP, AR and Muskegon-AR mailbox
     # history (24 months): domains with sustained, authenticated mail. Vendor and
     # customer contacts in the master data are known already and are not listed.
-    # bushconcreteproducts.com is Wieser's own (Muskegon; Matt, 2026-11-03).
+    # bushconcreteproducts.com is Wieser's own (Muskegon; Matt, 2026-11-03). Also listed
+    # (Matt, 2026-11-03): 16 long-standing correspondents whose mail does not pass
+    # SPF/DKIM/DMARC (e.g. newfrontiermaterials.com, usffab.com). Authentication is not
+    # checked by the sender flag, so a spoofed address on these domains is not flagged.
     known_senders:
       domains:
         - 1stayd.com
         - 1supply.com
+        - 360nationwide.com
         - a-lok.com
         - a1excavating.com
         - aaasling.com
@@ -203,6 +207,7 @@ nightly:
         - abmmarking.com
         - account.driveks.com
         - account.xcelenergy.com
+        - accurateexcavators.com
         - adelphiametals.com
         - adobe.com
         - advfleet.com
@@ -238,6 +243,7 @@ nightly:
         - barnhartcrane.com
         - bauerbuilt.com
         - bayverte.com
+        - beaudryoil.com
         - belletireadvantage.com
         - bennettsteel.com
         - bffastenersupply.com
@@ -280,10 +286,12 @@ nightly:
         - cox-industries.com
         - coylesupply.com
         - craigsconstructionspecialties.com
+        - cranesmart.com
         - cretexseals.com
         - crimachining.com
         - crst.com
         - cserickson.com
+        - csr24.email
         - ctlgroup.com
         - culliganquench.com
         - culliganredwing.com
@@ -370,6 +378,7 @@ nightly:
         - hootsystems.com
         - hosecon.com
         - hubindustrial.com
+        - huelsoil.com
         - hydraulicspecialty.com
         - iaccessportal.com
         - idealcranerental.com
@@ -427,7 +436,9 @@ nightly:
         - merwinoil.com
         - message.fedex.com
         - michiganpipe.com
+        - microtronicscontrols.com
         - midstateshydraulics.com
+        - midwaysteel.net
         - milestonematerials.com
         - mjmc.com
         - mononapfp.com
@@ -445,6 +456,8 @@ nightly:
         - ncp-inc.com
         - ncutility.com
         - neenahfoundry.com
+        - netorg12444232.onmicrosoft.com
+        - newfrontiermaterials.com
         - newkirk-electric.com
         - nextiva.com
         - nlslab.com
@@ -503,6 +516,7 @@ nightly:
         - rfdrigging.com
         - rhymebiz.com
         - rlcarriers.com
+        - rodsservice.com
         - roncelli-inc.com
         - routteconstruction.com
         - rplumber.com
@@ -523,6 +537,7 @@ nightly:
         - shorelineagency.com
         - sika.com
         - smarthub.coop
+        - smcleaningpros.com
         - specco.com
         - spectrumemails.com
         - spectrumenterprise.net
@@ -543,6 +558,7 @@ nightly:
         - tax.ohio.gov
         - tcco.com
         - tchco.com
+        - te-exc.com
         - team-terra.com
         - tekamixers.com
         - thompson-safety.com
@@ -562,7 +578,9 @@ nightly:
         - upsbilling.ups.com
         - ur.com
         - us.sika.com
+        - usffab.com
         - usfreightshippers.com
+        - usholdings.com
         - uslbm.com
         - vahalo.com
         - vankeppel.com
@@ -576,6 +594,7 @@ nightly:
         - wcsteel.com
         - wdlarson.com
         - wdnavis.com
+        - welchbrothers.com
         - wipfli.com
         - wisconsin.gov
         - wisconsinlifting.com
