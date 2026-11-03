@@ -1,0 +1,93 @@
+{{- if .Values.mediaConvert.enabled }}
+# Media conversion (AGG-476): turns an iPhone HEIC photo into a JPEG so an agent
+# can read it. The stock libheif tool (LGPL) runs as its own process inside this
+# image, never linked into erp-server (aggsys docs/sbom/README.md). Stateless,
+# credential-free, cluster-internal: only erp-server may call it and it opens no
+# outbound connection.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aggsys-media-convert
+  namespace: aggsys
+  labels:
+    {{- include "aggsys.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: aggsys-media-convert
+  template:
+    metadata:
+      labels:
+        app: aggsys-media-convert
+        app.kubernetes.io/name: {{ include "aggsys.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - name: media-convert
+          image: "{{ .Values.image.registry }}/aggsys-media-convert:{{ .Values.image.mediaConvertTag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 8080
+          env:
+            - { name: PORT, value: "8080" }
+            - { name: TMPDIR, value: /tmp }
+          readinessProbe:
+            httpGet: { path: /healthz, port: 8080 }
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: { path: /healthz, port: 8080 }
+            periodSeconds: 30
+          resources:
+            requests: { cpu: 50m, memory: 128Mi }
+            limits: { memory: 1Gi }
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            capabilities: { drop: ["ALL"] }
+          volumeMounts:
+            - { name: tmp, mountPath: /tmp }
+      volumes:
+        - name: tmp
+          emptyDir: { sizeLimit: 512Mi }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aggsys-media-convert
+  namespace: aggsys
+  labels:
+    {{- include "aggsys.labels" . | nindent 4 }}
+spec:
+  selector:
+    app: aggsys-media-convert
+  ports:
+    - { port: 8080, targetPort: 8080, protocol: TCP }
+---
+# Ingress: erp-server only. Egress: none (policyTypes lists Egress with no rules).
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: aggsys-media-convert
+  namespace: aggsys
+  labels:
+    {{- include "aggsys.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app: aggsys-media-convert
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: aggsys-erp-server
+      ports:
+        - port: 8080
+          protocol: TCP
+{{- end }}

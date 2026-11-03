@@ -1,10 +1,12 @@
 image:
   registry: 192.168.2.17:5000
   # Set both to the tag printed by `task sandbox-images` in the aggsys repo.
-  erpServerTag: 20261103-0c480266
-  toolsTag: 20261103-0c480266
+  erpServerTag: 20261103-30fffbf1
+  toolsTag: 20261103-30fffbf1
   # The aggsys-mail-ingest image (`task sandbox-images`); only read when mailIngest.enabled.
-  mailIngestTag: 20261103-0c480266
+  mailIngestTag: 20261103-30fffbf1
+  # The aggsys-media-convert image (HEIC to JPEG for agents; only read when mediaConvert.enabled).
+  mediaConvertTag: 20261103-30fffbf1
   pullPolicy: Always
 
 # Keycloak URLs (AGG-462 / AGG-360 D8). The issuer is https://auth.quoinerp.com
@@ -30,6 +32,8 @@ erpServer:
     OIDC_CLIENT_ID: erp-api
     OIDC_APP_CLIENT_ID: aggsys-app
     OIDC_AGENT_CLIENT_ID: aggsys-agent
+    # HEIC photos are converted by the media-convert service (mediaConvert below).
+    MEDIA_CONVERT_URL: http://aggsys-media-convert.aggsys.svc.cluster.local:8080
     # Remote MCP connectors (AGG-360 stage 2): pre-registered Keycloak clients
     # in each tenant realm; their tokens act as the agent (HumanOnly refused).
     OIDC_CONNECTOR_CLIENT_IDS: connector-claude,connector-chatgpt
@@ -874,6 +878,11 @@ documents:
 # has applied the quoin-mail-ingest service principal (its client secret, written
 # to the identity credentials file on first creation, sealed as
 # MAIL_INGEST_CLIENT_SECRET in aggsys-sandbox-secrets); mailIngestTag set.
+# Media conversion service (AGG-476): iPhone HEIC to JPEG for read_document. Stateless,
+# no credentials, reachable only from erp-server, no egress.
+mediaConvert:
+  enabled: true
+
 mailIngest:
   enabled: true
   env:
