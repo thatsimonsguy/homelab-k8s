@@ -1,12 +1,12 @@
 image:
   registry: 192.168.2.17:5000
   # Set both to the tag printed by `task sandbox-images` in the aggsys repo.
-  erpServerTag: 20261103-30fffbf1
-  toolsTag: 20261103-30fffbf1
+  erpServerTag: 20261103-bd83d267
+  toolsTag: 20261103-bd83d267
   # The aggsys-mail-ingest image (`task sandbox-images`); only read when mailIngest.enabled.
-  mailIngestTag: 20261103-30fffbf1
+  mailIngestTag: 20261103-bd83d267
   # The aggsys-media-convert image (HEIC to JPEG for agents; only read when mediaConvert.enabled).
-  mediaConvertTag: 20261103-30fffbf1
+  mediaConvertTag: 20261103-bd83d267
   pullPolicy: Always
 
 # Keycloak URLs (AGG-462 / AGG-360 D8). The issuer is https://auth.quoinerp.com
@@ -756,7 +756,7 @@ nightly:
           - views:read
           - views:write
       - name: ar_clerk
-        description: AR clerk - read and draft AR with evidence; reads AP; no mailbox queue (it is the AP mailbox); cannot approve, post or close.
+        description: AR clerk - read and draft AR with evidence, work the AR side of the shared mailbox queue; reads AP; cannot approve, post or close.
         permissions:
           - ap:read
           - ar:read
@@ -775,6 +775,8 @@ nightly:
           - pricing:read
           - documents:write
           - documents:ingest
+          - documents:intake
+          - documents:triage
           - approval:read
           - coa:read
           - gl:read
