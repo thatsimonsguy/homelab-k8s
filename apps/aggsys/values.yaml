@@ -842,12 +842,13 @@ nightly:
         keycloak: false
         legal_entities: ["Wieser Concrete Products", "Wieser Trucking", "Wieser Form Fabrication", "WW Leasing LLC"]
         locations: ["100", "110", "150", "151", "190", "200", "250", "300", "350", "400", "450", "500", "550", "600", "610", "650", "651", "700", "750", "910", "999"]
-      # Matt's clerk test identity (2026-11-03): a plus address on his own mailbox, a LOCAL Keycloak
-      # account (keycloak default true; temporary password in /data/identity-credentials.txt) so he
-      # can sign in as an AP/AR clerk and exercise the clerk role end to end. Same scope as Samantha/Kenna.
-      - email: msimons+clerk@wieserconcrete.com
-        display_name: Matt Simons Clerk
+      # Matt's test identity (2026-11-04): a real cloud-only Entra user (no license, no mailbox) so the
+      # clerk path runs the way Samantha/Kenna's will: Microsoft sign-in -> shell adoption -> agent
+      # connector. Swap its role here to test other permission sets. Delete the Entra user when done.
+      - email: quointestuser@wieserconcrete.com
+        display_name: Quoin Test User
         roles: [ap_ar_clerk]
+        keycloak: false
         legal_entities: ["Wieser Concrete Products", "Wieser Trucking", "Wieser Form Fabrication", "WW Leasing LLC"]
         locations: ["100", "110", "150", "151", "190", "200", "250", "300", "350", "400", "450", "500", "550", "600", "610", "650", "651", "700", "750", "910", "999"]
   mssql:
