@@ -96,6 +96,10 @@ nightly:
     # Tenant configuration (AGG-361): tax strategy + CoA purpose defaults,
     # applied through the public API after every rebuild (nightly.tenantConfig).
     SANDBOX_TENANT_CONFIG_FILE: /etc/aggsys/tenant-config/tenant-config.yaml
+    # People's approval policies (AGG-527; nightly.tenantConfigAfterReplay):
+    # applied on the post-replay pass only — the replay's service principals
+    # never give a secondary approval. Ignored by tools images before AGG-527.
+    SANDBOX_TENANT_CONFIG_AFTER_REPLAY_FILE: /etc/aggsys/tenant-config/tenant-config-after-replay.yaml
     # Entity manifest (AGG-391/392): the tenant's legal entity model for the
     # ETL load, the replay plan and the config passes (nightly.entities).
     SANDBOX_ENTITY_MANIFEST_FILE: /etc/aggsys/entities/entities.yaml
@@ -668,9 +672,49 @@ nightly:
     # PATCH /api/v1/settings/document-numbering each night.
     # document_numbering:
     #   ar_invoice: "INV-"
-    # Approval policy dial (AGG-353) — decision pending; example:
-    # approval_policies:
-    #   - { type: ap_invoice, require_sod: true, auto_approve_threshold: "2500" }
+    # Approval policies: NOT here — this file applies before the replay. The
+    # ap_invoice clerk-first policies live in nightly.tenantConfigAfterReplay.
+  # People's approval policies (AGG-527, clerk-first AP — aggsys
+  # deploy/sandbox/tenant-config-after-replay.example.yaml). Same format as
+  # tenantConfig, applied AFTER the replay (SANDBOX_TENANT_CONFIG_AFTER_REPLAY_FILE):
+  # under a secondary threshold the replay's service principals would leave every
+  # invoice at or above it waiting for a secondary they can never give (AGG-540).
+  # An AP clerk (ap_clerk / ap_ar_clerk) approves — and so posts — an AP invoice
+  # below secondary_threshold; at or above it their approval is the first and any
+  # one member of the pool gives the second. The API refuses (and the night fails
+  # loud on) a pool member who is not an active manifest user holding ap:approve,
+  # or an auto_approve_threshold above secondary_threshold. No auto-post
+  # threshold: nothing posts without a person (staged review D9).
+  # Check before pushing: aggsys `SANDBOX_CLERK_FIRST_CONFIG_DIR=<dir with
+  # identity.yaml, tenant-config.yaml, tenant-config-after-replay.yaml> go test
+  # ./internal/titanreplay/cli -run TestSandboxClerkFirstConfig`.
+  tenantConfigAfterReplay: |
+    approval_policies:
+      # Tenant default: every entity (and any new one) inherits it.
+      - type: ap_invoice
+        require_sod: true
+        secondary_threshold: "10000"                                  # PLACEHOLDER until Rob and Drew review (AGG-454)
+        secondary_approvers: [lisap@wieserconcrete.com, robt@wieserconcrete.com]  # PLACEHOLDER until Rob and Drew review (AGG-454)
+        secondary_can_approve_alone: false                            # PLACEHOLDER until Rob and Drew review (AGG-454); false = a secondary only ever gives the second approval
+      # Per-entity thresholds: each row overrides only secondary_threshold; the pool
+      # and approve-alone inherit the tenant default. Same value as the default
+      # until AGG-454 suggests per-entity limits from Wieser's own invoice history.
+      - type: ap_invoice
+        legal_entity: Wieser Concrete Products
+        secondary_threshold: "10000"                                  # PLACEHOLDER until Rob and Drew review (AGG-454)
+        overrides: [secondary_threshold]
+      - type: ap_invoice
+        legal_entity: Wieser Trucking
+        secondary_threshold: "10000"                                  # PLACEHOLDER until Rob and Drew review (AGG-454)
+        overrides: [secondary_threshold]
+      - type: ap_invoice
+        legal_entity: Wieser Form Fabrication
+        secondary_threshold: "10000"                                  # PLACEHOLDER until Rob and Drew review (AGG-454)
+        overrides: [secondary_threshold]
+      - type: ap_invoice
+        legal_entity: WW Leasing LLC
+        secondary_threshold: "10000"                                  # PLACEHOLDER until Rob and Drew review (AGG-454)
+        overrides: [secondary_threshold]
   identity: |
     # Realm security posture, re-applied every night (drift corrected).
     # Password rules bind at the next password change (first-login change
@@ -683,14 +727,23 @@ nightly:
       access_token_lifespan_seconds: 300
     roles:
       # AP/AR clerk (feedback sessions): reads and DRAFTS across AP and AR with
-      # their documents and the records they match against; no approve, post,
+      # their documents and the records they match against. Clerk-first AP
+      # (AGG-513/AGG-527, Matt 2026-11-04): approves AP invoices below the
+      # ap_invoice secondary threshold (nightly.tenantConfigAfterReplay) —
+      # approving posts — so ap:approve + ap:post (ap:post may be removable
+      # later: the system posts on final approval). Still no AR approve
+      # (ar:approve also gates credit holds/limits, bad-debt rates, write-offs),
       # disburse, void, payment run, bank file, period close, master-data
-      # write (vendor/customer bank details), user or role admin.
+      # write (vendor/customer bank details), user or role admin; never
+      # documents:intake_all (the queue follows Exchange delegation, AGG-523)
+      # or agent_bypass:*. approval:read = the approvals inbox (AGG-518).
       - name: ap_ar_clerk
-        description: AP/AR clerk - read and draft AP and AR with evidence; cannot approve, post, pay or close.
+        description: AP/AR clerk - drafts AP and AR with evidence; approves AP invoices below the secondary threshold; cannot approve AR, pay or close.
         permissions:
           - ap:read
           - ap:write
+          - ap:approve   # AGG-527: first-level AP invoice approval (posts below the secondary threshold)
+          - ap:post      # AGG-527 (Matt 2026-11-04)
           - ar:read
           - ar:write
           - vendors:read
@@ -721,11 +774,14 @@ nightly:
           - locations:read
           - views:read
           - views:write
+      # AP clerk: as ap_ar_clerk on the AP side (clerk-first AP, AGG-527); reads AR.
       - name: ap_clerk
-        description: AP clerk - read and draft AP with evidence, work the shared mailbox queue; reads AR; cannot approve, post, pay or close.
+        description: AP clerk - drafts AP with evidence from the shared mailbox queue; approves AP invoices below the secondary threshold; reads AR; cannot pay or close.
         permissions:
           - ap:read
           - ap:write
+          - ap:approve   # AGG-527: first-level AP invoice approval (posts below the secondary threshold)
+          - ap:post      # AGG-527 (Matt 2026-11-04)
           - ar:read
           - vendors:read
           - customers:read
@@ -844,7 +900,10 @@ nightly:
         locations: ["100", "110", "150", "151", "190", "200", "250", "300", "350", "400", "450", "500", "550", "600", "610", "650", "651", "700", "750", "910", "999"]
       # Matt's test identity (2026-11-04): a real cloud-only Entra user (no license, no mailbox) so the
       # clerk path runs the way Samantha/Kenna's will: Microsoft sign-in -> shell adoption -> agent
-      # connector. Swap its role here to test other permission sets. Delete the Entra user when done.
+      # connector. Swap its role here to test other permission sets (e.g. [ap_clerk] for the AP-only
+      # clerk; ap_ar_clerk now approves AP below the secondary threshold, AGG-527). It is NOT in the
+      # secondary pool: D7 bars one person giving both approvals, so rehearse the second step as Lisa/Rob.
+      # CLEANUP (AGG-531): delete the Entra user, object id 6ad040bd-f89f-40c3-816c-de1fe9330ea1, and this entry.
       - email: quointestuser@wieserconcrete.com
         display_name: Quoin Test User
         roles: [ap_ar_clerk]
@@ -961,3 +1020,13 @@ mailIngest:
     # In-cluster back channel; the token still carries iss=https://auth.quoinerp.com/realms/wieser.
     QUOIN_TOKEN_URL: http://keycloak.keycloak.svc.cluster.local:8080/realms/wieser/protocol/openid-connect/token
     QUOIN_CLIENT_ID: quoin-mail-ingest
+    # REQUIRED before mailIngestTag moves past 20261104-ca5b2939 — mail-ingest from aggsys
+    # e1bb201f (AGG-521) / b56574b8 (AGG-522) refuses to start without these. ORDER (AGG-550/551):
+    # Exchange header rules first (AGG-550 steps 1-6) or all new mail parks in Unrouted; the
+    # Quoin Delegation Reader role group applied; then set these, bump the image, deploy
+    # erp-server too, and run `mail-ingest -sync-delegates` (queue visibility and AP approval
+    # eligibility fail closed until the first sync; the nightly empties the table again).
+    # Values are UNCONFIRMED — fill the real tenant domains, then uncomment:
+    # MAIL_INGEST_SOURCE_MAILBOXES: ap@<domain>,ar@<domain>          # the AP/AR shared mailboxes the copy rules stamp
+    # MAIL_INGEST_EXCHANGE_ORGANIZATION: <tenant>.onmicrosoft.com     # Wieser's initial onmicrosoft domain
+    # MAIL_INGEST_DELEGATION_INTERVAL: 15m                            # optional (default 15m)

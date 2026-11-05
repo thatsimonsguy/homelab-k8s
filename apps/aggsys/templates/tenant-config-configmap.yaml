@@ -9,3 +9,7 @@ metadata:
 data:
   tenant-config.yaml: |
 {{ .Values.nightly.tenantConfig | indent 4 }}
+  # People's approval policies (AGG-527), applied after the replay only
+  # (SANDBOX_TENANT_CONFIG_AFTER_REPLAY_FILE).
+  tenant-config-after-replay.yaml: |
+{{ .Values.nightly.tenantConfigAfterReplay | indent 4 }}
