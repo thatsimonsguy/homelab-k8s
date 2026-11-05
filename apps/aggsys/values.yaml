@@ -1,12 +1,12 @@
 image:
   registry: 192.168.2.17:5000
   # Set both to the tag printed by `task sandbox-images` in the aggsys repo.
-  erpServerTag: 20261104-9969adbe
-  toolsTag: 20261104-9969adbe
+  erpServerTag: 20261104-ca5b2939
+  toolsTag: 20261104-ca5b2939
   # The aggsys-mail-ingest image (`task sandbox-images`); only read when mailIngest.enabled.
-  mailIngestTag: 20261104-9969adbe
+  mailIngestTag: 20261104-ca5b2939
   # The aggsys-media-convert image (HEIC to JPEG for agents; only read when mediaConvert.enabled).
-  mediaConvertTag: 20261104-9969adbe
+  mediaConvertTag: 20261104-ca5b2939
   pullPolicy: Always
 
 # Keycloak URLs (AGG-462 / AGG-360 D8). The issuer is https://auth.quoinerp.com
