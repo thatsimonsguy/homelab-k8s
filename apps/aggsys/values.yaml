@@ -114,6 +114,15 @@ nightly:
     # Entity manifest (AGG-391/392): the tenant's legal entity model for the
     # ETL load, the replay plan and the config passes (nightly.entities).
     SANDBOX_ENTITY_MANIFEST_FILE: /etc/aggsys/entities/entities.yaml
+    # Delegation-sync gate (AGG-566, tools images from aggsys 01771563): after
+    # postrebuild the nightly polls the PUBLIC erp-server until mail-ingest has
+    # re-synced every mailbox below (last_synced_at set, last_error null), else
+    # the night fails loud and is not announced green. Mailbox list unset = the
+    # step is skipped (today). Set SANDBOX_DELEGATION_MAILBOXES with the image
+    # bump, same value as mailIngest.env MAIL_INGEST_SOURCE_MAILBOXES.
+    SANDBOX_PUBLIC_API_URL: http://aggsys-erp-server.aggsys.svc.cluster.local
+    # SANDBOX_DELEGATION_MAILBOXES: ap@<domain>,ar@<domain>   # with the bump (AGG-550/551)
+    # SANDBOX_DELEGATION_WAIT: 5m                              # optional (default 5m)
     # Alerting + artifacts (AGG-362): the outcome line to ntfy (token in the
     # sealed secret), the night's record to MinIO (credentials likewise).
     NTFY_URL: http://ntfy.ntfy.svc.cluster.local/aggsys-sandbox
@@ -1041,7 +1050,9 @@ mailIngest:
     # 083aac9b (AGG-523) / 21e0c687 (AGG-524) blanks every clerk's queue and first-level approval
     # until that first successful sync, which needs the new mail-ingest. So all four image tags
     # move together, in one commit that also flips ap_clerk/ap_ar_clerk to tax:certificates_read
-    # (AGG-607). Already in place for that rollout: erpServer.env OIDC_DIRECT_CLIENT_IDS (AGG-604).
+    # (AGG-607) and sets nightly.env SANDBOX_DELEGATION_MAILBOXES to the same list (AGG-566).
+    # Already in place for that rollout: erpServer.env OIDC_DIRECT_CLIENT_IDS (AGG-604) and
+    # nightly.env SANDBOX_PUBLIC_API_URL.
     # Values are UNCONFIRMED — fill the real tenant domains, then uncomment:
     # MAIL_INGEST_SOURCE_MAILBOXES: ap@<domain>,ar@<domain>          # the AP/AR shared mailboxes the copy rules stamp
     # MAIL_INGEST_EXCHANGE_ORGANIZATION: <tenant>.onmicrosoft.com     # Wieser's initial onmicrosoft domain
