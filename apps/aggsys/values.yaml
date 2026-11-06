@@ -1,6 +1,9 @@
 image:
   registry: 192.168.2.17:5000
   # Set both to the tag printed by `task sandbox-images` in the aggsys repo.
+  # HELD at 20261104-ca5b2939 (all four tags move together): see the ORDER note
+  # under mailIngest.env — AGG-550/551 Exchange steps first, then AGG-607's
+  # tax:certificates_read flip in the same commit as the bump.
   erpServerTag: 20261104-ca5b2939
   toolsTag: 20261104-ca5b2939
   # The aggsys-mail-ingest image (`task sandbox-images`); only read when mailIngest.enabled.
@@ -37,6 +40,14 @@ erpServer:
     # Remote MCP connectors (AGG-360 stage 2): pre-registered Keycloak clients
     # in each tenant realm; their tokens act as the agent (HumanOnly refused).
     OIDC_CONNECTOR_CLIENT_IDS: connector-claude,connector-chatgpt
+    # Closed-world client classification (AGG-597 / AGG-604): from erpServerTag
+    # f31054f2 (2026-11-06) on, a token whose azp is not the app, the agent, a
+    # connector or one of these direct clients is refused 403 (earlier images
+    # ignore the setting). erp-api = the replay/tooling principals;
+    # quoin-mail-ingest = the mail-ingest service principal
+    # (mailIngest.env.QUOIN_CLIENT_ID) — without it every mail-ingest call 403s.
+    # quoin-apex never presents tokens to /api/v1, so it stays unlisted.
+    OIDC_DIRECT_CLIENT_IDS: erp-api,quoin-mail-ingest
     # Web-shell BFF (AGG-397) on <realm>.quoinerp.com; secrets
     # OIDC_APP_CLIENT_SECRET, OIDC_AGENT_CLIENT_SECRET, BFF_SESSION_KEY come
     # from the sealed secret (templates/deployment.yaml).
@@ -766,7 +777,7 @@ nightly:
           - coa:read
           - gl:read
           - treasury:read
-          - tax:read
+          - tax:read     # AGG-607: becomes tax:certificates_read in the SAME commit that moves erpServerTag/toolsTag to >= 685d2864 (its migration); earlier, the nightly's identity apply fails on the unknown permission
           - reporting:read
           - activity:read
           - crm:read
@@ -803,7 +814,7 @@ nightly:
           - coa:read
           - gl:read
           - treasury:read
-          - tax:read
+          - tax:read     # AGG-607: becomes tax:certificates_read with the image bump (see ap_ar_clerk)
           - reporting:read
           - activity:read
           - crm:read
@@ -1026,6 +1037,11 @@ mailIngest:
     # Quoin Delegation Reader role group applied; then set these, bump the image, deploy
     # erp-server too, and run `mail-ingest -sync-delegates` (queue visibility and AP approval
     # eligibility fail closed until the first sync; the nightly empties the table again).
+    # erpServerTag/toolsTag are HELD at 20261104-ca5b2939 for the same reason: erp-server from
+    # 083aac9b (AGG-523) / 21e0c687 (AGG-524) blanks every clerk's queue and first-level approval
+    # until that first successful sync, which needs the new mail-ingest. So all four image tags
+    # move together, in one commit that also flips ap_clerk/ap_ar_clerk to tax:certificates_read
+    # (AGG-607). Already in place for that rollout: erpServer.env OIDC_DIRECT_CLIENT_IDS (AGG-604).
     # Values are UNCONFIRMED — fill the real tenant domains, then uncomment:
     # MAIL_INGEST_SOURCE_MAILBOXES: ap@<domain>,ar@<domain>          # the AP/AR shared mailboxes the copy rules stamp
     # MAIL_INGEST_EXCHANGE_ORGANIZATION: <tenant>.onmicrosoft.com     # Wieser's initial onmicrosoft domain
