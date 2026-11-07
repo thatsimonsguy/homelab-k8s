@@ -1,20 +1,19 @@
 image:
   registry: 192.168.2.17:5000
-  # Set both to the tag printed by `task sandbox-images` in the aggsys repo.
-  # HELD at 20261104-ca5b2939 (all four tags move together): see the ORDER note
-  # under mailIngest.env — AGG-550/551 Exchange steps first, then AGG-607's
-  # tax:certificates_read flip in the same commit as the bump.
-  erpServerTag: 20261104-ca5b2939
-  # toolsTag is the ONE exception to the hold: 20261107-fcf37589 is ca5b2939 plus
-  # only the replay-planner fix for Titan's empty 'Receipt' shells (AGG-630,
-  # aggsys 1a76f082 cherry-picked; same migrations as erp-server, so the
-  # nightly's migrate step stays in lockstep). Goes back to the common tag at
-  # the bump.
-  toolsTag: 20261107-fcf37589
+  # Set all four to the tag printed by `task sandbox-images` in the aggsys repo.
+  # 20261107-1a76f082 = aggsys main 1a76f082: the clerk-first bump of 2026-11-07
+  # (AGG-521/522/523/524/566/604/607/609/623/627/628/630). The hold ended once the
+  # Exchange side was in place (AGG-550 steps 1-6; AGG-551 role group + ManageAsApp);
+  # see the ORDER note under mailIngest.env.
+  erpServerTag: 20261107-1a76f082
+  # The aggsys-tools image (titan-replay/titan-etl + nightly.sh): same commit as
+  # erp-server so the nightly's migrate step stays in lockstep (the tools-only
+  # hotfix 20261107-fcf37589 for AGG-630 is folded in).
+  toolsTag: 20261107-1a76f082
   # The aggsys-mail-ingest image (`task sandbox-images`); only read when mailIngest.enabled.
-  mailIngestTag: 20261104-ca5b2939
+  mailIngestTag: 20261107-1a76f082
   # The aggsys-media-convert image (HEIC to JPEG for agents; only read when mediaConvert.enabled).
-  mediaConvertTag: 20261104-ca5b2939
+  mediaConvertTag: 20261107-1a76f082
   pullPolicy: Always
 
 # Keycloak URLs (AGG-462 / AGG-360 D8). The issuer is https://auth.quoinerp.com
@@ -123,10 +122,9 @@ nightly:
     # postrebuild the nightly polls the PUBLIC erp-server until mail-ingest has
     # re-synced every mailbox below (last_synced_at set, last_error null), else
     # the night fails loud and is not announced green. Mailbox list unset = the
-    # step is skipped (today). Set SANDBOX_DELEGATION_MAILBOXES with the image
-    # bump, same value as mailIngest.env MAIL_INGEST_SOURCE_MAILBOXES.
+    # step is skipped. Same value as mailIngest.env MAIL_INGEST_SOURCE_MAILBOXES.
     SANDBOX_PUBLIC_API_URL: http://aggsys-erp-server.aggsys.svc.cluster.local
-    # SANDBOX_DELEGATION_MAILBOXES: ap@<domain>,ar@<domain>   # with the bump (AGG-550/551)
+    SANDBOX_DELEGATION_MAILBOXES: ap@wieserconcrete.com,ar@wieserconcrete.com
     # SANDBOX_DELEGATION_WAIT: 5m                              # optional (default 5m)
     # Alerting + artifacts (AGG-362): the outcome line to ntfy (token in the
     # sealed secret), the night's record to MinIO (credentials likewise).
@@ -791,7 +789,7 @@ nightly:
           - coa:read
           - gl:read
           - treasury:read
-          - tax:read     # AGG-607: becomes tax:certificates_read in the SAME commit that moves erpServerTag/toolsTag to >= 685d2864 (its migration); earlier, the nightly's identity apply fails on the unknown permission
+          - tax:certificates_read   # the review form's certificate picker (AGG-600/607), the tenant's certificates only; not tax:read
           - reporting:read
           - activity:read
           - crm:read
@@ -828,7 +826,7 @@ nightly:
           - coa:read
           - gl:read
           - treasury:read
-          - tax:read     # AGG-607: becomes tax:certificates_read with the image bump (see ap_ar_clerk)
+          - tax:certificates_read   # AGG-600/607, see ap_ar_clerk
           - reporting:read
           - activity:read
           - crm:read
@@ -1045,20 +1043,15 @@ mailIngest:
     # In-cluster back channel; the token still carries iss=https://auth.quoinerp.com/realms/wieser.
     QUOIN_TOKEN_URL: http://keycloak.keycloak.svc.cluster.local:8080/realms/wieser/protocol/openid-connect/token
     QUOIN_CLIENT_ID: quoin-mail-ingest
-    # REQUIRED before mailIngestTag moves past 20261104-ca5b2939 — mail-ingest from aggsys
-    # e1bb201f (AGG-521) / b56574b8 (AGG-522) refuses to start without these. ORDER (AGG-550/551):
-    # Exchange header rules first (AGG-550 steps 1-6) or all new mail parks in Unrouted; the
-    # Quoin Delegation Reader role group applied; then set these, bump the image, deploy
-    # erp-server too, and run `mail-ingest -sync-delegates` (queue visibility and AP approval
-    # eligibility fail closed until the first sync; the nightly empties the table again).
-    # erpServerTag/toolsTag are HELD at 20261104-ca5b2939 for the same reason: erp-server from
-    # 083aac9b (AGG-523) / 21e0c687 (AGG-524) blanks every clerk's queue and first-level approval
-    # until that first successful sync, which needs the new mail-ingest. So all four image tags
-    # move together, in one commit that also flips ap_clerk/ap_ar_clerk to tax:certificates_read
-    # (AGG-607) and sets nightly.env SANDBOX_DELEGATION_MAILBOXES to the same list (AGG-566).
-    # Already in place for that rollout: erpServer.env OIDC_DIRECT_CLIENT_IDS (AGG-604) and
-    # nightly.env SANDBOX_PUBLIC_API_URL.
-    # Values are UNCONFIRMED — fill the real tenant domains, then uncomment:
-    # MAIL_INGEST_SOURCE_MAILBOXES: ap@<domain>,ar@<domain>          # the AP/AR shared mailboxes the copy rules stamp
-    # MAIL_INGEST_EXCHANGE_ORGANIZATION: <tenant>.onmicrosoft.com     # Wieser's initial onmicrosoft domain
+    # Required since aggsys e1bb201f (AGG-521) / b56574b8 (AGG-522): mail-ingest refuses to
+    # start without both. ORDER, kept on 2026-11-07 (AGG-550/551): Exchange first — the strip
+    # rule "Quoin strip source-mailbox header" at priority 0, the two copy rules stamping
+    # X-Quoin-Source-Mailbox with their own mailbox, the "Quoin Delegation Reader" role group
+    # and Exchange.ManageAsApp on the Quoin app — then these values and all four image tags in
+    # ONE commit: queue visibility (AGG-523) and first-level approval eligibility (AGG-524)
+    # fail closed until the first successful delegation sync, and the nightly empties the
+    # table and waits for the re-sync (AGG-566). A mailbox added here needs its own stamped
+    # copy rule in Exchange first, or its mail parks in Unrouted.
+    MAIL_INGEST_SOURCE_MAILBOXES: ap@wieserconcrete.com,ar@wieserconcrete.com   # the AP/AR shared mailboxes the copy rules stamp
+    MAIL_INGEST_EXCHANGE_ORGANIZATION: wieserconcrete.onmicrosoft.com            # Wieser's Exchange organization (initial domain)
     # MAIL_INGEST_DELEGATION_INTERVAL: 15m                            # optional (default 15m)
