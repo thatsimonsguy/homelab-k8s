@@ -5,7 +5,12 @@ image:
   # under mailIngest.env — AGG-550/551 Exchange steps first, then AGG-607's
   # tax:certificates_read flip in the same commit as the bump.
   erpServerTag: 20261104-ca5b2939
-  toolsTag: 20261104-ca5b2939
+  # toolsTag is the ONE exception to the hold: 20261107-fcf37589 is ca5b2939 plus
+  # only the replay-planner fix for Titan's empty 'Receipt' shells (AGG-630,
+  # aggsys 1a76f082 cherry-picked; same migrations as erp-server, so the
+  # nightly's migrate step stays in lockstep). Goes back to the common tag at
+  # the bump.
+  toolsTag: 20261107-fcf37589
   # The aggsys-mail-ingest image (`task sandbox-images`); only read when mailIngest.enabled.
   mailIngestTag: 20261104-ca5b2939
   # The aggsys-media-convert image (HEIC to JPEG for agents; only read when mediaConvert.enabled).
