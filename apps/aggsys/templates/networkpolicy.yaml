@@ -3,8 +3,8 @@
 # that range mean "Traefik": only the Traefik pods may open :8080. Kubelet
 # probes come from the node, which k3s's network-policy controller always
 # admits; `kubectl port-forward` enters the pod's own namespace and is
-# unaffected. Nothing else in the cluster calls this server (the nightly
-# restarts it through the API server and runs its own replay-profile copy).
+# unaffected. The other callers each get their own policy: mail-ingest
+# (mail-ingest.yaml) and the nightly (below).
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -26,6 +26,34 @@ spec:
           podSelector:
             matchLabels:
               app.kubernetes.io/name: traefik
+      ports:
+        - port: 8080
+          protocol: TCP
+---
+# The nightly's delegation gate (AGG-566, step `delegation`) reads
+# GET /api/v1/documents/mailbox-delegates from the PUBLIC server
+# (SANDBOX_PUBLIC_API_URL). Without this the read is refused at the network
+# and the night fails "delegation not synced" (first seen 2026-11-09). The
+# nightly pod sits in Traefik's pod range, so it is trusted for
+# CF-Connecting-IP like any pod there; it is our own job.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: aggsys-erp-server-from-nightly
+  namespace: aggsys
+  labels:
+    {{- include "aggsys.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app: aggsys-erp-server
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: aggsys-nightly
       ports:
         - port: 8080
           protocol: TCP
