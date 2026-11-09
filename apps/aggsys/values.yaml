@@ -14,7 +14,7 @@ image:
   # one tag at the next full bump.
   toolsTag: 20261109-90517979
   # The aggsys-mail-ingest image (`task sandbox-images`); only read when mailIngest.enabled.
-  mailIngestTag: 20261107-1a76f082
+  mailIngestTag: 20261109-90517979
   # The aggsys-media-convert image (HEIC to JPEG for agents; only read when mediaConvert.enabled).
   mediaConvertTag: 20261109-90517979
   pullPolicy: Always
