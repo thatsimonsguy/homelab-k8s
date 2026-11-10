@@ -5,18 +5,18 @@ image:
   # (AGG-521/522/523/524/566/604/607/609/623/627/628/630). The hold ended once the
   # Exchange side was in place (AGG-550 steps 1-6; AGG-551 role group + ManageAsApp);
   # see the ORDER note under mailIngest.env.
-  erpServerTag: 20261109-90517979
+  erpServerTag: 20261110-df060bdd
   # The aggsys-tools image (titan-replay/titan-etl + nightly.sh). Tools-only
   # hotfix 20261108-20b0faf6 = erp-server's 1a76f082 + AGG-634 (identity
   # manifest reactivates the people it names) + AGG-635 (a last-good restore
   # migrates and restarts the public server). No new migrations, so the
   # nightly's migrate step stays in lockstep with erp-server; fold back into
   # one tag at the next full bump.
-  toolsTag: 20261109-90517979
+  toolsTag: 20261110-df060bdd
   # The aggsys-mail-ingest image (`task sandbox-images`); only read when mailIngest.enabled.
-  mailIngestTag: 20261109-90517979
+  mailIngestTag: 20261110-df060bdd
   # The aggsys-media-convert image (HEIC to JPEG for agents; only read when mediaConvert.enabled).
-  mediaConvertTag: 20261109-90517979
+  mediaConvertTag: 20261110-df060bdd
   pullPolicy: Always
 
 # Keycloak URLs (AGG-462 / AGG-360 D8). The issuer is https://auth.quoinerp.com
