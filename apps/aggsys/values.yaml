@@ -46,7 +46,7 @@ erpServer:
     MEDIA_CONVERT_URL: http://aggsys-media-convert.aggsys.svc.cluster.local:8080
     # Remote MCP connectors (AGG-360 stage 2): pre-registered Keycloak clients
     # in each tenant realm; their tokens act as the agent (HumanOnly refused).
-    OIDC_CONNECTOR_CLIENT_IDS: connector-claude,connector-chatgpt
+    OIDC_CONNECTOR_CLIENT_IDS: connector-claude,connector-chatgpt,connector-claude-code
     # Closed-world client classification (AGG-597 / AGG-604): from erpServerTag
     # f31054f2 (2026-11-06) on, a token whose azp is not the app, the agent, a
     # connector or one of these direct clients is refused 403 (earlier images
