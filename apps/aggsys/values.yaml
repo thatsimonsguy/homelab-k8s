@@ -187,15 +187,19 @@ nightly:
         cash_account: "1015"
         party_account_policy: explicit
         # no ic_account: no intercompany account names it in the source data
+      - label: NEOC                   # Northeast Ohio Concrete LLC (plant 920), acquired 2026-11-10 (AGG-646)
+        period_group: NEOC            # no gl_company_years row yet; guessed from the label (WW Leasing's matched) — a different spelling stops the load, loud
+        name: Northeast Ohio Concrete LLC
+        cash_account: "1018"          # Checking NE OH (1019 MMA NE OH stays a plain account, as WW Leasing's 1014 MMA)
+        ic_account: "1270"            # Intercompany - NE OH Concrete
+        party_account_policy: explicit
+        # A peer under the tenant: in no reporting group, no ownership edge (Matt, 2026-11-11).
     # Pending entities (entity-birth design D12): companies the source already
     # has GL / bank accounts for but no company, calendar or activity yet. Their
     # accounts are set aside while dormant; any activity on them, or the label
     # appearing as a source company, stops the load — then move the entry up to
     # `entities` (adding period_group, cash_account, ic_account/policy).
-    pending:
-      - label: NE Ohio Concrete       # acquisition (60% Wieser), expected close 2026-10-30/31; the label Titan will use is a guess
-        name: NE Ohio Concrete
-        cash_accounts: ["1018", "1019"] # 1018 Checking NE OH, 1019 MMA NE OH
+    # NE Ohio Concrete was promoted to NEOC above (AGG-646); none pending now.
   tenantConfig: |
     tax_strategy:
       tenant: tenant_rates
